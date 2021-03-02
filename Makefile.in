@@ -139,8 +139,8 @@ default: hooks/.enabled $(NDPI_LIB_DEP) $(LIB_TARGETS) $(TARGET)
 
 all: default
 
-OBJECTS = $(patsubst src/%.cpp, src/%.o, $(wildcard src/*.cpp)) @PRO_OBJECTS@
-HEADERS = $(wildcard include/*.h) @PRO_HEADERS@
+OBJECTS = $(patsubst src/%.cpp, src/%.o, $(wildcard src/*.cpp)) $(patsubst src/flow_callbacks/%.cpp, src/flow_callbacks/%.o, $(wildcard src/flow_callbacks/*.cpp)) @PRO_OBJECTS@
+HEADERS = $(wildcard include/*.h) $(wildcard include/flow_callbacks/*.h) @PRO_HEADERS@
 INC     = $(wildcard src/*.inc)
 OBJECTS_NO_MAIN := $(filter-out src/main.o,$(OBJECTS))
 

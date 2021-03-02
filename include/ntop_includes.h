@@ -285,6 +285,10 @@ using namespace std;
 #include "StoreManager.h"
 #include "StatsManager.h"
 #include "AlertsManager.h"
+#include "flow_callbacks/FlowCallback.h"
+#include "flow_callbacks/BlacklistedFlowCallback.h"
+#include "FlowCallbacksLoader.h"
+#include "FlowCallbacksExecutor.h"
 #include "DB.h"
 #ifdef HAVE_MYSQL
 #include "MySQLDB.h"
