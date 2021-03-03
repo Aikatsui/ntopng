@@ -290,7 +290,7 @@ void Redis::addToCache(const char * const key, const char * const value, u_int e
   if(!initializationCompleted) return;
 
 #ifdef CACHE_DEBUG
-  printf("**** Caching %s=%s\n", key, value ? value : "<NULL>");
+  printf("**** Caching %s=%s [len: %lu]\n", key, value ? value : "<NULL>", value ? strlen(value) : 0);
 #endif
 
   if((it = stringCache.find(key)) != stringCache.end()) {
@@ -331,7 +331,7 @@ int Redis::get(char *key, char *rsp, u_int rsp_len, bool cache_it) {
       stringCache.erase(it);
       rsp[0] = '\0';
     } else
-      snprintf(rsp, rsp_len-1, "%s", cached->value.c_str());
+      snprintf(rsp, rsp_len, "%s", cached->value.c_str());
 
 #ifdef CACHE_DEBUG
     printf("**** Read from cache %s=%s\n", key, rsp);

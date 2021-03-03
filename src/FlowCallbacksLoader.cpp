@@ -28,6 +28,7 @@ FlowCallbacksLoader::FlowCallbacksLoader(){
 /* **************************************************** */
 
 FlowCallbacksLoader::~FlowCallbacksLoader() {
+  
 }
 
 /* **************************************************** */
@@ -56,44 +57,59 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
 /* **************************************************** */
 
 void FlowCallbacksLoader::reloadFlowCallbacks() {
-  json_object *json;
+  json_object *json, *json_config, *json_flow;
   enum json_tokener_error jerr = json_tokener_success;
-  char key[CONST_MAX_LEN_REDIS_KEY], *value;
+  char *value;
   registerFunction register_function;
+  u_int actual_len = ntop->getRedis()->len(FLOW_CALLBACKS_CONFIG);
 
-  if((value = (char *) calloc(1, POOL_MAX_SERIALIZED_LEN)) == NULL) {
-    ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory to deserialize %s", key);
+  if((value = (char *) malloc(actual_len + 1)) == NULL) {
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory to deserialize %s", FLOW_CALLBACKS_CONFIG);
     return;
   }
 
-  if((json = json_tokener_parse_verbose(value, &jerr)) == NULL) {
-    ntop->getTrace()->traceEvent(TRACE_WARNING, "JSON Parse error [%s] key: %s: %s",
-				 json_tokener_error_desc(jerr),
-				 key, value);
+  if(ntop->getRedis()->get((char*)FLOW_CALLBACKS_CONFIG, value, actual_len + 1) != 0) {
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to find configuration %s", FLOW_CALLBACKS_CONFIG);
+  } else if((json = json_tokener_parse_verbose(value, &jerr)) == NULL) {
+    printf("%s\n", value);
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "JSON Parse error [%s] %s", json_tokener_error_desc(jerr), value);
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "Actual len: %u [strlen: %u]", actual_len, strlen(value));
+  } else if(!json_object_object_get_ex(json, "config", &json_config)) { /* 'config' section inside the JSON */
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "'config' not found in JSON");
+  } else if(!json_object_object_get_ex(json_config, "flow", &json_flow)) { /* 'flow' section inside 'config' JSON */
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "'flow' not found in 'config' JSON");
   } else {
-    /* Configuration load, i.e., if script_key is enabled, create instance */
+    /*
+      Iterate over all script configurations
+     */
+    struct json_object_iterator it = json_object_iter_begin(json_flow);
+    struct json_object_iterator itEnd = json_object_iter_end(json_flow);
 
-    /* e.g., only for enabled flows */
-    // registerFlowCallback<FlowCallback>(json);
-    // registerFlowCallback<BlacklistedFlowCallback>(json);
+    while(!json_object_iter_equal(&it, &itEnd)) {
+      /* Configuration load, i.e., if script_key is enabled, create instance */
+      const char *callback_key = json_object_iter_peek_name(&it);
+      json_object *jvalue = json_object_iter_peek_value(&it);
 
-    /* Example, to be made parametric */
-    register_function = cb_registrable["blacklisted"];
-    (this->*register_function)(json);
+      json_object *json_hook_all, *json_enabled, *json_script_conf;
+      bool enabled = false;
+      if(json_object_object_get_ex(jvalue, "all", &json_hook_all)               /*  Hook 'all' present                     */
+	 && json_object_object_get_ex(json_hook_all, "enabled", &json_enabled)  /* 'enabled' present in hook configuration */
+	 && (enabled = json_object_get_boolean(json_enabled))) {
+	json_object_object_get_ex(json_hook_all, "script_conf", &json_script_conf);
+
+	if(cb_registrable.find(callback_key) != cb_registrable.end()) {
+	  register_function = cb_registrable[callback_key];
+	  (this->*register_function)(json_script_conf);
+	  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Enabled callback: %s", callback_key);
+	}
+      }
+      /* Move to the next element */
+      json_object_iter_next(&it);
+    }
 
     /* Free the json */
     json_object_put(json);
   }
-
-  /* Example, to be removed when config is loaded */
-  register_function = cb_registrable["blacklisted"];
-  (this->*register_function)(json);
-
-  register_function = cb_registrable["long_lived"];
-  (this->*register_function)(json);
-
-  register_function = cb_registrable["low_goodput"];
-  (this->*register_function)(json);
 
   free(value);
 }
