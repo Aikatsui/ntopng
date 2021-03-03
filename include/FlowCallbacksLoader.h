@@ -26,7 +26,16 @@
 
 class FlowCallbacksLoader { /* A single instance inside Ntop */
  private:
-  list<FlowCallback*>enabled_flow_callbacks;
+  typedef void (FlowCallbacksLoader::*registerFunction)(json_object *obj); /* registerFlowCallback function pointer typedef */
+  typedef std::unordered_map<std::string, registerFunction> cb_map_t;      /* Map of registrable callbacks function pointer */
+  static cb_map_t cb_registrable;     /* Map with all the registrable callbacks, that is, every class under flow_callbacks/ */
+
+  /* These are callback instances, that is classes instantiated at runtime each one with a given configuration */
+  list<FlowCallback*> cb_all; /* All the callbacks instantiated */
+  list<FlowCallback*> cb_protocol_detected, cb_periodic_update, cb_idle; /* Callbacks instantiated, divided by type */
+
+  static cb_map_t initFlowCallbacks(); /* Static method to initialize all the registrable callbacks */
+  template<typename T> void registerFlowCallback(json_object *obj); /* Method called at runtime to register a callback */
 
  public:
   FlowCallbacksLoader();
@@ -34,6 +43,51 @@ class FlowCallbacksLoader { /* A single instance inside Ntop */
 
   void reloadFlowCallbacks();
   list<FlowCallback*> getFlowCallbacks(NetworkInterface *iface, FlowLuaCall flow_lua_call);
+  void printCallbacks();
+};
+
+/* Below are tests to check which callbacks each FlowCallback implements */
+
+// SFINAE test for protocolDetected
+template <typename T>
+class has_protocolDetected {
+ private:
+  typedef char YesType[1];
+  typedef char NoType[2];
+
+  template <typename C> static YesType& test( decltype(&C::protocolDetected) ) ;
+  template <typename C> static NoType& test(...);
+
+ public:
+  enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
+};
+
+// SFINAE test for periodicUpdate
+template <typename T>
+class has_periodicUpdate {
+ private:
+  typedef char YesType[1];
+  typedef char NoType[2];
+
+  template <typename C> static YesType& test( decltype(&C::periodicUpdate) ) ;
+  template <typename C> static NoType& test(...);
+
+ public:
+  enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
+};
+
+// SFINAE test for flowEnd 
+template <typename T>
+class has_flowEnd {
+ private:
+  typedef char YesType[1];
+  typedef char NoType[2];
+
+  template <typename C> static YesType& test( decltype(&C::flowEnd) ) ;
+  template <typename C> static NoType& test(...);
+
+ public:
+  enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
 };
 
 #endif /* _FLOW_CALLBACKS_LOADER_H_ */

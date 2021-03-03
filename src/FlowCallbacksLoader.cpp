@@ -33,12 +33,26 @@ FlowCallbacksLoader::~FlowCallbacksLoader() {
 
 /* **************************************************** */
 
+template<typename T> void FlowCallbacksLoader::registerFlowCallback(json_object *obj) {
+  T *t = new (nothrow) T(obj);
+
+  if(t) {
+    cb_all.push_back(t);
+
+    if(has_protocolDetected<T>::value) cb_protocol_detected.push_back(t);
+    if(has_periodicUpdate<T>::value) cb_periodic_update.push_back(t);
+    if(has_flowEnd<T>::value) cb_idle.push_back(t);
+  }
+}
+
+/* **************************************************** */
+
 void FlowCallbacksLoader::reloadFlowCallbacks() {
   json_object *obj;
   enum json_tokener_error jerr = json_tokener_success;
   char key[CONST_MAX_LEN_REDIS_KEY], *value;
 
-  if((value = (char *) malloc(POOL_MAX_SERIALIZED_LEN)) == NULL) {
+  if((value = (char *) calloc(1, POOL_MAX_SERIALIZED_LEN)) == NULL) {
     ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory to deserialize %s", key);
     return;
   }
@@ -51,11 +65,24 @@ void FlowCallbacksLoader::reloadFlowCallbacks() {
     /* Configuration load, i.e., if script_key is enabled, create instance */
 
     /* e.g., only for enabled flows */
-    enabled_flow_callbacks.push_back(new BlacklistedFlowCallback(obj));
+    // registerFlowCallback<FlowCallback>(obj);
+    // registerFlowCallback<BlacklistedFlowCallback>(obj);
+
+    /* Example, to be made parametric */
+    registerFunction rf = cb_registrable["blacklisted"];
+    (this->*rf)(obj);
 
     /* Free the json */
     json_object_put(obj);
   }
+
+  /* Example, to be removed when config is loaded */
+  registerFunction rf = cb_registrable["blacklisted"];
+  (this->*rf)(obj);
+  rf = cb_registrable["long_lived"];
+  (this->*rf)(obj);
+  rf = cb_registrable["low_goodput"];
+  (this->*rf)(obj);
 
   free(value);
 }
@@ -64,11 +91,52 @@ void FlowCallbacksLoader::reloadFlowCallbacks() {
 
 list<FlowCallback*> FlowCallbacksLoader::getFlowCallbacks(NetworkInterface *iface, FlowLuaCall flow_lua_call) {
   list<FlowCallback*> res;
+  list<FlowCallback*> *selected_list;
 
-  for(list<FlowCallback*>::const_iterator it = enabled_flow_callbacks.begin(); it != enabled_flow_callbacks.end(); ++it) {
-    /* Check conditions on iface, e.g., iface->isPacketInterface() */
-    res.push_back(NULL /* An Instance */);
+  switch(flow_lua_call) {
+  case flow_lua_call_protocol_detected:
+    selected_list = &cb_protocol_detected;
+    /* TODO add other cases */
+  default:
+    selected_list = NULL;
+  }
+
+  if(selected_list) {
+    for(list<FlowCallback*>::const_iterator it = selected_list->begin(); it != selected_list->end(); ++it) {
+      /* Check conditions on iface, e.g., iface->isPacketInterface() */
+      res.push_back(NULL /* An Instance */);
+    }
   }
 
   return res;
 }
+
+/* **************************************************** */
+
+void FlowCallbacksLoader::printCallbacks() {
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Registrable Callbacks:");
+  for(cb_map_t::const_iterator it = cb_registrable.begin(); it != cb_registrable.end(); ++it) {
+    ntop->getTrace()->traceEvent(TRACE_NORMAL, "\t[%s][%p]", it->first.c_str(), it->second);
+  }
+
+  ntop->getTrace()->traceEvent(TRACE_NORMAL,
+			       "Registered Callbacks [all: %u][protocol_detected: %u][periodic_update: %u][idle: %u]",
+			       cb_all.size(), cb_protocol_detected.size(), cb_periodic_update.size(), cb_idle.size());
+}
+
+/* **************************************************** */
+
+FlowCallbacksLoader::cb_map_t FlowCallbacksLoader::initFlowCallbacks() {
+  FlowCallbacksLoader::cb_map_t cbs;
+
+  /* Add lines here for each new callback added under flow_callbacks/ */
+  cbs["blacklisted"] = &FlowCallbacksLoader::registerFlowCallback<BlacklistedFlowCallback>;
+  cbs["long_lived"] = &FlowCallbacksLoader::registerFlowCallback<LongLivedFlowCallback>;
+  cbs["low_goodput"] = &FlowCallbacksLoader::registerFlowCallback<LowGoodputFlowCallback>;
+
+  return cbs;
+}
+
+/* **************************************************** */
+
+FlowCallbacksLoader::cb_map_t FlowCallbacksLoader::cb_registrable = FlowCallbacksLoader::initFlowCallbacks();

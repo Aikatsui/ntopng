@@ -19,19 +19,19 @@
  *
  */
 
-#ifndef _BLACKLISTED_FLOW_CALLBACK_H_
-#define _BLACKLISTED_FLOW_CALLBACK_H_
+#ifndef _LONGLIVED_FLOW_CALLBACK_H_
+#define _LONGLIVED_FLOW_CALLBACK_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedFlowCallback : public FlowCallback {
+class LongLivedFlowCallback : public FlowCallback {
  public:
-  BlacklistedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
-  virtual ~BlacklistedFlowCallback() {};
+  LongLivedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
+  virtual ~LongLivedFlowCallback() {};
 
-  void protocolDetected(Flow *f) {
+  void periodicUpdate(Flow *f) {
     // f->setStatus();
   };
 };
 
-#endif /* _BLACKLISTED_FLOW_CALLBACK_H_ */
+#endif /* _LONGLIVED_FLOW_CALLBACK_H_ */

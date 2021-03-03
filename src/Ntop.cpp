@@ -543,6 +543,9 @@ void Ntop::start() {
 
   startPurgeLoop();
 
+  flow_callbacks_loader.reloadFlowCallbacks();
+  flow_callbacks_loader.printCallbacks();
+
   sleep(2);
 
   for(int i=0; i<num_defined_interfaces; i++)

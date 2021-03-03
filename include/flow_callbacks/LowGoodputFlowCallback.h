@@ -19,19 +19,23 @@
  *
  */
 
-#ifndef _BLACKLISTED_FLOW_CALLBACK_H_
-#define _BLACKLISTED_FLOW_CALLBACK_H_
+#ifndef _LOWGOODPUT_FLOW_CALLBACK_H_
+#define _LOWGOODPUT_FLOW_CALLBACK_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedFlowCallback : public FlowCallback {
+class LowGoodputFlowCallback : public FlowCallback {
  public:
-  BlacklistedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
-  virtual ~BlacklistedFlowCallback() {};
+  LowGoodputFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
+  virtual ~LowGoodputFlowCallback() {};
 
-  void protocolDetected(Flow *f) {
+  void periodicUpdate(Flow *f) {
+    // f->setStatus();
+  };
+
+  void flowEnd(Flow *f) {
     // f->setStatus();
   };
 };
 
-#endif /* _BLACKLISTED_FLOW_CALLBACK_H_ */
+#endif /* _LOWGOODPUT_FLOW_CALLBACK_H_ */

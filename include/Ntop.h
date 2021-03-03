@@ -96,6 +96,9 @@ class Ntop {
   char *local_network_aliases[CONST_MAX_NUM_NETWORKS];
   AddressTree local_network_tree;
 
+  /* Flow Callbacks Loader */
+  FlowCallbacksLoader flow_callbacks_loader;
+
 #ifndef WIN32
   ContinuousPing *cping;
   Ping *ping;

@@ -185,6 +185,7 @@ https://translate.google.co.uk/translate?sl=auto&tl=en&u=http%3A%2F%2Fbugsfixed.
 #include <vector>
 #include <list>
 #include <iostream>
+#include <type_traits>
 #include <string>
 #include <sstream>
 #include <queue>
@@ -287,6 +288,8 @@ using namespace std;
 #include "AlertsManager.h"
 #include "flow_callbacks/FlowCallback.h"
 #include "flow_callbacks/BlacklistedFlowCallback.h"
+#include "flow_callbacks/LongLivedFlowCallback.h"
+#include "flow_callbacks/LowGoodputFlowCallback.h"
 #include "FlowCallbacksLoader.h"
 #include "FlowCallbacksExecutor.h"
 #include "DB.h"
