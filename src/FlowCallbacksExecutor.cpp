@@ -47,6 +47,8 @@ void FlowCallbacksExecutor::reloadFlowCallbacks() {
 FlowLuaCallExecStatus FlowCallbacksExecutor::listExecute(Flow *f, list<FlowCallback*> *l) {
   for(list<FlowCallback*>::const_iterator it = l->begin(); it != l->end(); ++it)
     ; /* Do the execution */
+
+  return flow_lua_call_exec_status_ok;
 }
 
 /* **************************************************** */

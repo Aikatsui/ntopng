@@ -26,16 +26,16 @@
 
 class FlowCallbacksLoader { /* A single instance inside Ntop */
  private:
-  typedef void (FlowCallbacksLoader::*registerFunction)(json_object *obj); /* registerFlowCallback function pointer typedef */
+  typedef void (FlowCallbacksLoader::*registerFunction)(json_object *json); /* registerFlowCallback function pointer typedef */
   typedef std::unordered_map<std::string, registerFunction> cb_map_t;      /* Map of registrable callbacks function pointer */
-  static cb_map_t cb_registrable;     /* Map with all the registrable callbacks, that is, every class under flow_callbacks/ */
+  cb_map_t cb_registrable;     /* Map with all the registrable callbacks, that is, every class under flow_callbacks/ */
 
   /* These are callback instances, that is classes instantiated at runtime each one with a given configuration */
   list<FlowCallback*> cb_all; /* All the callbacks instantiated */
   list<FlowCallback*> cb_protocol_detected, cb_periodic_update, cb_idle; /* Callbacks instantiated, divided by type */
 
-  static cb_map_t initFlowCallbacks(); /* Static method to initialize all the registrable callbacks */
-  template<typename T> void registerFlowCallback(json_object *obj); /* Method called at runtime to register a callback */
+  template<typename T> void registerFlowCallback(json_object *json); /* Method called at runtime to register a callback */
+  void registerFlowCallbacks(); /* Method called at runtime to register all callbacks */
 
  public:
   FlowCallbacksLoader();
