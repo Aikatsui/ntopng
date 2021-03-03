@@ -26,14 +26,13 @@
 
 class LowGoodputFlowCallback : public FlowCallback {
  private:
-  void periodicUpdate(Flow *f) { /* f->setStatus(); */ };
-  void flowEnd(Flow *f)        { /* f->setStatus(); */ };
-
  public:
   LowGoodputFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
   virtual ~LowGoodputFlowCallback() {};
 
   bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_periodic_update || flow_lua_call == flow_lua_call_idle; };
+  void periodicUpdate(Flow *f) { /* f->setStatus(); */ };
+  void flowEnd(Flow *f)        { /* f->setStatus(); */ };
 };
 
 #endif /* _LOWGOODPUT_FLOW_CALLBACK_H_ */

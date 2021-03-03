@@ -26,13 +26,12 @@
 
 class BlacklistedFlowCallback : public FlowCallback {
  private:
-  void protocolDetected(Flow *f) { /* f->setStatus(); */ };  
-
  public:
  BlacklistedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
   ~BlacklistedFlowCallback() {};
 
   bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_protocol_detected; };
+  void protocolDetected(Flow *f) { /* f->setStatus(); */ };
 };
 
 #endif /* _BLACKLISTED_FLOW_CALLBACK_H_ */

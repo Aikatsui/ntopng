@@ -30,14 +30,3 @@ FlowCallback::FlowCallback(json_object *json_config) {
 
 FlowCallback::~FlowCallback() {
 };
-
-/* **************************************************** */
-
-void FlowCallback::execute(FlowLuaCall flow_lua_call, Flow *f) {
-  switch(flow_lua_call) {
-  case flow_lua_call_protocol_detected: return protocolDetected(f);
-  case flow_lua_call_periodic_update:   return periodicUpdate(f);
-  case flow_lua_call_idle:              return flowEnd(f);
-  default:                              return;
-  }
-};

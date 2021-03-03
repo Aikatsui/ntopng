@@ -26,13 +26,12 @@
 
 class LongLivedFlowCallback : public FlowCallback {
  private:
-  void periodicUpdate(Flow *f) { /* f->setStatus(); */ };
-
  public:
   LongLivedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
   virtual ~LongLivedFlowCallback() {};
 
   bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_periodic_update; };
+  void periodicUpdate(Flow *f) { /* f->setStatus(); */ };
 };
 
 #endif /* _LONGLIVED_FLOW_CALLBACK_H_ */
