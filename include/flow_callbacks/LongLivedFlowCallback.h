@@ -25,13 +25,14 @@
 #include "ntop_includes.h"
 
 class LongLivedFlowCallback : public FlowCallback {
+ private:
+  void periodicUpdate(Flow *f) { /* f->setStatus(); */ };
+
  public:
   LongLivedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
   virtual ~LongLivedFlowCallback() {};
 
-  void periodicUpdate(Flow *f) {
-    // f->setStatus();
-  };
+  bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_periodic_update; };
 };
 
 #endif /* _LONGLIVED_FLOW_CALLBACK_H_ */

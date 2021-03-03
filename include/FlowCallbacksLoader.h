@@ -46,48 +46,4 @@ class FlowCallbacksLoader { /* A single instance inside Ntop */
   void printCallbacks();
 };
 
-/* Below are tests to check which callbacks each FlowCallback implements */
-
-// SFINAE test for protocolDetected
-template <typename T>
-class has_protocolDetected {
- private:
-  typedef char YesType[1];
-  typedef char NoType[2];
-
-  template <typename C> static YesType& test( decltype(&C::protocolDetected) ) ;
-  template <typename C> static NoType& test(...);
-
- public:
-  enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
-};
-
-// SFINAE test for periodicUpdate
-template <typename T>
-class has_periodicUpdate {
- private:
-  typedef char YesType[1];
-  typedef char NoType[2];
-
-  template <typename C> static YesType& test( decltype(&C::periodicUpdate) ) ;
-  template <typename C> static NoType& test(...);
-
- public:
-  enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
-};
-
-// SFINAE test for flowEnd 
-template <typename T>
-class has_flowEnd {
- private:
-  typedef char YesType[1];
-  typedef char NoType[2];
-
-  template <typename C> static YesType& test( decltype(&C::flowEnd) ) ;
-  template <typename C> static NoType& test(...);
-
- public:
-  enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
-};
-
 #endif /* _FLOW_CALLBACKS_LOADER_H_ */

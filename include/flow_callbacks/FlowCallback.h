@@ -26,10 +26,16 @@
 
 class FlowCallback {
  private:
+  virtual void protocolDetected(Flow *f) {};
+  virtual void periodicUpdate(Flow *f) {};
+  virtual void flowEnd(Flow *f) {};
  protected:
  public:
   FlowCallback(json_object *json_config);
   virtual ~FlowCallback();
+
+  virtual bool hasCallback(FlowLuaCall flow_lua_call) const { return false; };
+  void execute(FlowLuaCall flow_lua_call, Flow *f);
 };
 
 #endif /* _FLOW_CALLBACK_H_ */

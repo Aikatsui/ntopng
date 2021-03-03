@@ -39,9 +39,9 @@ template<typename T> void FlowCallbacksLoader::registerFlowCallback(json_object 
   if(t) {
     cb_all.push_back(t);
 
-    if(has_protocolDetected<T>::value) cb_protocol_detected.push_back(t);
-    if(has_periodicUpdate<T>::value) cb_periodic_update.push_back(t);
-    if(has_flowEnd<T>::value) cb_idle.push_back(t);
+    if(t->hasCallback(flow_lua_call_protocol_detected)) cb_protocol_detected.push_back(t);
+    if(t->hasCallback(flow_lua_call_periodic_update))   cb_periodic_update.push_back(t);
+    if(t->hasCallback(flow_lua_call_idle))              cb_idle.push_back(t);
   }
 }
 

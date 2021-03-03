@@ -368,6 +368,7 @@ typedef enum {
   flow_lua_call_exec_status_not_executed_shutdown_in_progress,  /* Call NOT executed as a shutdown was in progress           */
   flow_lua_call_exec_status_not_executed_vm_not_allocated,      /* Call NOT executed as the vm wasn't allocated              */
   flow_lua_call_exec_status_not_executed_not_pending,           /* Call NOT executed as other hooks have already been exec.  */
+  flow_lua_call_exec_status_unsupported_call,                   /* Call NOT executed as not supported                        */
 } FlowLuaCallExecStatus;
 
 typedef enum {
