@@ -23,12 +23,14 @@
 
 FlowCallbacksLoader::FlowCallbacksLoader(){
   registerFlowCallbacks();
+  reloadFlowCallbacks();
 }
 
 /* **************************************************** */
 
 FlowCallbacksLoader::~FlowCallbacksLoader() {
-  
+  for(list<FlowCallback*>::const_iterator it = cb_all.begin(); it != cb_all.end(); ++it)
+    delete *it;
 }
 
 /* **************************************************** */

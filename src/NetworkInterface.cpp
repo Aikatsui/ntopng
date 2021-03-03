@@ -52,6 +52,7 @@ NetworkInterface::NetworkInterface(const char *name,
 
   customIftype = custom_interface_type;
   influxdb_ts_exporter = rrd_ts_exporter = NULL;
+  flow_callbacks_loader_pending = NULL;
   hooksEngine = NULL;
   hooks_engine_reload = false;
   user_scripts_reload = false;
@@ -5248,12 +5249,27 @@ void NetworkInterface::getNetworksStats(lua_State* vm, AddressTree *allowed_host
 
 /* **************************************************** */
 
+void NetworkInterface::checkReloadFlowCallbacks() {
+  /* 
+     Check if ntop has given this interface a new callbacks loader to be used
+   */
+  if(flow_callbacks_loader_pending) {
+    /* TODO: do the reload of the callbacks for this interface (e.g., interface type matters) */
+
+    /* Notify that we are done with the reload */
+    flow_callbacks_loader_pending = NULL;
+  }
+}
+
+/* **************************************************** */
+
 u_int NetworkInterface::purgeIdleFlows(bool force_idle, bool full_scan) {
   u_int n = 0;
   time_t last_packet_time = getTimeLastPktRcvd();
 
   pollQueuedeCompanionEvents();
   bcast_domains->inlineReloadBroadcastDomains();
+  checkReloadFlowCallbacks();
 
   if(!force_idle && last_packet_time < next_idle_flow_purge)
     return(0); /* Too early */

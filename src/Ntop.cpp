@@ -70,6 +70,8 @@ Ntop::Ntop(char *appName) {
   start_time = last_modified_static_file_epoch = 0, epoch_buf[0] = '\0'; /* It will be initialized by start() */
   last_stats_reset = 0;
   ndpiReloadInProgress = false;
+  flowCallbacksReloadInProgress = false;
+  flow_callbacks_loader = flow_callbacks_loader_shadow = NULL;
   httpd = NULL, geo = NULL, mac_manufacturers = NULL;
   memset(&cpu_stats, 0, sizeof(cpu_stats));
   cpu_load = 0;
@@ -543,8 +545,8 @@ void Ntop::start() {
 
   startPurgeLoop();
 
-  flow_callbacks_loader.reloadFlowCallbacks();
-  flow_callbacks_loader.printCallbacks();
+  // flow_callbacks_loader.reloadFlowCallbacks();
+  // flow_callbacks_loader.printCallbacks();
 
   sleep(2);
 
@@ -2554,10 +2556,42 @@ void Ntop::initInterface(NetworkInterface *_if) {
 
 /* ******************************************* */
 
+void Ntop::checkReloadFlowCallbacks() {
+  if(!flow_callbacks_loader /* Startup */
+     || flowCallbacksReloadInProgress /* Reload requested from the UI upon configuration changes */) {
+    /* Check if all the interfaces are ready to reload */
+    for(int i = 0; i < get_num_interfaces(); i++) {
+      if(iface[i]->reloadFlowCallbacksInProgress())
+	return; /* Previous reload still pending, need to wait until the next call */
+    }
+
+    /* Possibly free the old loader */
+    if(flow_callbacks_loader_shadow) delete flow_callbacks_loader_shadow;
+
+    /*
+      Mark the reload as done. NOTE: important to do this before the next new
+      to prevent any chance of missing a reload.
+     */
+    flowCallbacksReloadInProgress = false;
+
+    /* Allocate the new flow callbacks loader */
+    flow_callbacks_loader = new (nothrow) FlowCallbacksLoader();
+
+    /* Pass the newly allocated loader to all interfaces so they will update their callbacks */
+    for(int i = 0; i < get_num_interfaces(); i++)
+      iface[i]->reloadFlowCallbacks(flow_callbacks_loader);
+  }
+}
+
+/* ******************************************* */
+
 /* NOTE: the multiple isShutdown checks below are necessary to reduce the shutdown time */
 void Ntop::runHousekeepingTasks() {
+  checkReloadFlowCallbacks();
+
   for(int i = 0; i < get_num_interfaces(); i++) {
     iface[i]->runHousekeepingTasks();
+
   }
 
   if(globals->isShutdownRequested()) return;

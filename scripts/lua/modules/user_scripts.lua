@@ -1125,6 +1125,9 @@ local function saveConfigset(configset)
    -- Reload the periodic scripts as the configuration has changed
    ntop.reloadPeriodicScripts()
 
+   -- Reload flow callbacks executed in C++
+   ntop.reloadFlowCallbacks()
+
    return true
 end
 

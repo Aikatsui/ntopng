@@ -44,6 +44,7 @@ class Ntop {
   pthread_t purgeLoop;    /* Loop which iterates on active interfaces to delete idle hash table entries */
   bool purgeLoop_started; /* Flag that indicates whether the purgeLoop has been started */
   bool ndpiReloadInProgress;
+  bool flowCallbacksReloadInProgress;
   Bloom *resolvedHostsBloom; /* Used by all redis class instances */
   AddressTree local_interface_addresses;
   char epoch_buf[11];
@@ -97,7 +98,7 @@ class Ntop {
   AddressTree local_network_tree;
 
   /* Flow Callbacks Loader */
-  FlowCallbacksLoader flow_callbacks_loader;
+  FlowCallbacksLoader *flow_callbacks_loader, *flow_callbacks_loader_shadow;
 
 #ifndef WIN32
   ContinuousPing *cping;
@@ -122,6 +123,8 @@ class Ntop {
   bool checkUserPasswordLocal(const char * const user, const char * const password, char *group) const;
   bool checkUserPassword(const char * const user, const char * const password, char *group, bool *localuser) const;
   bool startPurgeLoop();
+
+  void checkReloadFlowCallbacks();
   
  public:
   /**
@@ -504,7 +507,7 @@ class Ntop {
   inline struct ndpi_detection_module_struct* get_ndpi_struct() const { return(ndpi_struct); };
   bool initnDPIReload();
   void finalizenDPIReload();
-  inline bool isnDPIReloadInProgress()  { return(ndpiReloadInProgress);     }  
+  inline bool isnDPIReloadInProgress()  { return(ndpiReloadInProgress);     }
 
   void checkReloadHostsBroadcastDomain();
 
@@ -516,6 +519,7 @@ class Ntop {
   ndpi_protocol_category_t get_ndpi_proto_category(u_int protoid);
   void setnDPIProtocolCategory(u_int16_t protoId, ndpi_protocol_category_t protoCategory);
   void reloadPeriodicScripts();
+  inline void reloadFlowCallbacks() { flowCallbacksReloadInProgress = true; };
 #ifndef WIN32
   inline ContinuousPing* getContinuousPing() { return(cping); }
   inline Ping*           getPing()           { return(ping);  }

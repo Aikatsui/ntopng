@@ -84,6 +84,9 @@ class NetworkInterface : public AlertableEntity {
   ServiceMap *sMap;
 #endif
 
+  /* Flow Callbacks Loader, when set to a pointer, a reload is in progress */
+  FlowCallbacksLoader *flow_callbacks_loader_pending;
+
   /* Variables used by top sites periodic update */
   u_int8_t current_cycle = 0;
   FrequentStringItems *top_sites;
@@ -918,6 +921,14 @@ class NetworkInterface : public AlertableEntity {
   inline void request_user_scripts_reload()  { if(!user_scripts_reload) user_scripts_reload = true;    };
   virtual void updateDirectionStats()        { ; }
   void reloadDhcpRanges();
+
+  /* Handles the reload of flow callbacks, using the callback loader */
+  void checkReloadFlowCallbacks();
+  /* Used to give the interface a new callback loader to be used */
+  inline void reloadFlowCallbacks(FlowCallbacksLoader *fcbl) { flow_callbacks_loader_pending = fcbl; };
+  /* Used to check if the interface has a callback loader that still have to be used */
+  inline bool reloadFlowCallbacksInProgress() const { return flow_callbacks_loader_pending != NULL;  };
+  
   inline bool hasConfiguredDhcpRanges()      { return(dhcp_ranges && !dhcp_ranges->last_ip.isEmpty()); };
   inline bool isFlowDumpDisabled()           { return(flow_dump_disabled); }
   inline struct ndpi_detection_module_struct* initnDPIStruct();
