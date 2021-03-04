@@ -23,8 +23,12 @@
 
 /* **************************************************** */
 
-FlowCallbacksExecutor::FlowCallbacksExecutor(NetworkInterface *_iface) {
+FlowCallbacksExecutor::FlowCallbacksExecutor(FlowCallbacksLoader *flow_callbacks_loader, NetworkInterface *_iface) {
   iface = _iface;
+
+  list_protocol_detected = flow_callbacks_loader->getFlowCallbacks(iface, flow_lua_call_protocol_detected),
+    list_periodic_update = flow_callbacks_loader->getFlowCallbacks(iface, flow_lua_call_periodic_update),
+    list_idle = flow_callbacks_loader->getFlowCallbacks(iface, flow_lua_call_idle);
 };
 
 /* **************************************************** */

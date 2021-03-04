@@ -53,6 +53,7 @@ NetworkInterface::NetworkInterface(const char *name,
   customIftype = custom_interface_type;
   influxdb_ts_exporter = rrd_ts_exporter = NULL;
   flow_callbacks_loader_pending = NULL;
+  flow_callbacks_executor = NULL;
   hooksEngine = NULL;
   hooks_engine_reload = false;
   user_scripts_reload = false;
@@ -5254,10 +5255,15 @@ void NetworkInterface::checkReloadFlowCallbacks() {
      Check if ntop has given this interface a new callbacks loader to be used
    */
   if(flow_callbacks_loader_pending) {
-    /* TODO: do the reload of the callbacks for this interface (e.g., interface type matters) */
+    /* Reload of the callbacks for this interface (e.g., interface type matters) */
+
+    /* Dispose the old executor and instantiate a new one */
+    if(flow_callbacks_executor) delete flow_callbacks_executor;
+    flow_callbacks_executor = new (std::nothrow) FlowCallbacksExecutor(flow_callbacks_loader_pending, this);
 
     /* Notify that we are done with the reload */
-    flow_callbacks_loader_pending = NULL;
+    if(flow_callbacks_executor)
+      flow_callbacks_loader_pending = NULL;
   }
 }
 

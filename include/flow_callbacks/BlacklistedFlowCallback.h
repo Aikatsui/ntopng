@@ -27,7 +27,7 @@
 class BlacklistedFlowCallback : public FlowCallback {
  private:
  public:
- BlacklistedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
+ BlacklistedFlowCallback(json_object *json_config) : FlowCallback(json_config, false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */) {};
   ~BlacklistedFlowCallback() {};
 
   bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_protocol_detected; };

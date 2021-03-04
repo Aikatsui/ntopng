@@ -86,6 +86,8 @@ class NetworkInterface : public AlertableEntity {
 
   /* Flow Callbacks Loader, when set to a pointer, a reload is in progress */
   FlowCallbacksLoader *flow_callbacks_loader_pending;
+  /* The executor is per-interfaces, and uses the loader to configure itself and execute flow callbacks */
+  FlowCallbacksExecutor *flow_callbacks_executor;
 
   /* Variables used by top sites periodic update */
   u_int8_t current_cycle = 0;

@@ -26,11 +26,14 @@
 
 class FlowCallback {
  private:
+  bool packet_interface_only, nedge_exclude, nedge_only;
+
  protected:
  public:
-  FlowCallback(json_object *json_config);
+  FlowCallback(json_object *json_config, bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only);
   virtual ~FlowCallback();
 
+  bool isCallbackForInterface(NetworkInterface *iface);
   virtual bool hasCallback(FlowLuaCall flow_lua_call) const { return false; };
 
   virtual void protocolDetected(Flow *f) {};

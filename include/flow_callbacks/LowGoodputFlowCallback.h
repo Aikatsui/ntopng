@@ -27,7 +27,7 @@
 class LowGoodputFlowCallback : public FlowCallback {
  private:
  public:
-  LowGoodputFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
+  LowGoodputFlowCallback(json_object *json_config) : FlowCallback(json_config, false /* All interfaces */, true /* Exclude for nEdge */, false /* Only for nEdge */) {};
   virtual ~LowGoodputFlowCallback() {};
 
   bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_periodic_update || flow_lua_call == flow_lua_call_idle; };

@@ -27,7 +27,7 @@
 class LongLivedFlowCallback : public FlowCallback {
  private:
  public:
-  LongLivedFlowCallback(json_object *json_config) : FlowCallback(json_config) {};
+  LongLivedFlowCallback(json_object *json_config) :  FlowCallback(json_config, false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */) {};
   virtual ~LongLivedFlowCallback() {};
 
   bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_periodic_update; };

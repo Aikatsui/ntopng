@@ -31,7 +31,7 @@ class FlowCallbacksExecutor { /* One instance per ntopng Interface */
   static FlowLuaCallExecStatus listExecute(Flow *f, list<FlowCallback*> *l);
 
  public:
-  FlowCallbacksExecutor(NetworkInterface *iface);
+  FlowCallbacksExecutor(FlowCallbacksLoader *flow_callbacks_loader, NetworkInterface *_iface);
   virtual ~FlowCallbacksExecutor();
 
   void reloadFlowCallbacks();

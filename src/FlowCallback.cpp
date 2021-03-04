@@ -23,7 +23,10 @@
 
 /* **************************************************** */
 
-FlowCallback::FlowCallback(json_object *json_config) {
+FlowCallback::FlowCallback(json_object *json_config, bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only) {
+  packet_interface_only = _packet_interface_only,
+    nedge_exclude = _nedge_exclude,
+    nedge_only = _nedge_only;
 };
 
 /* **************************************************** */

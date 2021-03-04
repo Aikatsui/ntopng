@@ -135,7 +135,10 @@ list<FlowCallback*> FlowCallbacksLoader::getFlowCallbacks(NetworkInterface *ifac
   switch(flow_lua_call) {
   case flow_lua_call_protocol_detected:
     selected_list = &cb_protocol_detected;
-    /* TODO add other cases */
+  case flow_lua_call_periodic_update:
+    selected_list = &cb_periodic_update;
+  case flow_lua_call_idle:
+    selected_list = &cb_idle;
   default:
     selected_list = NULL;
   }
@@ -143,7 +146,7 @@ list<FlowCallback*> FlowCallbacksLoader::getFlowCallbacks(NetworkInterface *ifac
   if(selected_list) {
     for(list<FlowCallback*>::const_iterator it = selected_list->begin(); it != selected_list->end(); ++it) {
       /* Check conditions on iface, e.g., iface->isPacketInterface() */
-      res.push_back(NULL /* An Instance */);
+      res.push_back(*it);
     }
   }
 
