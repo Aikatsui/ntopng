@@ -80,7 +80,7 @@ Flow::Flow(NetworkInterface *_iface,
   top_bytes_thpt = 0, top_goodput_bytes_thpt = 0, applLatencyMsec = 0;
   external_alert = NULL;
   trigger_immediate_periodic_update = false;
-  next_lua_call_periodic_update = 0;
+  next_call_periodic_update = 0;
 
   last_db_dump.partial = NULL;
   last_db_dump.first_seen = last_db_dump.last_seen = 0;
@@ -250,7 +250,7 @@ Flow::~Flow() {
 #ifdef ALERTED_FLOWS_DEBUG
   if(iface_alert_inc && !iface_alert_dec) {
     char buf[256];
-    
+
     ntop->getTrace()->traceEvent(TRACE_WARNING, "[MISMATCH][inc but not dec][alerted: %u] %s",
 				 isFlowAlerted() ? 1 : 0, print(buf, sizeof(buf)));
   }
@@ -685,7 +685,7 @@ void Flow::processPacket(const u_char *ip_packet, u_int16_t ip_len, u_int64_t pa
 			 u_int8_t *payload, u_int16_t payload_len) {
   bool detected;
   ndpi_protocol proto_id;
-  
+
   /* Note: do not call endProtocolDissection before ndpi_detection_process_packet. In case of
    * early giveup (e.g. sampled traffic), nDPI should process at least one packet in order to
    * be able to guess the protocol. */
@@ -694,9 +694,9 @@ void Flow::processPacket(const u_char *ip_packet, u_int16_t ip_len, u_int64_t pa
 					   ip_packet, ip_len, packet_time,
 					   (struct ndpi_id_struct*) cli_id,
 					   (struct ndpi_id_struct*) srv_id);
-  
+
   detected = ndpi_is_protocol_detected(iface->get_ndpi_struct(), proto_id);
-  
+
   if(!detected && hasDissectedTooManyPackets()) {
     endProtocolDissection();
     return;
@@ -720,7 +720,7 @@ void Flow::processPacket(const u_char *ip_packet, u_int16_t ip_len, u_int64_t pa
 
   if(detection_completed && (!needsExtraDissection())) {
     setExtraDissectionCompleted();
-    updateProtocol(proto_id);    
+    updateProtocol(proto_id);
   }
 }
 
@@ -913,11 +913,11 @@ void Flow::updateProtocol(ndpi_protocol proto_id) {
 
   if((ndpiDetectedProtocol.app_protocol == NDPI_PROTOCOL_UNKNOWN)
      || (/*
-	   Update the protocols when adding a subprotocol, not when things 
+	   Update the protocols when adding a subprotocol, not when things
 	   are totally different
 	 */
 	 (ndpiDetectedProtocol.master_protocol == ndpiDetectedProtocol.app_protocol)
-	 && (ndpiDetectedProtocol.app_protocol != proto_id.app_protocol)))	 
+	 && (ndpiDetectedProtocol.app_protocol != proto_id.app_protocol)))
     ndpiDetectedProtocol.app_protocol = proto_id.app_protocol;
 
   /* NOTE: only overwrite the category if it was not set.
@@ -2054,7 +2054,7 @@ void Flow::lua(lua_State* vm, AddressTree * ptree,
     if(!mask_flow) {
       char buf[64];
       char *info = getFlowInfo(buf, sizeof(buf));
-      
+
       if(host_server_name) lua_push_str_table_entry(vm, "host_server_name", host_server_name);
       if(bt_hash)          lua_push_str_table_entry(vm, "bittorrent_hash", bt_hash);
       lua_push_str_table_entry(vm, "info", info ? info : (char*)"");
@@ -2600,7 +2600,7 @@ json_object* Flow::flow2json() {
   if(ntop->getPrefs()->do_dump_extended_json()) {
     const char *info;
     char buf[64];
-    
+
     /* Add items usually dumped on nIndex (useful for debugging) */
 
     json_object_object_add(my_object, "FLOW_TIME", json_object_new_int(last_seen));
@@ -2618,7 +2618,7 @@ json_object* Flow::flow2json() {
     }
 
     info = getFlowInfo(buf, sizeof(buf));
-    
+
     if(info)
       json_object_object_add(my_object, "INFO", json_object_new_string(info));
 
@@ -2821,7 +2821,7 @@ void Flow::housekeep(time_t t) {
     if(!is_swap_requested() /* Swap not requested */
        || (is_swap_requested() && !is_swap_done())) /* Or requested but never performed (no more packets seen) */
       iface->execFlowEndCallbacks(this);
-    
+
     dumpCheck(t, true /* LAST dump before delete */);
     break;
 
@@ -2949,10 +2949,31 @@ bool Flow::isTLSProto() const {
 
 /* *************************************** */
 
+void Flow::callFlowUpdate(time_t t) {
+  if(get_state() != hash_entry_state_active)
+    return;
+
+  /*
+    Flow update is conditional here as it is only performed every 5 minutes when the flow is active.
+  */
+  if(next_call_periodic_update == 0)
+    next_call_periodic_update = t + FLOW_LUA_CALL_PERIODIC_UPDATE_SECS; /* Set the time of the new periodic call */
+
+  if(trigger_immediate_periodic_update || next_call_periodic_update <= t) {
+    iface->execPeriodicUpdateCallbacks(this);
+    next_call_periodic_update = 0; /* Reset */
+
+    if(trigger_immediate_periodic_update)
+      trigger_immediate_periodic_update = false; /* Reset if necessary */
+  }
+}
+
+/* *************************************** */
+
 void Flow::incStats(bool cli2srv_direction, u_int pkt_len,
 		    u_int8_t *payload, u_int payload_len,
                     u_int8_t l4_proto, u_int8_t is_fragment,
-		    u_int16_t tcp_flags, const struct timeval *when,		    
+		    u_int16_t tcp_flags, const struct timeval *when,
 		    u_int16_t fragment_extra_overhead) {
   bool update_iat = true;
 
@@ -2964,12 +2985,8 @@ void Flow::incStats(bool cli2srv_direction, u_int pkt_len,
     stats.incStats(cli2srv_direction, 1, fragment_extra_overhead, fragment_extra_overhead);
   }
 
-  /*
-    Check if it is time to enqueue the flow for periodicUpdate hook execution.
-    NOTE: Must be in the same thread of Flow::housekeep()
-  */
-  if(get_state() == hash_entry_state_active) iface->execPeriodicUpdateCallbacks(this);
-  
+  callFlowUpdate((when->tv_sec));
+
   /*
     Do not update IAT during initial or final 3WH as we want to compute
     it only on the main traffic flow and not on connection or tear-down
@@ -3060,12 +3077,7 @@ void Flow::addFlowStats(bool new_flow,
 #endif
 
   updateSeen(last_seen);
-
-  /*
-    Check if it is time to enqueue the flow for periodicUpdate hook execution
-    NOTE: Must be in the same thread of Flow::housekeep()
-  */
-  if(get_state() == hash_entry_state_active) iface->execPeriodicUpdateCallbacks(this);
+  callFlowUpdate(last_seen);
 
   if(cli2srv_direction) {
     stats.incStats(true, in_pkts, in_bytes, in_goodput_bytes);
@@ -3083,7 +3095,7 @@ void Flow::addFlowStats(bool new_flow,
     having flows with seemingly zero throughput.
   */
   if(!new_flow && thp_delta_time <= 5) {
-    /* 
+    /*
        If here, delta time is too small to enable meaningful throughput calculations
        using only bytes/packets delta. In this case, totals are used and averaged
        using the overall flow lifetime.
@@ -3285,7 +3297,7 @@ char* Flow::getFlowInfo(char *buf, u_int buf_len) {
 
   if(iec104)
     return(iec104->getFlowInfo(buf, buf_len));
-      
+
   if(!isMaskedFlow()) {
     if(isDNS() && protos.dns.last_query)
       return protos.dns.last_query;
@@ -4729,7 +4741,7 @@ void Flow::lua_get_info(lua_State *vm, bool client) const {
 void Flow::lua_get_min_info(lua_State *vm) {
   char buf[64];
   char *info = getFlowInfo(buf, sizeof(buf));
-  
+
   lua_newtable(vm);
 
   lua_push_str_table_entry(vm, "cli.ip", get_cli_ip_addr()->print(buf, sizeof(buf)));

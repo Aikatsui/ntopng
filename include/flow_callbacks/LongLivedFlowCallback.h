@@ -28,7 +28,7 @@ class LongLivedFlowCallback : public FlowCallback {
  private:
  public:
   LongLivedFlowCallback() :  FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-					  true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+					  false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
   virtual ~LongLivedFlowCallback() {};
 
   void periodicUpdate(Flow *f);

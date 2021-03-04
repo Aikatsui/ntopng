@@ -98,7 +98,7 @@ class Flow : public GenericHashEntry {
 #endif
   char *external_alert;
   bool trigger_immediate_periodic_update; /* needed to process external alerts */
-  time_t next_lua_call_periodic_update; /* The time at which the periodic lua script on this flow shall be called */
+  time_t next_call_periodic_update; /* The time at which the periodic lua script on this flow shall be called */
   u_int32_t periodic_update_ctr;
 
   union {
@@ -258,6 +258,7 @@ class Flow : public GenericHashEntry {
   void lua_entropy(lua_State* vm);
   void luaScore(lua_State* vm);
   void luaIEC104(lua_State* vm);
+  void callFlowUpdate(time_t t);
   
  public:
   Flow(NetworkInterface *_iface,

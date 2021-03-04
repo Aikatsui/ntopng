@@ -71,7 +71,7 @@ Ntop::Ntop(char *appName) {
   last_stats_reset = 0;
   ndpiReloadInProgress = false;
   flowCallbacksReloadInProgress = false;
-  flow_callbacks_loader = flow_callbacks_loader_shadow = NULL;
+  flow_callbacks_loader = NULL;
   httpd = NULL, geo = NULL, mac_manufacturers = NULL;
   memset(&cpu_stats, 0, sizeof(cpu_stats));
   cpu_load = 0;
@@ -374,6 +374,8 @@ void Ntop::registerPrefs(Prefs *_prefs, bool quick_registration) {
 
   if(quick_registration) return;
 
+  loadFlowCallbacks();
+  
   system_interface = new (std::nothrow) NetworkInterface(SYSTEM_INTERFACE_NAME, SYSTEM_INTERFACE_NAME);
 
   /* License check could have increased the number of interfaces available */
@@ -545,10 +547,7 @@ void Ntop::start() {
 
   startPurgeLoop();
 
-  // flow_callbacks_loader.reloadFlowCallbacks();
-  // flow_callbacks_loader.printCallbacks();
-
-  sleep(2);
+  // sleep(2);
 
   for(int i=0; i<num_defined_interfaces; i++)
     iface[i]->checkPointCounters(true); /* Reset drop counters */
@@ -2555,30 +2554,21 @@ void Ntop::initInterface(NetworkInterface *_if) {
 
 /* ******************************************* */
 
-void Ntop::checkReloadFlowCallbacks() {
-  if(!flow_callbacks_loader /* Startup */
-     || flowCallbacksReloadInProgress /* Reload requested from the UI upon configuration changes */) {
-    /* Check if all the interfaces are ready to reload */
-    for(int i = 0; i < get_num_interfaces(); i++) {
-      if(iface[i]->reloadFlowCallbacksInProgress())
-	return; /* Previous reload still pending, need to wait until the next call */
-    }
+void Ntop::loadFlowCallbacks() {
+  FlowCallbacksLoader *old, *tmp_flow_callbacks_loader = new FlowCallbacksLoader();
 
-    /* Possibly free the old loader */
-    if(flow_callbacks_loader_shadow) delete flow_callbacks_loader_shadow;
+  old = flow_callbacks_loader;
+  
+  /* Pass the newly allocated loader to all interfaces so they will update their callbacks */
+  for(int i = 0; i < get_num_interfaces(); i++)
+    iface[i]->reloadFlowCallbacks(tmp_flow_callbacks_loader);
 
-    /*
-      Mark the reload as done. NOTE: important to do this before the next new
-      to prevent any chance of missing a reload.
-     */
-    flowCallbacksReloadInProgress = false;
+  flow_callbacks_loader = tmp_flow_callbacks_loader;
 
-    /* Allocate the new flow callbacks loader */
-    flow_callbacks_loader = new (nothrow) FlowCallbacksLoader();
-
-    /* Pass the newly allocated loader to all interfaces so they will update their callbacks */
-    for(int i = 0; i < get_num_interfaces(); i++)
-      iface[i]->reloadFlowCallbacks(flow_callbacks_loader);
+  if(old) {    
+    sleep(2); /* Make sure nobody is using the old one */
+    
+    delete old;
   }
 }
 
@@ -2586,13 +2576,14 @@ void Ntop::checkReloadFlowCallbacks() {
 
 /* NOTE: the multiple isShutdown checks below are necessary to reduce the shutdown time */
 void Ntop::runHousekeepingTasks() {
-  checkReloadFlowCallbacks();
-
-  for(int i = 0; i < get_num_interfaces(); i++) {
-    iface[i]->runHousekeepingTasks();
-
+  if(flowCallbacksReloadInProgress /* Reload requested from the UI upon configuration changes */) {
+    loadFlowCallbacks();
+    flowCallbacksReloadInProgress = false;
   }
-
+  
+  for(int i = 0; i < get_num_interfaces(); i++)
+    iface[i]->runHousekeepingTasks();
+  
   if(globals->isShutdownRequested()) return;
 
 #ifdef NTOPNG_PRO

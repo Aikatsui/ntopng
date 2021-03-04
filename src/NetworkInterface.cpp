@@ -52,7 +52,6 @@ NetworkInterface::NetworkInterface(const char *name,
 
   customIftype = custom_interface_type;
   influxdb_ts_exporter = rrd_ts_exporter = NULL;
-  flow_callbacks_loader_pending = NULL;
   flow_callbacks_executor = NULL;
   hooks_engine_reload = false;
   user_scripts_reload = false;
@@ -2612,6 +2611,8 @@ void NetworkInterface::startFlowDumping() {
 /* **************************************************** */
 
 void NetworkInterface::startPacketPolling() {
+  reloadFlowCallbacks(ntop->getFlowCallbacksLoader());
+  
   if(pollLoopCreated) {
     if((cpu_affinity != -1) && (ntop->getNumCPUs() > 1)) {
       if(Utils::setThreadAffinity(pollLoop, cpu_affinity))
@@ -5083,21 +5084,21 @@ void NetworkInterface::getNetworksStats(lua_State* vm, AddressTree *allowed_host
 
 /* **************************************************** */
 
-void NetworkInterface::checkReloadFlowCallbacks() {
-  /* 
-     Check if ntop has given this interface a new callbacks loader to be used
-   */
-  if(flow_callbacks_loader_pending) {
-    /* Reload of the callbacks for this interface (e.g., interface type matters) */
+/* Used to give the interface a new callback loader to be used */
+void NetworkInterface::reloadFlowCallbacks(FlowCallbacksLoader *fcbl) {
+  /* Reload of the callbacks for this interface (e.g., interface type matters) */
+  FlowCallbacksExecutor *old, *fce = new (std::nothrow) FlowCallbacksExecutor(fcbl, this);
 
-    /* Dispose the old executor and instantiate a new one */
-    if(flow_callbacks_executor) delete flow_callbacks_executor;
-    flow_callbacks_executor = new (std::nothrow) FlowCallbacksExecutor(flow_callbacks_loader_pending, this);
-
-    /* Notify that we are done with the reload */
-    if(flow_callbacks_executor)
-      flow_callbacks_loader_pending = NULL;
+  if(fce == NULL) {
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to reload callbacks on interface %s", ifname);
+    return;
   }
+
+  old = flow_callbacks_executor;
+  flow_callbacks_executor = fce;
+
+  if(old)
+    delete old;
 }
 
 /* **************************************************** */
@@ -5108,7 +5109,6 @@ u_int NetworkInterface::purgeIdleFlows(bool force_idle, bool full_scan) {
 
   pollQueuedeCompanionEvents();
   bcast_domains->inlineReloadBroadcastDomains();
-  checkReloadFlowCallbacks();
 
   if(!force_idle && last_packet_time < next_idle_flow_purge)
     return(0); /* Too early */

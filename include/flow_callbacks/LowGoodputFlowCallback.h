@@ -28,7 +28,7 @@ class LowGoodputFlowCallback : public FlowCallback {
  private:
  public:
   LowGoodputFlowCallback() : FlowCallback(false /* All interfaces */, true /* Exclude for nEdge */, false /* Only for nEdge */,
-					  true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+					  false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
   virtual ~LowGoodputFlowCallback() {};
 
   void periodicUpdate(Flow *f);

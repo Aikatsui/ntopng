@@ -84,8 +84,6 @@ class NetworkInterface : public AlertableEntity {
   ServiceMap *sMap;
 #endif
 
-  /* Flow Callbacks Loader, when set to a pointer, a reload is in progress */
-  FlowCallbacksLoader *flow_callbacks_loader_pending;
   /* The executor is per-interfaces, and uses the loader to configure itself and execute flow callbacks */
   FlowCallbacksExecutor *flow_callbacks_executor;
 
@@ -911,12 +909,8 @@ class NetworkInterface : public AlertableEntity {
   virtual void updateDirectionStats()        { ; }
   void reloadDhcpRanges();
 
-  /* Handles the reload of flow callbacks, using the callback loader */
-  void checkReloadFlowCallbacks();
   /* Used to give the interface a new callback loader to be used */
-  inline void reloadFlowCallbacks(FlowCallbacksLoader *fcbl) { flow_callbacks_loader_pending = fcbl; };
-  /* Used to check if the interface has a callback loader that still have to be used */
-  inline bool reloadFlowCallbacksInProgress() const { return flow_callbacks_loader_pending != NULL;  };
+  void reloadFlowCallbacks(FlowCallbacksLoader *fcbl);
   
   inline bool hasConfiguredDhcpRanges()      { return(dhcp_ranges && !dhcp_ranges->last_ip.isEmpty()); };
   inline bool isFlowDumpDisabled()           { return(flow_dump_disabled); }

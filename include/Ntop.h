@@ -98,7 +98,7 @@ class Ntop {
   AddressTree local_network_tree;
 
   /* Flow Callbacks Loader */
-  FlowCallbacksLoader *flow_callbacks_loader, *flow_callbacks_loader_shadow;
+  FlowCallbacksLoader *flow_callbacks_loader;
 
 #ifndef WIN32
   ContinuousPing *cping;
@@ -124,7 +124,7 @@ class Ntop {
   bool checkUserPassword(const char * const user, const char * const password, char *group, bool *localuser) const;
   bool startPurgeLoop();
 
-  void checkReloadFlowCallbacks();
+  void loadFlowCallbacks();
   
  public:
   /**
@@ -540,6 +540,8 @@ class Ntop {
   u_int8_t getLocalNetworkId(const char *network_name);
   
   //void getLocalAddresses(lua_State* vm) { return(local_network_tree.getAddresses(vm)); };
+
+  inline FlowCallbacksLoader* getFlowCallbacksLoader() { return(flow_callbacks_loader); }
 };
 
 extern Ntop *ntop;

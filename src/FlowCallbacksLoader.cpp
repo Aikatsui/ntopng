@@ -88,36 +88,37 @@ void FlowCallbacksLoader::loadConfiguration() {
 
   while(!json_object_iter_equal(&it, &itEnd)) {
     const char *callback_key   = json_object_iter_peek_name(&it);
-    json_object *callback_conf = json_object_iter_peek_value(&it);
-    json_object *json_hook_all, *json_script_conf;
-    
-    if(json_object_object_get_ex(json_hook_all, "script_conf", &json_script_conf)) {
-      if(json_object_object_get_ex(callback_conf, "all", &json_hook_all)) {       
-	bool enabled;
-	json_object *json_enabled;
-	
-	if(json_object_object_get_ex(json_hook_all, "enabled", &json_enabled))
-	  enabled = json_object_get_boolean(json_enabled);
-	else
-	  enabled = false;
+    json_object *callback_config = json_object_iter_peek_value(&it);
+    json_object *json_script_conf, *json_hook_all;
 
-	if(cb_all.find(callback_key) != cb_all.end()) {
-	  FlowCallback *cb = cb_all[callback_key];
+    if(json_object_object_get_ex(callback_config, "all", &json_hook_all)) {
+      json_object *json_enabled;
+      bool enabled;
 
-	  if(enabled) {
-	    if(cb->loadConfiguration(json_script_conf)) {	
-	      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Successfully loadeded configuration for callback %s", callback_key);		
+      if(json_object_object_get_ex(json_hook_all, "enabled", &json_enabled))
+	enabled = json_object_get_boolean(json_enabled);
+      else
+	enabled = false;
+
+      if(enabled) {
+	if(json_object_object_get_ex(json_hook_all, "script_conf", &json_script_conf)) {
+	  if(cb_all.find(callback_key) != cb_all.end()) {
+	    FlowCallback *cb = cb_all[callback_key];
+
+
+	    if(cb->loadConfiguration(json_script_conf)) {
+	      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Successfully loadeded configuration for callback %s", callback_key);
 	    } else {
 	      ntop->getTrace()->traceEvent(TRACE_WARNING, "Error while loading callback %s configuration", callback_key);
 	    }
-	      
+
 	    cb->enable();
-	  }
-	} else
-	  ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
+	  } else
+	    ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
+	}
       } /* enabled */
     }
-    
+
     /* Move to the next element */
     json_object_iter_next(&it);
   } /* while */
@@ -148,6 +149,6 @@ std::list<FlowCallback*>* FlowCallbacksLoader::getCallbacks(NetworkInterface *if
     if(cb->isEnabled())
       cb->addCallback(l, iface, callback);
   }
-  
+
   return(l);
 }
