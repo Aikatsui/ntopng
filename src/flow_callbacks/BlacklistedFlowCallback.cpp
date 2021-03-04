@@ -23,4 +23,17 @@
 
 void BlacklistedFlowCallback::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+  
+  if(f->isBlacklistedFlow()) {
+    u_int16_t c_score, s_score, f_score = 100;
+    
+    if(f->isBlacklistedServer())
+      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
+    else
+      c_score = 5, s_score = 10;
+
+    f->setStatus(status_normal /* ?? */, f_score, c_score, s_score, "" /* ?? */, script_category_security);
+  }
+
+  /* TODO emit flow alert */
 }
