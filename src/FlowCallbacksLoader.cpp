@@ -23,48 +23,33 @@
 
 FlowCallbacksLoader::FlowCallbacksLoader(){
   registerFlowCallbacks();
-  reloadFlowCallbacks();
+  loadConfiguration();
 }
 
 /* **************************************************** */
 
 FlowCallbacksLoader::~FlowCallbacksLoader() {
-  for(list<FlowCallback*>::const_iterator it = cb_all.begin(); it != cb_all.end(); ++it)
-    delete *it;
-}
-
-/* **************************************************** */
-
-template<typename T> void FlowCallbacksLoader::registerFlowCallback(json_object *json) {
-  T *t = new (nothrow) T(json);
-
-  if(t) {
-    cb_all.push_back(t);
-
-    if(t->hasCallback(flow_lua_call_protocol_detected)) cb_protocol_detected.push_back(t);
-    if(t->hasCallback(flow_lua_call_periodic_update))   cb_periodic_update.push_back(t);
-    if(t->hasCallback(flow_lua_call_idle))              cb_idle.push_back(t);
-  }
+  for(std::map<std::string, FlowCallback*>::const_iterator it = cb_all.begin(); it != cb_all.end(); ++it)
+    delete it->second;
 }
 
 /* **************************************************** */
 
 void FlowCallbacksLoader::registerFlowCallbacks() {
-  /* Add lines here for each new callback added under flow_callbacks/ */
-  cb_registrable["blacklisted"] = &FlowCallbacksLoader::registerFlowCallback<BlacklistedFlowCallback>;
-  cb_registrable["long_lived"] = &FlowCallbacksLoader::registerFlowCallback<LongLivedFlowCallback>;
-  cb_registrable["low_goodput"] = &FlowCallbacksLoader::registerFlowCallback<LowGoodputFlowCallback>;
+  /* TODO: implement dynamic loading */
+  cb_all[BlacklistedFlowCallback::getName()] = new BlacklistedFlowCallback();
+  cb_all[LongLivedFlowCallback::getName()]   = new LongLivedFlowCallback();
+  cb_all[LowGoodputFlowCallback::getName()]  = new LowGoodputFlowCallback();
 }
 
 /* **************************************************** */
 
-void FlowCallbacksLoader::reloadFlowCallbacks() {
+void FlowCallbacksLoader::loadConfiguration() {
   json_object *json = NULL, *json_config, *json_config_flow;
   struct json_object_iterator it;
   struct json_object_iterator itEnd;
   enum json_tokener_error jerr = json_tokener_success;
   char *value = NULL;
-  registerFunction register_function;
   u_int actual_len = ntop->getRedis()->len(FLOW_CALLBACKS_CONFIG);
 
   if((value = (char *) malloc(actual_len + 1)) == NULL) {
@@ -78,16 +63,19 @@ void FlowCallbacksLoader::reloadFlowCallbacks() {
   }
 
   if((json = json_tokener_parse_verbose(value, &jerr)) == NULL) {
-    ntop->getTrace()->traceEvent(TRACE_ERROR, "JSON Parse error [%s] %s [len: %u][strlen: %u]", json_tokener_error_desc(jerr), value, actual_len, strlen(value));
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "JSON Parse error [%s] %s [len: %u][strlen: %u]",
+				 json_tokener_error_desc(jerr), value, actual_len, strlen(value));
     goto out;
   }
 
-  if(!json_object_object_get_ex(json, "config", &json_config)) { /* 'config' section inside the JSON */
+  if(!json_object_object_get_ex(json, "config", &json_config)) {
+    /* 'config' section inside the JSON */
     ntop->getTrace()->traceEvent(TRACE_ERROR, "'config' not found in JSON");
     goto out;
   }
 
-  if(!json_object_object_get_ex(json_config, "flow", &json_config_flow)) { /* 'flow' section inside 'config' JSON */
+  if(!json_object_object_get_ex(json_config, "flow", &json_config_flow)) {
+    /* 'flow' section inside 'config' JSON */
     ntop->getTrace()->traceEvent(TRACE_ERROR, "'flow' not found in 'config' JSON");
     goto out;
   }
@@ -99,26 +87,40 @@ void FlowCallbacksLoader::reloadFlowCallbacks() {
   itEnd = json_object_iter_end(json_config_flow);
 
   while(!json_object_iter_equal(&it, &itEnd)) {
-    /* Configuration load, i.e., if script_key is enabled, create instance */
-    const char *callback_key = json_object_iter_peek_name(&it);
+    const char *callback_key   = json_object_iter_peek_name(&it);
     json_object *callback_conf = json_object_iter_peek_value(&it);
+    json_object *json_hook_all, *json_script_conf;
+    
+    if(json_object_object_get_ex(json_hook_all, "script_conf", &json_script_conf)) {
+      if(json_object_object_get_ex(callback_conf, "all", &json_hook_all)) {       
+	bool enabled;
+	json_object *json_enabled;
+	
+	if(json_object_object_get_ex(json_hook_all, "enabled", &json_enabled))
+	  enabled = json_object_get_boolean(json_enabled);
+	else
+	  enabled = false;
 
-    json_object *json_hook_all, *json_enabled, *json_script_conf;
-    bool enabled = false;
-    if(json_object_object_get_ex(callback_conf, "all", &json_hook_all)        /*  Hook 'all' present                     */
-       && json_object_object_get_ex(json_hook_all, "enabled", &json_enabled)  /* 'enabled' present in hook configuration */
-       && (enabled = json_object_get_boolean(json_enabled))) {
-      json_object_object_get_ex(json_hook_all, "script_conf", &json_script_conf);
+	if(cb_all.find(callback_key) != cb_all.end()) {
+	  FlowCallback *cb = cb_all[callback_key];
 
-      if(cb_registrable.find(callback_key) != cb_registrable.end()) {
-	register_function = cb_registrable[callback_key];
-	(this->*register_function)(json_script_conf);
-	ntop->getTrace()->traceEvent(TRACE_NORMAL, "Enabled callback: %s", callback_key);
-      }
+	  if(enabled) {
+	    if(cb->loadConfiguration(json_script_conf)) {	
+	      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Successfully loadeded configuration for callback %s", callback_key);		
+	    } else {
+	      ntop->getTrace()->traceEvent(TRACE_WARNING, "Error while loading callback %s configuration", callback_key);
+	    }
+	      
+	    cb->enable();
+	  }
+	} else
+	  ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
+      } /* enabled */
     }
+    
     /* Move to the next element */
     json_object_iter_next(&it);
-  }
+  } /* while */
 
  out:
   /* Free the json */
@@ -128,43 +130,24 @@ void FlowCallbacksLoader::reloadFlowCallbacks() {
 
 /* **************************************************** */
 
-list<FlowCallback*> FlowCallbacksLoader::getFlowCallbacks(NetworkInterface *iface, FlowLuaCall flow_lua_call) {
-  list<FlowCallback*> res;
-  list<FlowCallback*> *selected_list;
-
-  switch(flow_lua_call) {
-  case flow_lua_call_protocol_detected:
-    selected_list = &cb_protocol_detected;
-  case flow_lua_call_periodic_update:
-    selected_list = &cb_periodic_update;
-  case flow_lua_call_idle:
-    selected_list = &cb_idle;
-  default:
-    selected_list = NULL;
-  }
-
-  if(selected_list) {
-    for(list<FlowCallback*>::const_iterator it = selected_list->begin(); it != selected_list->end(); ++it) {
-      /* Check conditions on iface, e.g., iface->isPacketInterface() */
-      res.push_back(*it);
-    }
-  }
-
-  return res;
-}
-
-/* **************************************************** */
-
 void FlowCallbacksLoader::printCallbacks() {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Registrable Callbacks:");
-  for(cb_map_t::const_iterator it = cb_registrable.begin(); it != cb_registrable.end(); ++it) {
-    ntop->getTrace()->traceEvent(TRACE_NORMAL, "\t[%s][%p]", it->first.c_str(), it->second);
-  }
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Available Callbacks:");
 
-  ntop->getTrace()->traceEvent(TRACE_NORMAL,
-			       "Registered Callbacks [all: %u][protocol_detected: %u][periodic_update: %u][idle: %u]",
-			       cb_all.size(), cb_protocol_detected.size(), cb_periodic_update.size(), cb_idle.size());
+  for(std::map<std::string, FlowCallback*>::const_iterator it = cb_all.begin(); it != cb_all.end(); ++it)
+    ntop->getTrace()->traceEvent(TRACE_NORMAL, "\t%s", it->first.c_str());
 }
 
 /* **************************************************** */
 
+std::list<FlowCallback*>* FlowCallbacksLoader::getCallbacks(NetworkInterface *iface, FlowCallbacks callback) {
+  std::list<FlowCallback*> *l = new std::list<FlowCallback*>;
+
+  for(std::map<std::string, FlowCallback*>::const_iterator it = cb_all.begin(); it != cb_all.end(); ++it) {
+    FlowCallback *cb = it->second;
+
+    if(cb->isEnabled())
+      cb->addCallback(l, iface, callback);
+  }
+  
+  return(l);
+}

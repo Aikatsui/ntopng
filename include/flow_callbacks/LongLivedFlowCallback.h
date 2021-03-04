@@ -27,11 +27,13 @@
 class LongLivedFlowCallback : public FlowCallback {
  private:
  public:
-  LongLivedFlowCallback(json_object *json_config) :  FlowCallback(json_config, false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */) {};
+  LongLivedFlowCallback() :  FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+					  true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   virtual ~LongLivedFlowCallback() {};
 
-  bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_periodic_update; };
-  void periodicUpdate(Flow *f) { /* f->setStatus(); */ };
+  void periodicUpdate(Flow *f);
+  bool loadConfiguration(json_object *config) { return(true); }
+  static std::string getName() { return(std::string("long_lived")); }
 };
 
 #endif /* _LONGLIVED_FLOW_CALLBACK_H_ */

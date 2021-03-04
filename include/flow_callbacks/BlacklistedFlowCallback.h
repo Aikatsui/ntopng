@@ -26,12 +26,16 @@
 
 class BlacklistedFlowCallback : public FlowCallback {
  private:
+  
  public:
- BlacklistedFlowCallback(json_object *json_config) : FlowCallback(json_config, false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */) {};
+  BlacklistedFlowCallback() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+					   true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~BlacklistedFlowCallback() {};
 
-  bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_protocol_detected; };
-  void protocolDetected(Flow *f) { /* f->setStatus(); */ };
+  bool loadConfiguration(json_object *config) { return(true); }
+  void protocolDetected(Flow *f);
+  
+  static std::string getName() { return(std::string("blacklisted")); }
 };
 
 #endif /* _BLACKLISTED_FLOW_CALLBACK_H_ */

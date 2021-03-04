@@ -316,7 +316,6 @@ using namespace std;
 #include "SPSCQueue.h"
 #include "LuaReusableEngine.h"
 #include "AlertCheckLuaEngine.h"
-#include "FlowAlertCheckLuaEngine.h"
 #include "SyslogLuaEngine.h"
 #include "FifoQueue.h"
 #include "StringFifoQueue.h"

@@ -26,24 +26,23 @@
 
 class FlowCallbacksLoader { /* A single instance inside Ntop */
  private:
-  typedef void (FlowCallbacksLoader::*registerFunction)(json_object *json); /* registerFlowCallback function pointer typedef */
-  typedef std::unordered_map<std::string, registerFunction> cb_map_t;      /* Map of registrable callbacks function pointer */
-  cb_map_t cb_registrable;     /* Map with all the registrable callbacks, that is, every class under flow_callbacks/ */
-
   /* These are callback instances, that is classes instantiated at runtime each one with a given configuration */
-  list<FlowCallback*> cb_all; /* All the callbacks instantiated */
-  list<FlowCallback*> cb_protocol_detected, cb_periodic_update, cb_idle; /* Callbacks instantiated, divided by type */
+  std::map<std::string, FlowCallback*> cb_all; /* All the callbacks instantiated */
 
-  template<typename T> void registerFlowCallback(json_object *json); /* Method called at runtime to register a callback */
+  std::list<FlowCallback*>* getCallbacks(NetworkInterface *iface, FlowCallbacks callback);
   void registerFlowCallbacks(); /* Method called at runtime to register all callbacks */
+  void loadConfiguration();
 
  public:
   FlowCallbacksLoader();
   virtual ~FlowCallbacksLoader();
 
   void reloadFlowCallbacks();
-  list<FlowCallback*> getFlowCallbacks(NetworkInterface *iface, FlowLuaCall flow_lua_call);
   void printCallbacks();
+
+  inline std::list<FlowCallback*>* getProtocolDetectedCallbacks(NetworkInterface *iface) { return(getCallbacks(iface, flow_callback_protocol_detected)); }
+  inline std::list<FlowCallback*>* getPeriodicUpdateCallbacks(NetworkInterface *iface)   { return(getCallbacks(iface, flow_callback_periodic_update));   }
+  inline std::list<FlowCallback*>* getFlowEndCallbacks(NetworkInterface *iface)          { return(getCallbacks(iface, flow_callback_flow_end));          }
 };
 
 #endif /* _FLOW_CALLBACKS_LOADER_H_ */

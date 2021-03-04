@@ -26,19 +26,26 @@
 
 class FlowCallback {
  private:
-  bool packet_interface_only, nedge_exclude, nedge_only;
+  u_int8_t has_protocol_detected:1, has_periodic_update:1, has_flow_end:1, packet_interface_only:1, nedge_exclude:1, nedge_only:1, enabled:1/* , _unused:1 */;
 
+  bool isCallbackCompatibleWithInterface(NetworkInterface *iface);
+  
  protected:
  public:
-  FlowCallback(json_object *json_config, bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only);
+  FlowCallback(bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only,
+	       bool _has_protocok_detected, bool _has_periodic_update, bool _has_flow_end);
   virtual ~FlowCallback();
 
-  bool isCallbackForInterface(NetworkInterface *iface);
-  virtual bool hasCallback(FlowLuaCall flow_lua_call) const { return false; };
+  virtual bool loadConfiguration(json_object *config) { return(false); }
 
+  /* Callback hooks */
   virtual void protocolDetected(Flow *f) {};
-  virtual void periodicUpdate(Flow *f) {};
-  virtual void flowEnd(Flow *f) {};
+  virtual void periodicUpdate(Flow *f)   {};
+  virtual void flowEnd(Flow *f)          {};
+
+  inline void enable()    { enabled = 1;  }
+  inline bool isEnabled() { return(enabled ? true : false); }
+  void addCallback(std::list<FlowCallback*> *l, NetworkInterface *iface, FlowCallbacks callback);
 };
 
 #endif /* _FLOW_CALLBACK_H_ */

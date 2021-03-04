@@ -80,7 +80,6 @@ Flow::Flow(NetworkInterface *_iface,
   top_bytes_thpt = 0, top_goodput_bytes_thpt = 0, applLatencyMsec = 0;
   external_alert = NULL;
   trigger_immediate_periodic_update = false;
-  current_flow_lua_call = flow_lua_call_protocol_detected; /* Lua calls start from protocoldetected */
   next_lua_call_periodic_update = 0;
 
   last_db_dump.partial = NULL;
@@ -1755,48 +1754,6 @@ void Flow::periodic_stats_update(const struct timeval *tv) {
 
 /* *************************************** */
 
-void Flow::hookProtocolDetectedCheck(time_t t) {
-  /*
-    Enqueue the flow
-   */
-  getInterface()->hookEnqueue(t, this);
-}
-
-/* *************************************** */
-
-void Flow::hookPeriodicUpdateCheck(time_t t) {
-  if(get_state() != hash_entry_state_active)
-    return; /* periodicUpdate hook is only for active flows */
-
-  /*
-    Enqueue is conditional here as it is only performed every 5 minutes when the flow is active.
-   */
-  if(next_lua_call_periodic_update == 0)
-    next_lua_call_periodic_update = t + FLOW_LUA_CALL_PERIODIC_UPDATE_SECS; /* Set the time of the new periodic call */
-
-  if(trigger_immediate_periodic_update ||
-     next_lua_call_periodic_update <= t) {
-    if(getInterface()->hookEnqueue(t, this)) {
-      /*
-	If the enqueue was successfull, we can update the time for the next periodic call update
-       */
-      next_lua_call_periodic_update = 0; /* Reset */
-      if(trigger_immediate_periodic_update) trigger_immediate_periodic_update = false; /* Reset if necessary */
-    }
-  }
-}
-
-/* *************************************** */
-
-void Flow::hookFlowEndCheck(time_t t) {
-  /*
-    Enqueue the flow
-  */
-  getInterface()->hookEnqueue(t, this);
-}
-
-/* *************************************** */
-
 void Flow::dumpCheck(time_t t, bool last_dump_before_free) {
   if((ntop->getPrefs()->is_flows_dump_enabled()
 #ifndef HAVE_NEDGE
@@ -2842,10 +2799,12 @@ void Flow::housekeep(time_t t) {
 	endProtocolDissection();
     }
     break;
+
   case hash_entry_state_flow_protocoldetected:
     if(!is_swap_requested()) /* The flow will be swapped, hook execution will occur on the swapped flow. */
-      hookProtocolDetectedCheck(t);
+      iface->execProtocolDetectedCallbacks(this);
     break;
+
   case hash_entry_state_active:
     /*
       The hook for periodicUpdate is checked when increasing flow stats inline
@@ -2854,15 +2813,18 @@ void Flow::housekeep(time_t t) {
      */
     dumpCheck(t, false /* NOT the last dump before delete */);
     break;
+
   case hash_entry_state_idle:
     if(swap_requested && !swap_done) /* Swap requested but never performed (no more packets seen) */
-      hookProtocolDetectedCheck(t);
+      iface->execProtocolDetectedCallbacks(this);
 
     if(!is_swap_requested() /* Swap not requested */
        || (is_swap_requested() && !is_swap_done())) /* Or requested but never performed (no more packets seen) */
-      hookFlowEndCheck(t);
+      iface->execFlowEndCallbacks(this);
+    
     dumpCheck(t, true /* LAST dump before delete */);
     break;
+
   default:
     break;
   }
@@ -3006,8 +2968,8 @@ void Flow::incStats(bool cli2srv_direction, u_int pkt_len,
     Check if it is time to enqueue the flow for periodicUpdate hook execution.
     NOTE: Must be in the same thread of Flow::housekeep()
   */
-  hookPeriodicUpdateCheck(when->tv_sec);
-
+  if(get_state() == hash_entry_state_active) iface->execPeriodicUpdateCallbacks(this);
+  
   /*
     Do not update IAT during initial or final 3WH as we want to compute
     it only on the main traffic flow and not on connection or tear-down
@@ -3103,7 +3065,7 @@ void Flow::addFlowStats(bool new_flow,
     Check if it is time to enqueue the flow for periodicUpdate hook execution
     NOTE: Must be in the same thread of Flow::housekeep()
   */
-  hookPeriodicUpdateCheck(last_seen);
+  if(get_state() == hash_entry_state_active) iface->execPeriodicUpdateCallbacks(this);
 
   if(cli2srv_direction) {
     stats.incStats(true, in_pkts, in_bytes, in_goodput_bytes);
@@ -5050,93 +5012,6 @@ void Flow::lua_get_geoloc(lua_State *vm, bool client, bool coords, bool country_
       lua_push_str_table_entry(vm,  client ? "cli.city" : "srv.city", h->get_city(buf, sizeof(buf)));
     }
   }
-}
-
-/* ***************************************************** */
-
-FlowLuaCallExecStatus Flow::performLuaCall(FlowLuaCall flow_lua_call, FlowAlertCheckLuaEngine *acle) {
-  const char *lua_call_fn_name = NULL;
-
-  if(flow_lua_call != flow_lua_call_idle
-     && ntop->getGlobals()->isShutdownRequested())
-    return flow_lua_call_exec_status_not_executed_shutdown_in_progress; /* Only flow_lua_call_idle go through during a shutdown */
-
-  if(!acle)
-    return flow_lua_call_exec_status_not_executed_vm_not_allocated;
-
-  lua_State *L = acle->getState();
-  acle->setFlow(this);
-
-  switch(flow_lua_call) {
-  case flow_lua_call_protocol_detected:
-    /* Check if the call is actually pending, before execution */
-    if(current_flow_lua_call > flow_lua_call_protocol_detected) /* Periodic update or idle already executed */
-      return flow_lua_call_exec_status_not_executed_not_pending;
-    else
-      current_flow_lua_call = flow_lua_call_protocol_detected;  /* Mark the current call to protocol detected */
-
-    lua_call_fn_name = FLOW_LUA_CALL_PROTOCOL_DETECTED_FN_NAME;
-    break;
-  case flow_lua_call_periodic_update:
-    /* Check if the call is actually pending, before execution */
-    if(current_flow_lua_call > flow_lua_call_periodic_update) /* Idle call already executed */
-      return flow_lua_call_exec_status_not_executed_not_pending;
-    else
-      current_flow_lua_call = flow_lua_call_periodic_update;  /* Mark the current call to periodic update */
-
-    lua_call_fn_name = FLOW_LUA_CALL_PERIODIC_UPDATE_FN_NAME;
-    break;
-  case flow_lua_call_idle:
-    /* Check if the call is actually pending, before execution */
-    if(current_flow_lua_call > flow_lua_call_idle) /* Idle call already executed, should not occur */
-      return flow_lua_call_exec_status_not_executed_not_pending;
-    else
-      current_flow_lua_call = flow_lua_call_idle;  /* Mark the current call to idle */
-
-    lua_call_fn_name = FLOW_LUA_CALL_IDLE_FN_NAME;
-    break;
-  default:
-    return flow_lua_call_exec_status_not_executed_unknown_call;
-  }
-
-  int num_args = 3;
-
-  /* Call the function */
-  lua_getglobal(L, lua_call_fn_name); /* Called function */
-  lua_pushinteger(L, protocol);
-  lua_pushinteger(L, ndpiDetectedProtocol.master_protocol);
-  lua_pushinteger(L, ndpiDetectedProtocol.app_protocol);
-
-  if(flow_lua_call == flow_lua_call_periodic_update) {
-    /* pass the periodic_update counter as the second argument,
-     * needed to determine which periodic scripts to call. */
-    lua_pushinteger(L, periodic_update_ctr++);
-    num_args++;
-  }
-
-  if(acle->pcall(num_args,
-		 1 /* 1 result, true if the call has been executed
-		      or false if there was not time left,
-		      depending on the deadline passed as argument */)) {
-    bool executed = lua_toboolean(acle->getState(), -1);
-    lua_pop(acle->getState(), -1);
-
-    if(executed) {
-      acle->incSuccessfulPcalls(flow_lua_call);
-      return flow_lua_call_exec_status_ok;
-    } else {
-      switch(get_state()) {
-      case hash_entry_state_idle:
-	acle->incSkippedPcalls(flow_lua_call);
-	break;
-      default:
-	acle->incPendingPcalls(flow_lua_call);
-	break;
-      }
-      return(flow_lua_call_exec_status_not_executed_no_time_left);
-    }
-  } else
-    return(flow_lua_call_exec_status_not_executed_script_failure);
 }
 
 /* ***************************************************** */

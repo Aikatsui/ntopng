@@ -21,27 +21,6 @@
 
 #include "ntop_includes.h"
 
-/* **************************************************** */
-
-FlowCallbacksExecutor::FlowCallbacksExecutor(FlowCallbacksLoader *fcl, NetworkInterface *_iface) {
-  iface = _iface;
-
-  loadFlowCallbacks(fcl);
-};
-
-/* **************************************************** */
-
-FlowCallbacksExecutor::~FlowCallbacksExecutor() {
-  if(protocol_detected) delete protocol_detected;
-  if(periodic_update)   delete periodic_update;
-  if(flow_end)          delete flow_end;
-};
-
-/* **************************************************** */
-
-void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
-  protocol_detected = fcl->getProtocolDetectedCallbacks(iface);
-  periodic_update   = fcl->getPeriodicUpdateCallbacks(iface);
-  flow_end          = fcl->getFlowEndCallbacks(iface);
+void LowGoodputFlowCallback::periodicUpdate(Flow *f) {
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
 }
-

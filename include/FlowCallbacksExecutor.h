@@ -27,16 +27,29 @@
 class FlowCallbacksExecutor { /* One instance per ntopng Interface */
  private:
   NetworkInterface *iface;
-  list<FlowCallback*> list_protocol_detected, list_periodic_update, list_idle;
-  static FlowLuaCallExecStatus listExecute(Flow *f, list<FlowCallback*> *l);
-
+  std::list<FlowCallback*> *protocol_detected, *periodic_update, *flow_end;
+  
+  void loadFlowCallbacks(FlowCallbacksLoader *fcl);
+    
  public:
-  FlowCallbacksExecutor(FlowCallbacksLoader *flow_callbacks_loader, NetworkInterface *_iface);
+  FlowCallbacksExecutor(FlowCallbacksLoader *fcl, NetworkInterface *_iface);
   virtual ~FlowCallbacksExecutor();
 
-  void reloadFlowCallbacks();
-  list<FlowCallback*> getFlowCallbacks(NetworkInterface *iface, FlowLuaCall flow_lua_call);
-  FlowLuaCallExecStatus execute(Flow *f, FlowLuaCall flow_lua_call);
+  inline void execProtocolDetectedCallback(Flow *f) {
+    for(list<FlowCallback*>::iterator it = protocol_detected->begin(); it != protocol_detected->end(); ++it)
+      (*it)->protocolDetected(f);
+  }
+
+  inline void execPeriodicUpdateCallback(Flow *f) {
+    for(list<FlowCallback*>::iterator it = periodic_update->begin(); it != periodic_update->end(); ++it)
+      (*it)->periodicUpdate(f);
+  }
+
+  inline void execFlowEndCallback(Flow *f) {
+    for(list<FlowCallback*>::iterator it = flow_end->begin(); it != flow_end->end(); ++it)
+      (*it)->flowEnd(f);
+  }
+
 };
 
 #endif /* _FLOW_CALLBACKS_EXECUTOR_H_ */

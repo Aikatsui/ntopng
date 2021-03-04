@@ -355,10 +355,10 @@ typedef u_int8_t FlowStatus;
 #define status_normal 0
 
 typedef enum {
-  flow_lua_call_protocol_detected = 0,
-  flow_lua_call_periodic_update = 1,
-  flow_lua_call_idle = 2,
-} FlowLuaCall;
+  flow_callback_protocol_detected = 0,
+  flow_callback_periodic_update,
+  flow_callback_flow_end
+} FlowCallbacks;
 
 typedef enum {
   flow_lua_call_exec_status_ok = 0,                             /* Call executed successfully                                */

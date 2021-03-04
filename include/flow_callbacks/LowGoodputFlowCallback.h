@@ -27,12 +27,13 @@
 class LowGoodputFlowCallback : public FlowCallback {
  private:
  public:
-  LowGoodputFlowCallback(json_object *json_config) : FlowCallback(json_config, false /* All interfaces */, true /* Exclude for nEdge */, false /* Only for nEdge */) {};
+  LowGoodputFlowCallback() : FlowCallback(false /* All interfaces */, true /* Exclude for nEdge */, false /* Only for nEdge */,
+					  true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   virtual ~LowGoodputFlowCallback() {};
 
-  bool hasCallback(FlowLuaCall flow_lua_call) const { return flow_lua_call == flow_lua_call_periodic_update || flow_lua_call == flow_lua_call_idle; };
-  void periodicUpdate(Flow *f) { /* f->setStatus(); */ };
-  void flowEnd(Flow *f)        { /* f->setStatus(); */ };
+  void periodicUpdate(Flow *f);
+  static std::string getName()                { return(std::string("low_goodput")); }
+  bool loadConfiguration(json_object *config) { return(true); }
 };
 
 #endif /* _LOWGOODPUT_FLOW_CALLBACK_H_ */

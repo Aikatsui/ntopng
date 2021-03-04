@@ -98,7 +98,6 @@ class Flow : public GenericHashEntry {
 #endif
   char *external_alert;
   bool trigger_immediate_periodic_update; /* needed to process external alerts */
-  FlowLuaCall current_flow_lua_call;   /* Indicate the latest flow lua call performed */
   time_t next_lua_call_periodic_update; /* The time at which the periodic lua script on this flow shall be called */
   u_int32_t periodic_update_ctr;
 
@@ -238,15 +237,6 @@ class Flow : public GenericHashEntry {
 			  const struct timeval *tv,
 			  u_int64_t diff_sent_packets, u_int64_t diff_sent_bytes,
 			  u_int64_t diff_rcvd_packets, u_int64_t diff_rcvd_bytes) const;
-  /* 
-     Check (and possibly enqueues) the flow for the execution of lua user script hooks
-     - hookProtocolDetectedCheck is executed when the flow enters state hash_entry_state_flow_protocoldetected
-     - hookPeriodicUpdateCheck is executed periodically, when the flow is in state hash_entry_state_active
-     - hookFlowEndCheck is executed when the flow enters state hash_entry_state_idle
-   */
-  void hookProtocolDetectedCheck(time_t t);
-  void hookPeriodicUpdateCheck(time_t t);
-  void hookFlowEndCheck(time_t t);
   /*
     Check (and possibly enqueues) the flow for dump
    */
@@ -506,16 +496,6 @@ class Flow : public GenericHashEntry {
 		       Host *srv, u_int16_t srv_port,
 		       u_int16_t vlan_id,
 		       u_int16_t protocol);
-  /**
-   * @brief Method to call a given lua script on the flow
-   *
-   * @param flow_lua_call The time of the call that should be performed on the flow
-   * @param vm The Lua virtual machine to use
-   *
-   * @return Whether the call has been executed successfully or if there were issues during the execution
-   */
-  FlowLuaCallExecStatus performLuaCall(FlowLuaCall flow_lua_call, FlowAlertCheckLuaEngine *acle);
-
   void lua(lua_State* vm, AddressTree * ptree, DetailsLevel details_level, bool asListElement);
   void lua_get_min_info(lua_State* vm);
   void lua_duration_info(lua_State* vm);
