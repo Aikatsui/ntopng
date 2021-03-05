@@ -2977,6 +2977,15 @@ void Flow::postFlowCallbacks() {
   if(getAlertedStatus() == status_normal)
     return; /* Nothing to do */
 
+  /* Make the shadow status JSON the official alerted status JSON */
+  alert_status_info = alert_status_info_shadow;
+
+  /* Free the shadow that is now the official alerted status JSON */
+  if(alert_status_info_shadow){
+    free(alert_status_info_shadow);
+    alert_status_info_shadow = NULL;
+  }
+
   bool first_alert = true; /* TODO: implement check !f->isFlowAlerted(); */
   bool rv = false;
   u_int32_t buflen;
@@ -3017,15 +3026,6 @@ void Flow::postFlowCallbacks() {
   }
 
   ndpi_term_serializer(&flow_json);
-
-  /* Make the shadow status JSON the official alerted status JSON */
-  alert_status_info = alert_status_info_shadow;
-
-  /* Free the shadow that is now the official alerted status JSON */
-  if(alert_status_info_shadow){
-    free(alert_status_info_shadow);
-    alert_status_info_shadow = NULL;
-  }
 }
 
 /* *************************************** */
