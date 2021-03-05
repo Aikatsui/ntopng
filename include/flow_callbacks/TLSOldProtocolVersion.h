@@ -28,7 +28,7 @@ class TLSOldProtocolVersion : public FlowCallback {
  private:
   
  public:
-  TLSOldProtocolVersion() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+  TLSOldProtocolVersion() : FlowCallback(true /* Packet Interface only */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
 				    true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~TLSOldProtocolVersion() {};
 

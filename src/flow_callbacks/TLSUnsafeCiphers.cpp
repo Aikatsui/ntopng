@@ -24,13 +24,13 @@
 void TLSUnsafeCiphers::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   
-  if (0 /* TODO Implement check */) {
-    u_int16_t c_score = 0, s_score = 0, f_score = 0;
+  if (f->isTLS()
+      && f->hasRisk(NDPI_TLS_WEAK_CIPHER)) {
+    u_int16_t c_score = 40;
+    u_int16_t s_score = 5;
+    u_int16_t f_score = 40;
     
-    /* TODO Set score */
-
-    f->setStatus(this, alert_level_error /* TODO read from the config */,
-      f_score, c_score, s_score);
+    f->setStatus(this, getSeverity(), f_score, c_score, s_score);
   }
 }
 

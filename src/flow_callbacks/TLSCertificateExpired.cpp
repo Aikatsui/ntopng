@@ -24,13 +24,22 @@
 void TLSCertificateExpired::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   
-  if (0 /* TODO Implement check */) {
-    u_int16_t c_score = 0, s_score = 0, f_score = 0;
-    
-    /* TODO Set score */
+  if (f->isThreeWayHandshakeOK() 
+      && f->isTLS()
+      && f->getTLSNotBefore()
+      && f->getTLSNotAfter()) {
+    time_t now = time(NULL);
 
-    f->setStatus(this, alert_level_error /* TODO read from the config */,
-      f_score, c_score, s_score);
+    if (now < f->getTLSNotBefore()
+        || now > f->getTLSNotAfter()) {
+      u_int16_t c_score = 5;
+      u_int16_t s_score = 50;
+      u_int16_t f_score = 40;
+
+      //TODO pass flow.getTLSInfo()
+
+      f->setStatus(this, getSeverity(), f_score, c_score, s_score);
+    }
   }
 }
 

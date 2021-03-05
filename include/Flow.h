@@ -716,7 +716,9 @@ class Flow : public GenericHashEntry {
 	   && is_active_entry_now_idle(10 * getInterface()->getFlowMaxIdle()));
   }
 
-  inline u_int16_t getTLSVersion()  { return(isTLS() ? (protos.tls.tls_version) : 0); }
+  inline u_int16_t getTLSVersion()   { return(isTLS() ? protos.tls.tls_version : 0); }
+  inline u_int32_t getTLSNotBefore() { return(isTLS() ? protos.tls.notBefore   : 0); };
+  inline u_int32_t getTLSNotAfter()  { return(isTLS() ? protos.tls.notAfter    : 0); };
 
   inline void setTOS(u_int8_t tos, bool is_cli_tos) { if(is_cli_tos) cli2srv_tos = tos; srv2cli_tos = tos; }
   inline u_int8_t getTOS(bool is_cli_tos) const { return (is_cli_tos ? cli2srv_tos : srv2cli_tos); }

@@ -28,7 +28,7 @@ class DNSDataExfiltration : public FlowCallback {
  private:
   
  public:
-  DNSDataExfiltration() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+  DNSDataExfiltration() : FlowCallback(true /* Packet Interface only */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
 				       false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
   ~DNSDataExfiltration() {};
 

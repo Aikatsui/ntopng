@@ -28,7 +28,7 @@ class DataExfiltration : public FlowCallback {
  private:
   
  public:
-  DataExfiltration() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+  DataExfiltration() : FlowCallback(true /* Packet Interface only */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
 				    false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
   ~DataExfiltration() {};
 

@@ -46,6 +46,7 @@ class FlowCallback {
 
   inline void enable()    { enabled = 1;  }
   inline bool isEnabled() { return(enabled ? true : false); }
+  inline AlertLevel getSeverity() { return severity_id; }
 
   void addCallback(std::list<FlowCallback*> *l, NetworkInterface *iface, FlowCallbacks callback);
   virtual bool loadConfiguration(json_object *config);
