@@ -43,14 +43,14 @@ FlowCallback::~FlowCallback() {
 
 /* **************************************************** */
 
-bool FlowCallback::triggerAlert(Flow *f, FlowCallbackStatus status, FlowCallbackAlertType atype, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
+bool FlowCallback::triggerAlert(Flow *f, FlowCallbackStatus status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
   bool first_alert = !f->isFlowAlerted();
   bool rv = false;
   u_int32_t buflen;
   AlertFifoItem notification;
 
   /* Logic similar to ntop_flow_trigger_alert */
-  if(f->triggerAlert(status, atype, severity, alert_score, alert_json)) {
+  if(f->triggerAlert(status, severity, alert_score, alert_json)) {
     /* The alert was successfully triggered */
     ndpi_serializer flow_json;
     const char *flow_str;

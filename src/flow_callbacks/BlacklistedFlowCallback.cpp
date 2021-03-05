@@ -37,7 +37,6 @@ void BlacklistedFlowCallback::protocolDetected(Flow *f) {
     /* Call this only ONE time after all the flow callbacks have been executed, only on the PREDOMINANT status */
     triggerAlert(f,
 		 status_blacklisted, /* The status set. Make this a BlacklistedFlowCallback class member? */
-		 alert_flow_blacklisted, /* Alert ids are != from status ids. Merge them (e.g., first 128 alert ids == flow statuses)? */
 		 alert_level_error, /* Severity, TODO: read it from the alert configuration */
 		 f_score, /* The score used to setStatus() */
 		 NULL /* A possible JSON specific to this alert, e.g,. getJSONAlert(f) */);

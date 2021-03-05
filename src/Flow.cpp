@@ -5052,7 +5052,7 @@ bool Flow::hasDissectedTooManyPackets() {
 
 /* ***************************************************** */
 
-bool Flow::triggerAlert(FlowStatus status, AlertType atype, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
+bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
   bool first_alert = !isFlowAlerted();
   Host *cli_h = get_cli_host(), *srv_h = get_srv_host();
 
@@ -5068,10 +5068,10 @@ bool Flow::triggerAlert(FlowStatus status, AlertType atype, AlertLevel severity,
 #endif
 
     if(cli_h)
-      cli_h->incTotalAlerts(atype);
+      cli_h->incTotalAlerts(status);
 
     if(srv_h)
-      srv_h->incTotalAlerts(atype);
+      srv_h->incTotalAlerts(status);
   } else { /* Not the first alert triggered for this flow */
     if(alert_level != severity) { /* If the new severity is different from the old severity ...*/
       iface->decNumAlertedFlows(this, alert_level); /* Decrease the value previously increased for the former level */
@@ -5088,7 +5088,7 @@ bool Flow::triggerAlert(FlowStatus status, AlertType atype, AlertLevel severity,
   alert_status_info = alert_json ? strdup(alert_json) : NULL;
   alerted_status = status;
   alert_level = severity;
-  alert_type = atype;
+  alert_type = status;
   alerted_status_score = alert_score;
 
   /* Success - alert is dumped/notified from lua */

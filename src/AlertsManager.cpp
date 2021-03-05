@@ -79,6 +79,8 @@ AlertsManager::AlertsManager(int interface_id, const char *filename) : StoreMana
   unlink(filePath);
   sprintf(&filePath[base_offset], "%s", "alerts_v23.db");
   unlink(filePath);
+  sprintf(&filePath[base_offset], "%s", "alerts_v24.db");
+  unlink(filePath);
   filePath[base_offset] = 0;
 
   /* open the newest */

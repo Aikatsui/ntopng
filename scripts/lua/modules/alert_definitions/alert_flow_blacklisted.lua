@@ -21,7 +21,7 @@ local alert_flow_blacklisted = classes.class(alert)
 
 alert_flow_blacklisted.meta = {
    status_key = status_keys.ntopng.status_blacklisted,
-   alert_key = alert_keys.ntopng.alert_flow_blacklisted,
+   alert_key = alert_keys.ntopng.status_blacklisted, -- MERGED with status, will be removed
    i18n_title = "alerts_dashboard.blacklisted_flow",
    icon = "fas fa-exclamation",
    has_victim = true,

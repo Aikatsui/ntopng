@@ -31,7 +31,7 @@ class FlowCallback {
   bool isCallbackCompatibleWithInterface(NetworkInterface *iface);
 
  protected:
-  bool triggerAlert(Flow *f, FlowCallbackStatus status, FlowCallbackAlertType atype, AlertLevel severity, u_int16_t alert_score, const char *alert_json);
+  bool triggerAlert(Flow *f, FlowCallbackStatus status, AlertLevel severity, u_int16_t alert_score, const char *alert_json);
 
  public:
   FlowCallback(bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only,

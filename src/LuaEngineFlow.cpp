@@ -1092,7 +1092,7 @@ static int ntop_flow_trigger_alert(lua_State* vm) {
 
   lua_newtable(vm);
 
-  if(f->triggerAlert(status, atype, severity, alerted_status_score, status_info)) {
+  if(f->triggerAlert(status, severity, alerted_status_score, status_info)) {
     /* The alert was successfully triggered */
     triggered = true;
 
