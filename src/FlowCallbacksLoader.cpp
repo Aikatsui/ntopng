@@ -57,6 +57,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new UDPUnidirectional()))           cb_all[fcb->getName()] = fcb;
   if((fcb = new IEC60870_5_104()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new WebMining()))                   cb_all[fcb->getName()] = fcb;
+  if((fcb = new ElephantFlow()))                cb_all[fcb->getName()] = fcb;
   
 }
 

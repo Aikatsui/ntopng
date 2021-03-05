@@ -410,6 +410,7 @@ using namespace std;
 #include "FlowCallback.h"
 #include "flow_callbacks/BlacklistedFlow.h"
 #include "flow_callbacks/LowGoodputFlow.h"
+#include "flow_callbacks/ElephantFlow.h"
 #include "flow_callbacks/TLSCertificateMismatch.h"
 #include "flow_callbacks/DNSDataExfiltration.h"
 #include "flow_callbacks/DataExfiltration.h"
