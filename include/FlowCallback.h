@@ -29,8 +29,10 @@ class FlowCallback {
   u_int8_t has_protocol_detected:1, has_periodic_update:1, has_flow_end:1, packet_interface_only:1, nedge_exclude:1, nedge_only:1, enabled:1/* , _unused:1 */;
 
   bool isCallbackCompatibleWithInterface(NetworkInterface *iface);
-  
+
  protected:
+  bool triggerAlert(Flow *f, FlowCallbackStatus status, FlowCallbackAlertType atype, AlertLevel severity, u_int16_t alert_score, const char *alert_json);
+
  public:
   FlowCallback(bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only,
 	       bool _has_protocok_detected, bool _has_periodic_update, bool _has_flow_end);

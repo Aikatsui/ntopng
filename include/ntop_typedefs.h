@@ -352,13 +352,24 @@ struct string_list {
 
 /* Status are handled in Lua (flow_consts.lua) */
 typedef u_int8_t FlowStatus;
-#define status_normal 0
 
 typedef enum {
   flow_callback_protocol_detected = 0,
   flow_callback_periodic_update,
   flow_callback_flow_end
 } FlowCallbacks;
+
+/* This MUST be kept in sync (and eventually will replace) modules/status_keys.lua */
+typedef enum {
+  status_normal = 0,
+  status_blacklisted = 1,
+  STATUS_MAX_STATUS = 128 /* Constrained by `Bitmap status_map` inside Flow.h and also by `FlowStatus` in this file */
+} FlowCallbackStatus;
+
+/* This MUST be kept in sync with modules/alert_keys. Likely it will also be merged with FlowCallbackStatus */
+typedef enum {
+  alert_flow_blacklisted = 8
+} FlowCallbackAlertType;
 
 typedef enum {
   flow_lua_call_exec_status_ok = 0,                             /* Call executed successfully                                */
