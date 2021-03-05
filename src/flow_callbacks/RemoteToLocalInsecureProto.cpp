@@ -21,7 +21,7 @@
 
 #include "ntop_includes.h"
 
-void BlacklistedFlowCallback::protocolDetected(Flow *f) {
+void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   
   if(f->isBlacklistedFlow()) {
@@ -52,7 +52,7 @@ void BlacklistedFlowCallback::protocolDetected(Flow *f) {
   }
   }
 */
-bool BlacklistedFlowCallback::loadConfiguration(json_object *config) {
+bool RemoteToLocalInsecureProto::loadConfiguration(json_object *config) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   FlowCallback::loadConfiguration(config); /* Parse parameters in common */
 

@@ -5162,7 +5162,6 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
  */
 bool Flow::setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   FlowStatus status = fcb->getStatus();
-  const char* script_key = fcb->getName().c_str();
   ScriptCategory script_category = fcb->getCategory();
   const char * alert_json = NULL; /* TODO */
 

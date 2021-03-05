@@ -21,6 +21,6 @@
 
 #include "ntop_includes.h"
 
-void LowGoodputFlowCallback::periodicUpdate(Flow *f) {
+void LowGoodputFlow::periodicUpdate(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
 }

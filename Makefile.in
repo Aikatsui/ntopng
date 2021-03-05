@@ -180,7 +180,7 @@ hooks/.enabled:
 	touch hooks/.enabled
 
 clean:
-	-rm -f src/*.o src/*~ include/*~ *~ #config.h
+	-rm -f src/*.o src/*~ src/flow_callbacks/*.o  src/flow_callbacks/*~ include/*~ *~ #config.h
 	-rm -f $(TARGET)
 	if [ -d pro ]; then cd pro && make clean; fi
 

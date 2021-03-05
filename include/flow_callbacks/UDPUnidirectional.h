@@ -19,23 +19,24 @@
  *
  */
 
-#ifndef _LOWGOODPUT_FLOW_CALLBACK_H_
-#define _LOWGOODPUT_FLOW_CALLBACK_H_
+#ifndef _UDP_UNIDIRECTIONAL_H_
+#define _UDP_UNIDIRECTIONAL_H_
 
 #include "ntop_includes.h"
 
-class LowGoodputFlowCallback : public FlowCallback {
+class UDPUnidirectional : public FlowCallback {
  private:
+  
  public:
-  LowGoodputFlowCallback() : FlowCallback(false /* All interfaces */, true /* Exclude for nEdge */, false /* Only for nEdge */,
-					  false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
-  virtual ~LowGoodputFlowCallback() {};
+  UDPUnidirectional() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+					   true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+  ~UDPUnidirectional() {};
 
-  void periodicUpdate(Flow *f);
-
-  std::string getName()          const { return(std::string("low_goodput")); }
-  ScriptCategory getCategory()   const { return script_category_network; }
-  FlowCallbackStatus getStatus() const { return status_low_goodput;      }
+  void protocolDetected(Flow *f);
+  
+  std::string getName()          const { return(std::string("udp_unidirectional")); }
+  ScriptCategory getCategory()   const { return script_category_security;    }
+  FlowCallbackStatus getStatus() const { return status_blacklisted;        }
 };
 
-#endif /* _LOWGOODPUT_FLOW_CALLBACK_H_ */
+#endif /* _UDP_UNIDIRECTIONAL_H_ */

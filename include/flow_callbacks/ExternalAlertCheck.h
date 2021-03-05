@@ -19,8 +19,25 @@
  *
  */
 
+#ifndef _EXTERNAL_ALERT_CHECK_H_
+#define _EXTERNAL_ALERT_CHECK_H_
+
 #include "ntop_includes.h"
 
-void LongLivedFlowCallback::periodicUpdate(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-}
+class ExternalAlertCheck : public FlowCallback {
+ private:
+  
+ public:
+  ExternalAlertCheck() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+					   true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+  ~ExternalAlertCheck() {};
+
+  void protocolDetected(Flow *f);
+  bool loadConfiguration(json_object *config);
+  
+  std::string getName()          const { return(std::string("external_alert_check")); }
+  ScriptCategory getCategory()   const { return script_category_security;    }
+  FlowCallbackStatus getStatus() const { return status_blacklisted;        }
+};
+
+#endif /* _EXTERNAL_ALERT_CHECK_H_ */

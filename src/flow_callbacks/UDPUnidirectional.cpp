@@ -19,23 +19,24 @@
  *
  */
 
-#ifndef _LONGLIVED_FLOW_CALLBACK_H_
-#define _LONGLIVED_FLOW_CALLBACK_H_
-
 #include "ntop_includes.h"
 
-class LongLivedFlowCallback : public FlowCallback {
- private:
- public:
-  LongLivedFlowCallback() :  FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-					  false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
-  virtual ~LongLivedFlowCallback() {};
+void UDPUnidirectional::protocolDetected(Flow *f) {
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+  
+  if(f->isBlacklistedFlow()) {
+    u_int16_t c_score, s_score, f_score = 100;
+    
+    if(f->isBlacklistedServer())
+      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
+    else
+      c_score = 5, s_score = 10;
 
-  void periodicUpdate(Flow *f);
+    f->setStatus(this,
+		 alert_level_error /* TODO: read it from the config */,
+		 f_score, c_score, s_score);
+  }
+}
 
-  std::string getName()          const { return(std::string("long_lived")); }
-  ScriptCategory getCategory()   const { return script_category_security;   }
-  FlowCallbackStatus getStatus() const { return status_longlived;           }
-};
+/* ***************************************************** */
 
-#endif /* _LONGLIVED_FLOW_CALLBACK_H_ */

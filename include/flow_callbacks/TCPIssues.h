@@ -19,25 +19,25 @@
  *
  */
 
-#ifndef _BLACKLISTED_FLOW_CALLBACK_H_
-#define _BLACKLISTED_FLOW_CALLBACK_H_
+#ifndef _TCP_ISSUES_H_
+#define _TCP_ISSUES_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedFlowCallback : public FlowCallback {
+class TCPIssues : public FlowCallback {
  private:
   
  public:
-  BlacklistedFlowCallback() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+  TCPIssues() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
 					   true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
-  ~BlacklistedFlowCallback() {};
+  ~TCPIssues() {};
 
   void protocolDetected(Flow *f);
   bool loadConfiguration(json_object *config);
   
-  std::string getName()          const { return(std::string("blacklisted")); }
+  std::string getName()          const { return(std::string("tcp_issues_generic")); }
   ScriptCategory getCategory()   const { return script_category_security;    }
   FlowCallbackStatus getStatus() const { return status_blacklisted;        }
 };
 
-#endif /* _BLACKLISTED_FLOW_CALLBACK_H_ */
+#endif /* _TCP_ISSUES_H_ */
