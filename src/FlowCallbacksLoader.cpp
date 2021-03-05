@@ -51,6 +51,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new TLSCertificateExpired()))  cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSOldProtocolVersion()))  cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSUnsafeCiphers()))  cb_all[fcb->getName()] = fcb;
+  if((fcb = new TcpZeroWindow()))           cb_all[fcb->getName()] = fcb;
 }
 
 /* **************************************************** */
