@@ -427,6 +427,7 @@ using namespace std;
 #include "flow_callbacks/RemoteToLocalInsecureProto.h"
 #include "flow_callbacks/TCPIssues.h"
 #include "flow_callbacks/UDPUnidirectional.h"
+#include "flow_callbacks/Iec60870_5_104.h"
 
 #include "FlowCallbacksLoader.h"
 #include "FlowCallbacksExecutor.h"

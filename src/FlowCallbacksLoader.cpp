@@ -55,6 +55,8 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new TcpZeroWindow()))               cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPIssues()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new UDPUnidirectional()))           cb_all[fcb->getName()] = fcb;
+  if((fcb = new Iec60870_5_104()))              cb_all[fcb->getName()] = fcb;
+  
 }
 
 /* **************************************************** */
