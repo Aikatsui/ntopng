@@ -408,7 +408,6 @@ using namespace std;
 #include "HTTPserver.h"
 #include "Paginator.h"
 #include "FlowCallback.h"
-
 #include "flow_callbacks/BlacklistedFlow.h"
 #include "flow_callbacks/LowGoodputFlow.h"
 #include "flow_callbacks/TlsCertificateMismatch.h"
@@ -416,6 +415,8 @@ using namespace std;
 #include "flow_callbacks/DataExfiltration.h"
 #include "flow_callbacks/DeviceProtocolNotAllowed.h"
 #include "flow_callbacks/FlowRisk.h"
+#include "flow_callbacks/NedgeBlockedFlow.h"
+#include "flow_callbacks/PotentiallyDangerousFlow.h"
 #include "flow_callbacks/RemoteToRemote.h"
 #include "flow_callbacks/TLSCertificateExpired.h"
 #include "flow_callbacks/TLSOldProtocolVersion.h"
@@ -428,7 +429,7 @@ using namespace std;
 #include "flow_callbacks/TCPIssues.h"
 #include "flow_callbacks/UDPUnidirectional.h"
 #include "flow_callbacks/Iec60870_5_104.h"
-
+#include "flow_callbacks/WebMining.h"
 #include "FlowCallbacksLoader.h"
 #include "FlowCallbacksExecutor.h"
 #include "Ntop.h"

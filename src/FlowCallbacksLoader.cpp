@@ -47,6 +47,8 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new DataExfiltration()))            cb_all[fcb->getName()] = fcb;
   if((fcb = new DeviceProtocolNotAllowed()))    cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRisk()))                    cb_all[fcb->getName()] = fcb;
+  if((fcb = new NedgeBlockedFlow()))            cb_all[fcb->getName()] = fcb;
+  if((fcb = new PotentiallyDangerousFlow()))    cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToRemote()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToLocalInsecureProto()))  cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSCertificateExpired()))       cb_all[fcb->getName()] = fcb;
@@ -56,7 +58,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new TCPIssues()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new UDPUnidirectional()))           cb_all[fcb->getName()] = fcb;
   if((fcb = new Iec60870_5_104()))              cb_all[fcb->getName()] = fcb;
-  
+  if((fcb = new WebMining()))                   cb_all[fcb->getName()] = fcb;
 }
 
 /* **************************************************** */
