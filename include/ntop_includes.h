@@ -421,6 +421,7 @@ using namespace std;
 #include "flow_callbacks/TLSOldProtocolVersion.h"
 #include "flow_callbacks/TLSUnsafeCiphers.h"
 #include "flow_callbacks/TcpZeroWindow.h"
+#include "flow_callbacks/NotPurged.h"
 #include "FlowCallbacksLoader.h"
 #include "FlowCallbacksExecutor.h"
 #include "Ntop.h"

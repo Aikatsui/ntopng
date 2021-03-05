@@ -39,19 +39,20 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   /* TODO: implement dynamic loading */
   FlowCallback *fcb;
 
-  if((fcb = new BlacklistedFlowCallback())) cb_all[fcb->getName()] = fcb;
-  if((fcb = new LongLivedFlowCallback()))   cb_all[fcb->getName()] = fcb;
-  if((fcb = new LowGoodputFlowCallback()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new TlsCertificateMismatch()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new DNSDataExfiltration()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new DataExfiltration()))  cb_all[fcb->getName()] = fcb;
+  if((fcb = new BlacklistedFlowCallback()))   cb_all[fcb->getName()] = fcb;
+  if((fcb = new LongLivedFlowCallback()))     cb_all[fcb->getName()] = fcb;
+  if((fcb = new LowGoodputFlowCallback()))    cb_all[fcb->getName()] = fcb;
+  if((fcb = new TlsCertificateMismatch()))    cb_all[fcb->getName()] = fcb;
+  if((fcb = new DNSDataExfiltration()))       cb_all[fcb->getName()] = fcb;
+  if((fcb = new DataExfiltration()))          cb_all[fcb->getName()] = fcb;
   if((fcb = new DeviceProtocolNotAllowed()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new FlowRisk()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new RemoteToRemote()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new TLSCertificateExpired()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new TLSOldProtocolVersion()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new TLSUnsafeCiphers()))  cb_all[fcb->getName()] = fcb;
-  if((fcb = new TcpZeroWindow()))           cb_all[fcb->getName()] = fcb;
+  if((fcb = new FlowRisk()))                  cb_all[fcb->getName()] = fcb;
+  if((fcb = new RemoteToRemote()))            cb_all[fcb->getName()] = fcb;
+  if((fcb = new TLSCertificateExpired()))     cb_all[fcb->getName()] = fcb;
+  if((fcb = new TLSOldProtocolVersion()))     cb_all[fcb->getName()] = fcb;
+  if((fcb = new TLSUnsafeCiphers()))          cb_all[fcb->getName()] = fcb;
+  if((fcb = new TcpZeroWindow()))             cb_all[fcb->getName()] = fcb;
+  if((fcb = new NotPurged()))                 cb_all[fcb->getName()] = fcb;
 }
 
 /* **************************************************** */
