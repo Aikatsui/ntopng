@@ -19,21 +19,24 @@
  *
  */
 
+#ifndef _IEC60870_5_104_FLOW_CALLBACK_H_
+#define _IEC60870_5_104_FLOW_CALLBACK_H_
+
 #include "ntop_includes.h"
 
-void TlsCertificateMismatch::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+class IEC60870_5_104 : public FlowCallback {
+ private:
   
-  if(f->hasRisk(NDPI_TLS_CERTIFICATE_MISMATCH)) {
-    u_int16_t c_score, s_score, f_score = 100;
-    
-    if(f->isBlacklistedServer())
-      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
-    else
-      c_score = 5, s_score = 10;
+ public:
+ IEC60870_5_104() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+			    false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
+  ~IEC60870_5_104() {};
 
-    f->setStatus(this,
-		 alert_level_error /* TODO: read it from the config */,
-		 f_score, c_score, s_score);
-  }
-}
+  void protocolDetected(Flow *f);
+  
+  std::string getName()          const { return(std::string("iec60870_5_104")); }
+  ScriptCategory getCategory()   const { return script_category_security;       }
+  FlowCallbackStatus getStatus() const { return status_iec_invalid_transition;  }
+};
+
+#endif /* _IEC60870_5_104_FLOW_CALLBACK_H_ */

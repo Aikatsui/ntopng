@@ -21,20 +21,19 @@
 
 #include "ntop_includes.h"
 
-void TcpZeroWindow::protocolDetected(Flow *f) {
-  bool as_client, as_server;
-  u_int16_t c_score, s_score, f_score = 30;
-
+void TLSCertificateMismatch::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
-  f->triggerZeroWindowAlert(&as_client, &as_server);
-
-  if(as_client || as_server) {
-    if(as_client) c_score = 30, s_score = 5;
-    if(as_server) c_score = 5, s_score = 30;
+  
+  if(f->hasRisk(NDPI_TLS_CERTIFICATE_MISMATCH)) {
+    u_int16_t c_score, s_score, f_score = 100;
+    
+    if(f->isBlacklistedServer())
+      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
+    else
+      c_score = 5, s_score = 10;
 
     f->setStatus(this,
-		 alert_level_warning /* TODO: read it from the config */,
+		 alert_level_error /* TODO: read it from the config */,
 		 f_score, c_score, s_score);
   }
 }

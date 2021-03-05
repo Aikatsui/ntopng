@@ -19,24 +19,22 @@
  *
  */
 
-#ifndef _IEC60870_5_104_FLOW_CALLBACK_H_
-#define _IEC60870_5_104_FLOW_CALLBACK_H_
-
 #include "ntop_includes.h"
 
-class Iec60870_5_104 : public FlowCallback {
- private:
-  
- public:
- Iec60870_5_104() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-			    false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
-  ~Iec60870_5_104() {};
+void TCPZeroWindow::protocolDetected(Flow *f) {
+  bool as_client, as_server;
+  u_int16_t c_score, s_score, f_score = 30;
 
-  void protocolDetected(Flow *f);
-  
-  std::string getName()          const { return(std::string("iec60870_5_104")); }
-  ScriptCategory getCategory()   const { return script_category_security;       }
-  FlowCallbackStatus getStatus() const { return status_iec_invalid_transition;  }
-};
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
 
-#endif /* _IEC60870_5_104_FLOW_CALLBACK_H_ */
+  f->triggerZeroWindowAlert(&as_client, &as_server);
+
+  if(as_client || as_server) {
+    if(as_client) c_score = 30, s_score = 5;
+    if(as_server) c_score = 5, s_score = 30;
+
+    f->setStatus(this,
+		 alert_level_warning /* TODO: read it from the config */,
+		 f_score, c_score, s_score);
+  }
+}

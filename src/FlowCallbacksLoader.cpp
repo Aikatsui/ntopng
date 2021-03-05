@@ -40,25 +40,24 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   FlowCallback *fcb;
 
   if((fcb = new BlacklistedFlow()))             cb_all[fcb->getName()] = fcb;
-  if((fcb = new ExternalAlertCheck()))          cb_all[fcb->getName()] = fcb;
-  if((fcb = new LowGoodputFlow()))              cb_all[fcb->getName()] = fcb;
-  if((fcb = new TlsCertificateMismatch()))      cb_all[fcb->getName()] = fcb;
   if((fcb = new DNSDataExfiltration()))         cb_all[fcb->getName()] = fcb;
   if((fcb = new DataExfiltration()))            cb_all[fcb->getName()] = fcb;
   if((fcb = new DeviceProtocolNotAllowed()))    cb_all[fcb->getName()] = fcb;
+  if((fcb = new ExternalAlertCheck()))          cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRisk()))                    cb_all[fcb->getName()] = fcb;
-  if((fcb = new NedgeBlockedFlow()))            cb_all[fcb->getName()] = fcb;
-  if((fcb = new PotentiallyDangerousFlow()))    cb_all[fcb->getName()] = fcb;
+  if((fcb = new LowGoodputFlow()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToRemote()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToLocalInsecureProto()))  cb_all[fcb->getName()] = fcb;
+  if((fcb = new TCPZeroWindow()))               cb_all[fcb->getName()] = fcb;
+  if((fcb = new TCPIssues()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSCertificateExpired()))       cb_all[fcb->getName()] = fcb;
+  if((fcb = new TLSCertificateMismatch()))      cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSOldProtocolVersion()))       cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSUnsafeCiphers()))            cb_all[fcb->getName()] = fcb;
-  if((fcb = new TcpZeroWindow()))               cb_all[fcb->getName()] = fcb;
-  if((fcb = new TCPIssues()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new UDPUnidirectional()))           cb_all[fcb->getName()] = fcb;
-  if((fcb = new Iec60870_5_104()))              cb_all[fcb->getName()] = fcb;
+  if((fcb = new IEC60870_5_104()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new WebMining()))                   cb_all[fcb->getName()] = fcb;
+  
 }
 
 /* **************************************************** */

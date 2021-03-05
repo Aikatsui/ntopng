@@ -21,7 +21,7 @@
 
 #include "ntop_includes.h"
 
-void Iec60870_5_104::protocolDetected(Flow *f) {
+void IEC60870_5_104::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   
   if(0 /* TODO */) {

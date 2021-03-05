@@ -19,25 +19,25 @@
  *
  */
 
-#ifndef _TCP_ZERO_WINDOW_FLOW_CALLBACK_H_
-#define _TCP_ZERO_WINDOW_FLOW_CALLBACK_H_
+#ifndef _TLS_CERTIFICATE_MISMATCH_FLOW_CALLBACK_H_
+#define _TLS_CERTIFICATE_MISMATCH_FLOW_CALLBACK_H_
 
 #include "ntop_includes.h"
 
-class TcpZeroWindow : public FlowCallback {
+class TLSCertificateMismatch : public FlowCallback {
  private:
   
  public:
- TcpZeroWindow() : FlowCallback(true /* Packet-interfaces only */, true /* Exclude for nEdge */, false /* NOT only for nEdge */,
-				false /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
-  ~TcpZeroWindow() {};
+ TLSCertificateMismatch() : FlowCallback(true /* Packet-interfaces only */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+					 true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+  ~TLSCertificateMismatch() {};
 
   bool loadConfiguration(json_object *config) { return(true); }
   void protocolDetected(Flow *f);
   
-  std::string getName()          const { return(std::string("zero_tcp_window")); }
-  ScriptCategory getCategory()   const { return script_category_network;         }
-  FlowCallbackStatus getStatus() const { return status_zero_tcp_window;          }
+  std::string getName()          const { return(std::string("tls_certificate_mismatch")); }
+  ScriptCategory getCategory()   const { return script_category_security;                 }
+  FlowCallbackStatus getStatus() const { return status_tls_certificate_mismatch;          }
 };
 
-#endif /* _TCP_ZERO_WINDOW_FLOW_CALLBACK_H_ */
+#endif /* _TLS_CERTIFICATE_MISMATCH_FLOW_CALLBACK_H_ */
