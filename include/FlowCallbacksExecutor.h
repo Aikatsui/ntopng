@@ -24,6 +24,8 @@
 
 #include "ntop_includes.h"
 
+class Flow;
+
 class FlowCallbacksExecutor { /* One instance per ntopng Interface */
  private:
   NetworkInterface *iface;
@@ -38,16 +40,19 @@ class FlowCallbacksExecutor { /* One instance per ntopng Interface */
   inline void execProtocolDetectedCallback(Flow *f) {
     for(list<FlowCallback*>::iterator it = protocol_detected->begin(); it != protocol_detected->end(); ++it)
       (*it)->protocolDetected(f);
+    f->postFlowCallbacks();
   }
 
   inline void execPeriodicUpdateCallback(Flow *f) {
     for(list<FlowCallback*>::iterator it = periodic_update->begin(); it != periodic_update->end(); ++it)
       (*it)->periodicUpdate(f);
+    f->postFlowCallbacks();
   }
 
   inline void execFlowEndCallback(Flow *f) {
     for(list<FlowCallback*>::iterator it = flow_end->begin(); it != flow_end->end(); ++it)
       (*it)->flowEnd(f);
+    f->postFlowCallbacks();
   }
 
 };

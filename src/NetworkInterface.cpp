@@ -8575,3 +8575,21 @@ void NetworkInterface::incrOS(char *hostname) {
 }
 
 /* *************************************** */
+
+void NetworkInterface::execProtocolDetectedCallbacks(Flow *f) {
+  flow_callbacks_executor->execProtocolDetectedCallback(f);
+};
+
+/* *************************************** */
+
+void NetworkInterface::execPeriodicUpdateCallbacks(Flow *f) {
+  flow_callbacks_executor->execPeriodicUpdateCallback(f);
+};
+
+/* *************************************** */
+
+void NetworkInterface::execFlowEndCallbacks(Flow *f) {
+  flow_callbacks_executor->execFlowEndCallback(f);
+};
+
+/* *************************************** */

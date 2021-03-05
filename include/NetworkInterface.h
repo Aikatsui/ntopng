@@ -46,6 +46,8 @@ class DB;
 class Paginator;
 class NetworkInterfaceTsPoint;
 class ViewInterface;
+class FlowCallbacksLoader;
+class FlowCallbacksExecutor;
 
 #ifdef NTOPNG_PRO
 class L7Policer;
@@ -962,10 +964,9 @@ class NetworkInterface : public AlertableEntity {
    */
   u_int64_t dequeueFlowsForDump(u_int idle_flows_budget, u_int active_flows_budget);
 
-
-  inline void execProtocolDetectedCallbacks(Flow *f) { flow_callbacks_executor->execProtocolDetectedCallback(f); };
-  inline void execPeriodicUpdateCallbacks(Flow *f)   { flow_callbacks_executor->execPeriodicUpdateCallback(f);   };
-  inline void execFlowEndCallbacks(Flow *f)          { flow_callbacks_executor->execFlowEndCallback(f);          };
+  void execProtocolDetectedCallbacks(Flow *f);
+  void execPeriodicUpdateCallbacks(Flow *f);
+  void execFlowEndCallbacks(Flow *f);
 };
 
 #endif /* _NETWORK_INTERFACE_H_ */

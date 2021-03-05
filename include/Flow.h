@@ -270,11 +270,13 @@ class Flow : public GenericHashEntry {
   ~Flow();
 
   inline Bitmap getStatusBitmap()     const     { return(status_map);           }
-  bool setStatus(FlowStatus status, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, const char*script_key, ScriptCategory script_category);
+  bool setStatus(FlowStatus status, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, const char*script_key, ScriptCategory script_category, const char * alert_json);
   bool triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alerted_status_score, const char* alert_json);
+  void postFlowCallbacks();
   FlowStatus getAlertedStatus() const;
-  inline AlertLevel getAlertedSeverity() const { return alert_level;        };
-  inline const char* getStatusInfo()     const { return(alert_status_info); };
+  inline AlertLevel getAlertedSeverity() const { return alert_level;          };
+  inline u_int16_t  getAlertedScore()    const { return alerted_status_score; };
+  inline const char* getStatusInfo()     const { return(alert_status_info);   };
 
   bool isBlacklistedFlow()   const;
   bool isBlacklistedClient() const;

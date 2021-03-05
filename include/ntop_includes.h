@@ -286,12 +286,6 @@ using namespace std;
 #include "StoreManager.h"
 #include "StatsManager.h"
 #include "AlertsManager.h"
-#include "FlowCallback.h"
-#include "flow_callbacks/BlacklistedFlowCallback.h"
-#include "flow_callbacks/LongLivedFlowCallback.h"
-#include "flow_callbacks/LowGoodputFlowCallback.h"
-#include "FlowCallbacksLoader.h"
-#include "FlowCallbacksExecutor.h"
 #include "DB.h"
 #ifdef HAVE_MYSQL
 #include "MySQLDB.h"
@@ -413,6 +407,12 @@ using namespace std;
 #include "AddressResolution.h"
 #include "HTTPserver.h"
 #include "Paginator.h"
+#include "FlowCallback.h"
+#include "flow_callbacks/BlacklistedFlowCallback.h"
+#include "flow_callbacks/LongLivedFlowCallback.h"
+#include "flow_callbacks/LowGoodputFlowCallback.h"
+#include "FlowCallbacksLoader.h"
+#include "FlowCallbacksExecutor.h"
 #include "Ntop.h"
 
 #ifdef NTOPNG_PRO

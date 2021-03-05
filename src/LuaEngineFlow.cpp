@@ -70,7 +70,10 @@ static int ntop_flow_set_status(lua_State* vm) {
      && (ScriptCategory)lua_tointeger(vm, 6) < MAX_NUM_SCRIPT_CATEGORIES)
     script_category = (ScriptCategory)lua_tointeger(vm, 6);
 
-  lua_pushboolean(vm, f->setStatus(new_status, flow_score, cli_score, srv_score, script_key, script_category));
+  // lua_pushboolean(vm, f->setStatus(new_status, flow_score, cli_score, srv_score, script_key, script_category));
+  // TODO: remove. Statuses are only set from C++ callbacks
+  lua_pushboolean(vm, false);
+
   return(CONST_LUA_OK);
 }
 

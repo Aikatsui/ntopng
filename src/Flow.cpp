@@ -2970,6 +2970,66 @@ void Flow::callFlowUpdate(time_t t) {
 
 /* *************************************** */
 
+void Flow::postFlowCallbacks() {
+  /* See if it is time to trigger an alert */
+
+  /* TODO: Implement checks on bitmap changes, not just on predominant status changes */
+  if(getAlertedStatus() == status_normal)
+    return; /* Nothing to do */
+
+  bool first_alert = true; /* TODO: implement check !f->isFlowAlerted(); */
+  bool rv = false;
+  u_int32_t buflen;
+  AlertFifoItem notification;
+
+  /* The alert was successfully triggered */
+  ndpi_serializer flow_json;
+  const char *flow_str;
+
+  ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
+
+  flow2alertJson(&flow_json, time(NULL));
+
+  if(!first_alert)
+    ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
+
+  if(false /* status_always_notify */)
+    ndpi_serialize_string_boolean(&flow_json, "status_always_notify", true);
+
+  flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
+
+  /* TODO: read all the recipients responsible for flows, and enqueue only to them */
+  /* Currenty, we forcefully enqueue only to the builtin sqlite */
+    
+  if((notification.alert = strdup(flow_str))) {
+    notification.alert_severity = getAlertedSeverity();
+
+    rv = ntop->recipient_enqueue(0/* SQLite builtin*/,
+				 getAlertedSeverity() >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
+				 &notification);
+  }
+
+  if(!rv) {
+    getInterface()->incNumDroppedAlerts(1);
+
+    if(notification.alert)
+      free(notification.alert);
+  }
+
+  ndpi_term_serializer(&flow_json);
+
+  /* Make the shadow status JSON the official alerted status JSON */
+  alert_status_info = alert_status_info_shadow;
+
+  /* Free the shadow that is now the official alerted status JSON */
+  if(alert_status_info_shadow){
+    free(alert_status_info_shadow);
+    alert_status_info_shadow = NULL;
+  }
+}
+
+/* *************************************** */
+
 void Flow::incStats(bool cli2srv_direction, u_int pkt_len,
 		    u_int8_t *payload, u_int payload_len,
                     u_int8_t l4_proto, u_int8_t is_fragment,
@@ -5081,11 +5141,10 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
 
   /* Note: triggerAlert is called by flow.lua only after all the flow
    * status are processed (once every 5 seconds), so it is safe to use the shadow */
-  if(alert_status_info_shadow)
-    free(alert_status_info_shadow);
-  alert_status_info_shadow = alert_status_info;
+  if(alert_status_info_shadow) free(alert_status_info_shadow);
+  alert_status_info_shadow = alert_json ? strdup(alert_json) : NULL;
 
-  alert_status_info = alert_json ? strdup(alert_json) : NULL;
+  // alert_status_info =  alert_status_info_shadow;  /* Set in postFlowCallbacks to avoid races */
   alerted_status = status;
   alert_level = severity;
   alert_type = status;
@@ -5101,9 +5160,12 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
 /*
   This method is called by Lua to set score and various other values of the flow
  */
-bool Flow::setStatus(FlowStatus status, u_int16_t flow_inc, u_int16_t cli_inc,
+bool Flow::setStatus(FlowStatus status,
+		     AlertLevel severity,
+		     u_int16_t flow_inc, u_int16_t cli_inc,
 		     u_int16_t srv_inc, const char* script_key,
-		     ScriptCategory script_category) {
+		     ScriptCategory script_category,
+		     const char * alert_json) {
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
 
   if(status == status_normal)
@@ -5126,6 +5188,12 @@ bool Flow::setStatus(FlowStatus status, u_int16_t flow_inc, u_int16_t cli_inc,
 
   if(unsafeGetServer())
     srv_host_score[score_category] += unsafeGetServer()->incScoreValue(srv_inc, score_category, false /* as server */);
+
+  /* Check if also the predominant status should be updated */
+  if(!isFlowAlerted() /* Flow is not yet alerted */
+     || getAlertedScore() < flow_inc /* The score of the current alerted status is less than the score of this status */
+     || getAlertedSeverity() < severity)
+    triggerAlert(status, severity, flow_inc, alert_json);
 
   return true;
 }

@@ -24,7 +24,7 @@
 void BlacklistedFlowCallback::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   
-  if(f->isBlacklistedFlow()) {
+  if(true || f->isBlacklistedFlow()) {
     u_int16_t c_score, s_score, f_score = 100;
     
     if(f->isBlacklistedServer())
@@ -32,15 +32,11 @@ void BlacklistedFlowCallback::protocolDetected(Flow *f) {
     else
       c_score = 5, s_score = 10;
 
-    f->setStatus(status_blacklisted, f_score, c_score, s_score, "" /* ?? */, script_category_security);
-
-    /* Call this only ONE time after all the flow callbacks have been executed, only on the PREDOMINANT status */
-    triggerAlert(f,
-		 status_blacklisted, /* The status set. Make this a BlacklistedFlowCallback class member? */
-		 alert_level_error, /* Severity, TODO: read it from the alert configuration */
-		 f_score, /* The score used to setStatus() */
-		 NULL /* A possible JSON specific to this alert, e.g,. getJSONAlert(f) */);
+    f->setStatus(status_blacklisted,
+		 alert_level_error /* TODO: read it from the config */,
+		 f_score, c_score, s_score,
+		 getName().c_str(),
+		 script_category_security,
+		 NULL /* TODO: prepare the JSON, e.g., getCallbackJSON(f) */);
   }
-
-  /* TODO emit flow alert */
 }
