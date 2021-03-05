@@ -5160,12 +5160,12 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
 /*
   This method is called by Lua to set score and various other values of the flow
  */
-bool Flow::setStatus(FlowStatus status,
-		     AlertLevel severity,
-		     u_int16_t flow_inc, u_int16_t cli_inc,
-		     u_int16_t srv_inc, const char* script_key,
-		     ScriptCategory script_category,
-		     const char * alert_json) {
+bool Flow::setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  FlowStatus status = fcb->getStatus();
+  const char* script_key = fcb->getName().c_str();
+  ScriptCategory script_category = fcb->getCategory();
+  const char * alert_json = NULL; /* TODO */
+
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
 
   if(status == status_normal)

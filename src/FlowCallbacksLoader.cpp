@@ -37,9 +37,11 @@ FlowCallbacksLoader::~FlowCallbacksLoader() {
 
 void FlowCallbacksLoader::registerFlowCallbacks() {
   /* TODO: implement dynamic loading */
-  cb_all[BlacklistedFlowCallback::getName()] = new BlacklistedFlowCallback();
-  cb_all[LongLivedFlowCallback::getName()]   = new LongLivedFlowCallback();
-  cb_all[LowGoodputFlowCallback::getName()]  = new LowGoodputFlowCallback();
+  FlowCallback *fcb;
+
+  if((fcb = new BlacklistedFlowCallback())) cb_all[fcb->getName()] = fcb;
+  if((fcb = new LongLivedFlowCallback()))   cb_all[fcb->getName()] = fcb;
+  if((fcb = new LowGoodputFlowCallback()))  cb_all[fcb->getName()] = fcb;
 }
 
 /* **************************************************** */

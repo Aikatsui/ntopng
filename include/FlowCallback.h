@@ -48,6 +48,10 @@ class FlowCallback {
   inline void enable()    { enabled = 1;  }
   inline bool isEnabled() { return(enabled ? true : false); }
   void addCallback(std::list<FlowCallback*> *l, NetworkInterface *iface, FlowCallbacks callback);
+
+  virtual std::string getName()          const = 0;
+  virtual ScriptCategory getCategory()   const = 0;
+  virtual FlowCallbackStatus getStatus() const = 0;
 };
 
 #endif /* _FLOW_CALLBACK_H_ */

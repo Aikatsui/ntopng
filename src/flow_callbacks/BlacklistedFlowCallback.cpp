@@ -32,11 +32,8 @@ void BlacklistedFlowCallback::protocolDetected(Flow *f) {
     else
       c_score = 5, s_score = 10;
 
-    f->setStatus(status_blacklisted,
+    f->setStatus(this,
 		 alert_level_error /* TODO: read it from the config */,
-		 f_score, c_score, s_score,
-		 getName().c_str(),
-		 script_category_security,
-		 NULL /* TODO: prepare the JSON, e.g., getCallbackJSON(f) */);
+		 f_score, c_score, s_score);
   }
 }

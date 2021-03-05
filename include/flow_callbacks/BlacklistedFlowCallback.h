@@ -35,7 +35,9 @@ class BlacklistedFlowCallback : public FlowCallback {
   bool loadConfiguration(json_object *config) { return(true); }
   void protocolDetected(Flow *f);
   
-  static std::string getName() { return(std::string("blacklisted")); }
+  std::string getName()          const { return(std::string("blacklisted")); }
+  ScriptCategory getCategory()   const { return script_category_security;    }
+  FlowCallbackStatus getStatus() const { return status_blacklisted;        }
 };
 
 #endif /* _BLACKLISTED_FLOW_CALLBACK_H_ */

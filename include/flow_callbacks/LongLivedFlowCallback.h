@@ -33,7 +33,10 @@ class LongLivedFlowCallback : public FlowCallback {
 
   void periodicUpdate(Flow *f);
   bool loadConfiguration(json_object *config) { return(true); }
-  static std::string getName() { return(std::string("long_lived")); }
+
+  std::string getName()          const { return(std::string("long_lived")); }
+  ScriptCategory getCategory()   const { return script_category_security;   }
+  FlowCallbackStatus getStatus() const { return status_longlived;           }
 };
 
 #endif /* _LONGLIVED_FLOW_CALLBACK_H_ */

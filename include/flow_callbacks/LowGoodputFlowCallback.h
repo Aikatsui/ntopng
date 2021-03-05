@@ -32,7 +32,10 @@ class LowGoodputFlowCallback : public FlowCallback {
   virtual ~LowGoodputFlowCallback() {};
 
   void periodicUpdate(Flow *f);
-  static std::string getName()                { return(std::string("low_goodput")); }
+
+  std::string getName()          const { return(std::string("low_goodput")); }
+  ScriptCategory getCategory()   const { return script_category_network; }
+  FlowCallbackStatus getStatus() const { return status_low_goodput;      }
   bool loadConfiguration(json_object *config) { return(true); }
 };
 
