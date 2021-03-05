@@ -37,3 +37,26 @@ void BlacklistedFlowCallback::protocolDetected(Flow *f) {
 		 f_score, c_score, s_score);
   }
 }
+
+/* ***************************************************** */
+
+/*
+  "script_conf": {
+  "severity": {
+  "syslog_severity": 3,
+  "severity_id": 5,
+  "i18n_title": "alerts_dashboard.error",
+  "emoji": "❗",
+  "icon": "fas fa-exclamation-triangle text-danger",
+  "label": "badge-danger"
+  }
+  }
+*/
+bool BlacklistedFlowCallback::loadConfiguration(json_object *config) {
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+  FlowCallback::loadConfiguration(config); /* Parse parameters in common */
+
+  /* Parse additional parameters */
+  
+  return(true);
+}

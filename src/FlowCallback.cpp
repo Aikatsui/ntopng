@@ -33,7 +33,7 @@ FlowCallback::FlowCallback(bool _packet_interface_only, bool _nedge_exclude, boo
   if(_has_periodic_update)    has_periodic_update = 1;
   if(_has_flow_end)           has_flow_end = 1;
   
-  enabled = 0;
+  enabled = 0, severity_id = alert_level_warning;
 };
 
 /* **************************************************** */
@@ -122,4 +122,21 @@ void FlowCallback::addCallback(std::list<FlowCallback*> *l, NetworkInterface *if
     if(has_flow_end) l->push_back(this);
     break;
   }
+}
+
+/* **************************************************** */
+
+bool FlowCallback::loadConfiguration(json_object *config) {
+  json_object *obj;
+  bool rc = true;
+  
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+  
+  if(json_object_object_get_ex(config, "severity_id", &obj)) {
+    if((severity_id = (AlertLevel)json_object_get_int(obj)) >= ALERT_LEVEL_MAX_LEVEL)
+      severity_id = alert_level_emergency;
+  } else
+    rc = false;
+  
+  return(rc);
 }

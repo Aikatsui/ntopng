@@ -36,7 +36,6 @@ class LowGoodputFlowCallback : public FlowCallback {
   std::string getName()          const { return(std::string("low_goodput")); }
   ScriptCategory getCategory()   const { return script_category_network; }
   FlowCallbackStatus getStatus() const { return status_low_goodput;      }
-  bool loadConfiguration(json_object *config) { return(true); }
 };
 
 #endif /* _LOWGOODPUT_FLOW_CALLBACK_H_ */

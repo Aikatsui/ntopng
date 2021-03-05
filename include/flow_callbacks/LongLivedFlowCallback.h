@@ -32,7 +32,6 @@ class LongLivedFlowCallback : public FlowCallback {
   virtual ~LongLivedFlowCallback() {};
 
   void periodicUpdate(Flow *f);
-  bool loadConfiguration(json_object *config) { return(true); }
 
   std::string getName()          const { return(std::string("long_lived")); }
   ScriptCategory getCategory()   const { return script_category_security;   }
