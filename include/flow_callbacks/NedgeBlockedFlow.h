@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _NEDGEBLOCKED_FLOW_CALLBACK_H_
-#define _NEDGEBLOCKED_FLOW_CALLBACK_H_
+#ifndef _NEDGEBLOCKED_FLOW_H_
+#define _NEDGEBLOCKED_FLOW_H_
 
 #include "ntop_includes.h"
 
@@ -39,4 +39,4 @@ class NedgeBlockedFlow : public FlowCallback {
   FlowCallbackStatus getStatus() const { return(status_blocked);               }
 };
 
-#endif /* _NEDGEBLOCKED_FLOW_CALLBACK_H_ */
+#endif /* _NEDGEBLOCKED_FLOW_H_ */

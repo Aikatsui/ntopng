@@ -39,4 +39,4 @@ class PotentiallyDangerousFlow : public FlowCallback {
   FlowCallbackStatus getStatus() const { return status_potentially_dangerous;          }
 };
 
-#endif /* _POTENTIALLY_DANGEROUS_FLOW_CALLBACK_H_ */
+#endif /* _POTENTIALLY_DANGEROUS_FLOW_H_ */
