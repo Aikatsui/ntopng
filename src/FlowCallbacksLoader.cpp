@@ -42,6 +42,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new BlacklistedFlowCallback())) cb_all[fcb->getName()] = fcb;
   if((fcb = new LongLivedFlowCallback()))   cb_all[fcb->getName()] = fcb;
   if((fcb = new LowGoodputFlowCallback()))  cb_all[fcb->getName()] = fcb;
+  if((fcb = new TlsCertificateMismatch()))  cb_all[fcb->getName()] = fcb;
 }
 
 /* **************************************************** */

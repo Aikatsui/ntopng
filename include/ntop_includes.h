@@ -411,6 +411,7 @@ using namespace std;
 #include "flow_callbacks/BlacklistedFlowCallback.h"
 #include "flow_callbacks/LongLivedFlowCallback.h"
 #include "flow_callbacks/LowGoodputFlowCallback.h"
+#include "flow_callbacks/TlsCertificateMismatch.h"
 #include "FlowCallbacksLoader.h"
 #include "FlowCallbacksExecutor.h"
 #include "Ntop.h"
