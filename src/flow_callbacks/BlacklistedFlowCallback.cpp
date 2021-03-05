@@ -24,7 +24,7 @@
 void BlacklistedFlowCallback::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   
-  if(true || f->isBlacklistedFlow()) {
+  if(f->isBlacklistedFlow()) {
     u_int16_t c_score, s_score, f_score = 100;
     
     if(f->isBlacklistedServer())
