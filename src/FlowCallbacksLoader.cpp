@@ -49,6 +49,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new ExternalAlertCheck()))          cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRisks()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new LowGoodputFlow()))              cb_all[fcb->getName()] = fcb;
+  if((fcb = new PotentiallyDangerous()))        cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToRemote()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToLocalInsecureProto()))  cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPZeroWindow()))               cb_all[fcb->getName()] = fcb;
@@ -72,6 +73,8 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new TLSCertificateSelfSigned()))    cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSMaliciousSignature()))       cb_all[fcb->getName()] = fcb;
 #endif
+
+  // printCallbacks();
 }
 
 /* **************************************************** */
@@ -145,8 +148,12 @@ void FlowCallbacksLoader::loadConfiguration() {
 	    }
 
 	    cb->enable();
-	  } else
-	    ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
+	  } else {
+	    if(strcmp(callback_key, "new_flow_api_demo") == 0)
+	      ; /* No noise for demos */
+	    else
+	      ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
+	  }
 	}
       } /* enabled */
     }

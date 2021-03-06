@@ -175,13 +175,14 @@ bool FlowCallback::loadConfiguration(json_object *config) {
     }
    */
 
+  severity_id = alert_level_warning; /* Default */
+  
   /* Read and parse the default severity */
   if(json_object_object_get_ex(config, "severity", &json_severity)
      && json_object_object_get_ex(json_severity, "severity_id", &json_severity_id)) {
     if((severity_id = (AlertLevel)json_object_get_int(json_severity_id)) >= ALERT_LEVEL_MAX_LEVEL)
       severity_id = alert_level_emergency;
-  } else
-    rc = false;
+  }
   
   return(rc);
 }
