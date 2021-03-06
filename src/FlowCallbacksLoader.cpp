@@ -49,7 +49,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new ExternalAlertCheck()))          cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRisks()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new LowGoodputFlow()))              cb_all[fcb->getName()] = fcb;
-  if((fcb = new PotentiallyDangerous()))        cb_all[fcb->getName()] = fcb;
+  if((fcb = new PotentiallyDangerousFlow()))    cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToRemote()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToLocalInsecureProto()))  cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPZeroWindow()))               cb_all[fcb->getName()] = fcb;

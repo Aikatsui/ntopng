@@ -750,6 +750,10 @@ class Flow : public GenericHashEntry {
   u_char* getCommunityId(u_char *community_id, u_int community_id_len);
 
   inline FlowTrafficStats* getTrafficStats() { return(&stats); };
+  ndpi_serializer* getAlertJSON(Flow *f);
+  
+  inline char* getTLSCertificateIssuerDN()  { return(isTLSProto() ? protos.tls.issuerDN  : NULL); }
+  inline char* getTLSCertificateSubjectDN() { return(isTLSProto() ? protos.tls.subjectDN : NULL); }
 };
 
 #endif /* _FLOW_H_ */

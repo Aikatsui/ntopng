@@ -68,6 +68,8 @@ void TCPIssues::periodicUpdate(Flow *f) {
   checkFlow(f, &is_client, &is_server, &is_severe, true);
 }
 
+/* ******************************************** */
+
 void TCPIssues::flowEnd(Flow *f) {
   bool is_client, is_server, is_severe;
 
