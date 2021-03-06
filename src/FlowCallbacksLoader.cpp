@@ -20,6 +20,9 @@
  */
 
 #include "ntop_includes.h"
+#include "flow_callbacks_includes.h"
+
+/* **************************************************** */
 
 FlowCallbacksLoader::FlowCallbacksLoader(){
   registerFlowCallbacks();
@@ -58,8 +61,16 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new IEC60870_5_104()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new WebMining()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new ElephantFlow()))                cb_all[fcb->getName()] = fcb;
-  if((fcb = new NotPurged()))                   cb_all[fcb->getName()] = fcb;
-  
+  if((fcb = new NotPurged()))                   cb_all[fcb->getName()] = fcb;  
+
+#ifdef NTOPNG_PRO
+  if((fcb = new BlacklistedFlow()))             cb_all[fcb->getName()] = fcb;
+  if((fcb = new InvalidDNSQuery()))             cb_all[fcb->getName()] = fcb;
+  if((fcb = new LongLivedFlow()))               cb_all[fcb->getName()] = fcb;
+  if((fcb = new TCPProbing()))                  cb_all[fcb->getName()] = fcb;
+  if((fcb = new TLSCertificateSelfSigned()))    cb_all[fcb->getName()] = fcb;
+  if((fcb = new TLSMaliciousSignature()))       cb_all[fcb->getName()] = fcb;
+#endif
 }
 
 /* **************************************************** */

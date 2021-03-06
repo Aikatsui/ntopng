@@ -24,6 +24,7 @@
 
 #include "ntop_includes.h"
 
+
 class LowGoodputFlow : public FlowCallback {
  private:
  public:

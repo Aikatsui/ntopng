@@ -24,6 +24,7 @@
 
 #include "ntop_includes.h"
 
+
 class DeviceProtocolNotAllowed : public FlowCallback {
  private:
   

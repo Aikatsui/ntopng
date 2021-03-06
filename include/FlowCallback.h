@@ -27,11 +27,11 @@
 class FlowCallback {
  private:
   u_int8_t has_protocol_detected:1, has_periodic_update:1, has_flow_end:1, packet_interface_only:1, nedge_exclude:1, nedge_only:1, enabled:1/* , _unused:1 */;
-  AlertLevel severity_id;
-  
+ 
   bool isCallbackCompatibleWithInterface(NetworkInterface *iface);
   
  protected:
+  AlertLevel severity_id;
   bool triggerAlert(Flow *f, FlowCallbackStatus status, AlertLevel severity, u_int16_t alert_score, const char *alert_json);
 
  public:

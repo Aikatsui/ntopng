@@ -20,6 +20,7 @@
  */
 
 #include "ntop_includes.h"
+#include "flow_callbacks_includes.h"
 
 void TCPIssues::protocolDetected(Flow *f) {
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
