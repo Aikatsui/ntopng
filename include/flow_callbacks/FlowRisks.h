@@ -19,21 +19,25 @@
  *
  */
 
+#ifndef _FLOW_RISK_H_
+#define _FLOW_RISK_H_
+
 #include "ntop_includes.h"
-#include "flow_callbacks_includes.h"
 
-void FlowRisk::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+class FlowRisks : public FlowCallback {
+ private:
   
-  if (0 /* TODO Implement check */) {
-    u_int16_t c_score = 0, s_score = 0, f_score = 0;
-    
-    /* TODO Set score */
+ public:
+  FlowRisks() : FlowCallback(ntopng_edition_community,
+			    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+			    true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+  ~FlowRisks() {};
 
-    f->setStatus(this, alert_level_error /* TODO read from the config */,
-      f_score, c_score, s_score);
-  }
-}
+  void protocolDetected(Flow *f);
+  
+  std::string getName()          const { return(std::string("flow_risks")); }
+  ScriptCategory getCategory()   const { return script_category_security;   }
+  FlowCallbackStatus getStatus() const { return status_flow_risk;           }
+};
 
-/* ***************************************************** */
-
+#endif /* _FLOW_RISK_H_ */

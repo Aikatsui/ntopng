@@ -47,7 +47,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new DataExfiltration()))            cb_all[fcb->getName()] = fcb;
   if((fcb = new DeviceProtocolNotAllowed()))    cb_all[fcb->getName()] = fcb;
   if((fcb = new ExternalAlertCheck()))          cb_all[fcb->getName()] = fcb;
-  if((fcb = new FlowRisk()))                    cb_all[fcb->getName()] = fcb;
+  if((fcb = new FlowRisks()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new LowGoodputFlow()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToRemote()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToLocalInsecureProto()))  cb_all[fcb->getName()] = fcb;
