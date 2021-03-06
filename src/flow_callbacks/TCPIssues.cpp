@@ -22,42 +22,41 @@
 #include "ntop_includes.h"
 #include "flow_callbacks_includes.h"
 
-void TCPIssues::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+void TCPIssues::checkFlow(Flow *f) {
+  u_int16_t min_pkt_threshold = 10;
+  u_int16_t normal_issues_ratio = 10; // 1/10
+  u_int16_t severe_issues_ratio = 3;  // 1/3
+  bool is_client = false, is_server = false, is_severe = false;
   
-  if(f->isBlacklistedFlow()) {
-    u_int16_t c_score, s_score, f_score = 100;
-    
-    if(f->isBlacklistedServer())
-      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
-    else
-      c_score = 5, s_score = 10;
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
 
-    f->setStatus(this,
-		 alert_level_error /* TODO: read it from the config */,
-		 f_score, c_score, s_score);
+  if(f->get_protocol() != IPPROTO_TCP) return; /* Non TCP traffic */
+
+  if(f->getCliTcpIssues() > min_pkt_threshold) {
+    u_int64_t pkts = f->get_packets_cli2srv();
+        
+    if((f->getCliTcpIssues() * severe_issues_ratio) > pkts)
+      is_client = true, is_severe = true;
+    else if((f->getCliTcpIssues() * normal_issues_ratio) > pkts)  
+      is_client = true;
+  }
+  
+  if(f->getSrvTcpIssues() > min_pkt_threshold) {
+    u_int64_t pkts = f->get_packets_srv2cli();
+        
+    if((f->getSrvTcpIssues() * severe_issues_ratio) > pkts)
+      is_server = true, is_severe = true;
+    else if((f->getSrvTcpIssues() * normal_issues_ratio) > pkts)  
+      is_server = true;
+  }
+
+  if(is_client || is_server) {
+    u_int16_t fs_score = is_severe ? 20 : 10;
+
+    /* TODO: Missing JSON */
+    f->setStatus(this, is_severe ? severity_id : alert_level_info, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
   }
 }
 
-/* ***************************************************** */
-
-/*
-  "script_conf": {
-  "severity": {
-  "syslog_severity": 3,
-  "severity_id": 5,
-  "i18n_title": "alerts_dashboard.error",
-  "emoji": "❗",
-  "icon": "fas fa-exclamation-triangle text-danger",
-  "label": "badge-danger"
-  }
-  }
-*/
-bool TCPIssues::loadConfiguration(json_object *config) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  FlowCallback::loadConfiguration(config); /* Parse parameters in common */
-
-  /* Parse additional parameters */
-  
-  return(true);
-}
+void TCPIssues::periodicUpdate(Flow *f) { checkFlow(f); }
+void TCPIssues::flowEnd(Flow *f)        { checkFlow(f); }

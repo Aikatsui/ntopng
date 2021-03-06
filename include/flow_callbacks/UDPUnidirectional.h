@@ -26,14 +26,17 @@
 
 class UDPUnidirectional : public FlowCallback {
  private:
+  void checkFlow(Flow *f);
   
  public:
   UDPUnidirectional() : FlowCallback(ntopng_edition_community,
 				     false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				     true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+				     true /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
   ~UDPUnidirectional() {};
-
+  
   void protocolDetected(Flow *f);
+  void periodicActivities(Flow *f);
+  void flowEnd(Flow *f);
   
   std::string getName()          const { return(std::string("udp_unidirectional")); }
   ScriptCategory getCategory()   const { return script_category_security;    }

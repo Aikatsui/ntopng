@@ -23,41 +23,53 @@
 #include "flow_callbacks_includes.h"
 
 void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
+  Host *cli_host = f->get_cli_host();
+  Host *srv_host = f->get_srv_host();
+
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   
-  if(f->isBlacklistedFlow()) {
-    u_int16_t c_score, s_score, f_score = 100;
+  if(cli_host && srv_host && (!cli_host->isLocalHost()) && srv_host->isLocalHost()) {
+    /* Remote to local */
+    bool unsafe;
+    u_int16_t c_score, s_score = 5, f_score = 100;
     
-    if(f->isBlacklistedServer())
-      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
-    else
-      c_score = 5, s_score = 10;
+    switch(f->get_protocol_breed()) {
+    case NDPI_PROTOCOL_UNSAFE:
+      unsafe = true;
+      c_score = 50;
+      break;
 
-    f->setStatus(this,
-		 alert_level_error /* TODO: read it from the config */,
-		 f_score, c_score, s_score);
+    case NDPI_PROTOCOL_POTENTIALLY_DANGEROUS:
+      unsafe = true;
+      c_score = 100;
+      break;
+      
+    case NDPI_PROTOCOL_DANGEROUS:
+      unsafe = true;
+      c_score = SCORE_MAX_SCRIPT_VALUE;
+      break;
+
+    default:
+      unsafe = false;
+      break;
+    }  
+
+    if(!unsafe) {
+      switch(f->get_protocol_category()) {
+      case 100:
+      case 102:
+	c_score = SCORE_MAX_SCRIPT_VALUE;
+	unsafe = true;
+	break;
+
+      default:
+	break;
+      }
+    }
+  
+    if(unsafe)
+      f->setStatus(this, severity_id, f_score, c_score, s_score);
   }
 }
 
 /* ***************************************************** */
-
-/*
-  "script_conf": {
-  "severity": {
-  "syslog_severity": 3,
-  "severity_id": 5,
-  "i18n_title": "alerts_dashboard.error",
-  "emoji": "❗",
-  "icon": "fas fa-exclamation-triangle text-danger",
-  "label": "badge-danger"
-  }
-  }
-*/
-bool RemoteToLocalInsecureProto::loadConfiguration(json_object *config) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  FlowCallback::loadConfiguration(config); /* Parse parameters in common */
-
-  /* Parse additional parameters */
-  
-  return(true);
-}

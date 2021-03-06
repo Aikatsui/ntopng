@@ -26,15 +26,16 @@
 
 class TCPIssues : public FlowCallback {
  private:
+  void checkFlow(Flow *f);
   
  public:
  TCPIssues() : FlowCallback(ntopng_edition_community,
 			    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-			    true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+			    false /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
   ~TCPIssues() {};
 
-  void protocolDetected(Flow *f);
-  bool loadConfiguration(json_object *config);
+  void periodicUpdate(Flow *f);
+  void flowEnd(Flow *f);
   
   std::string getName()          const { return(std::string("tcp_issues_generic")); }
   ScriptCategory getCategory()   const { return script_category_security;    }

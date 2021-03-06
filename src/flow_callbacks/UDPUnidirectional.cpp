@@ -22,22 +22,42 @@
 #include "ntop_includes.h"
 #include "flow_callbacks_includes.h"
 
-void UDPUnidirectional::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+void UDPUnidirectional::checkFlow(Flow *f) {
+  Host *cli_host = f->get_cli_host();
+  Host *srv_host = f->get_srv_host();
+  u_int16_t fs_score = 10;
   
-  if(f->isBlacklistedFlow()) {
-    u_int16_t c_score, s_score, f_score = 100;
-    
-    if(f->isBlacklistedServer())
-      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
-    else
-      c_score = 5, s_score = 10;
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
 
-    f->setStatus(this,
-		 alert_level_error /* TODO: read it from the config */,
-		 f_score, c_score, s_score);
+  if(f->get_protocol() != IPPROTO_UDP)   return; /* Non UDP traffic        */
+  if(f->get_bytes_srv2cli() == 0)        return; /* Two way communications */
+  if((!cli_host) || cli_host->get_ip()->isEmpty()) return; /* No client IP */
+  
+  switch(f->get_detected_protocol().app_protocol) {
+  case NDPI_PROTOCOL_MDNS:
+  case NDPI_PROTOCOL_SYSLOG:
+  case NDPI_PROTOCOL_DHCP:
+  case NDPI_PROTOCOL_DHCPV6:
+  case NDPI_PROTOCOL_RTP:
+  case NDPI_PROTOCOL_SFLOW:
+  case NDPI_PROTOCOL_NETFLOW:
+    return; /* Whitelisted protocol */
+    break;
+
+  default:
+    /* No whitelist */
+    break;
   }
+
+  if(srv_host && (!srv_host->isLocalHost()))
+    fs_score = 50;
+  
+  f->setStatus(this, severity_id, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
 }
 
 /* ***************************************************** */
 
+void UDPUnidirectional::protocolDetected(Flow *f)   { checkFlow(f); }
+void UDPUnidirectional::periodicActivities(Flow *f) { checkFlow(f); }
+void UDPUnidirectional::flowEnd(Flow *f)            { checkFlow(f); }
+  
