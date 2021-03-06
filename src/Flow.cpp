@@ -5154,7 +5154,6 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
   return true;
 }
 
-
 /* *************************************** */
 
 /*
@@ -5162,9 +5161,8 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
  */
 bool Flow::setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   FlowStatus status = fcb->getStatus();
-  ScriptCategory script_category = fcb->getCategory();
-  const char * alert_json = NULL; /* TODO */
-
+  ScriptCategory script_category    = fcb->getCategory();
+  ndpi_serializer *alert_serializer = fcb->getAlertJSON(this);
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
 
   if(status == status_normal)
@@ -5191,9 +5189,21 @@ bool Flow::setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc,
   /* Check if also the predominant status should be updated */
   if(!isFlowAlerted() /* Flow is not yet alerted */
      || getAlertedScore() < flow_inc /* The score of the current alerted status is less than the score of this status */
-     || getAlertedSeverity() < severity)
-    triggerAlert(status, severity, flow_inc, alert_json);
-
+     || getAlertedSeverity() < severity) {
+    u_int32_t json_string_len;
+    char *json_string;
+    
+    if(alert_serializer)
+      json_string = ndpi_serializer_get_buffer(alert_serializer, &json_string_len);
+    else
+      json_string = NULL;
+    
+    triggerAlert(status, severity, flow_inc, json_string);
+  }
+  
+  if(alert_serializer)
+    ndpi_term_serializer(alert_serializer);
+  
   return true;
 }
 

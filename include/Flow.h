@@ -748,6 +748,8 @@ class Flow : public GenericHashEntry {
   }
 
   u_char* getCommunityId(u_char *community_id, u_int community_id_len);
+
+  inline FlowTrafficStats* getTrafficStats() { return(&stats); };
 };
 
 #endif /* _FLOW_H_ */

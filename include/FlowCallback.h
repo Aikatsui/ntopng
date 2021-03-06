@@ -55,6 +55,7 @@ class FlowCallback {
   virtual std::string getName()          const = 0;
   virtual ScriptCategory getCategory()   const = 0;
   virtual FlowCallbackStatus getStatus() const = 0;
+  virtual ndpi_serializer* getAlertJSON(Flow *f) { return(NULL); }
 };
 
 #endif /* _FLOW_CALLBACK_H_ */

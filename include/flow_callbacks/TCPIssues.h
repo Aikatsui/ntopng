@@ -26,7 +26,7 @@
 
 class TCPIssues : public FlowCallback {
  private:
-  void checkFlow(Flow *f);
+  void checkFlow(Flow *f, bool *is_client, bool *is_server, bool *is_severe, bool trigger_alert); 
   
  public:
  TCPIssues() : FlowCallback(ntopng_edition_community,
@@ -40,6 +40,8 @@ class TCPIssues : public FlowCallback {
   std::string getName()          const { return(std::string("tcp_issues_generic")); }
   ScriptCategory getCategory()   const { return script_category_security;    }
   FlowCallbackStatus getStatus() const { return status_blacklisted;        }
+
+  ndpi_serializer* getAlertJSON(Flow *f);
 };
 
 #endif /* _TCP_ISSUES_H_ */
