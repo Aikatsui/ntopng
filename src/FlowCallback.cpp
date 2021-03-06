@@ -23,16 +23,17 @@
 
 /* **************************************************** */
 
-FlowCallback::FlowCallback(bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only,
+FlowCallback::FlowCallback(NtopngEdition _edition,
+			   bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only,
 			   bool _has_protocol_detected, bool _has_periodic_update, bool _has_flow_end) {
-
   if(_packet_interface_only)  packet_interface_only = 1;
   if(_nedge_exclude)          nedge_exclude = 1;
   if(_nedge_only)             nedge_only = 1;
   if(_has_protocol_detected)  has_protocol_detected = 1;
   if(_has_periodic_update)    has_periodic_update = 1;
   if(_has_flow_end)           has_flow_end = 1;
-  
+
+  plugin_edition = _edition;
   enabled = 0, severity_id = alert_level_warning;
 };
 
@@ -97,6 +98,34 @@ bool FlowCallback::triggerAlert(Flow *f, FlowCallbackStatus status, AlertLevel s
 /* **************************************************** */
 
 bool FlowCallback::isCallbackCompatibleWithInterface(NetworkInterface *iface) {
+  /* Check first if the license allows plugin to be enabled */
+  switch(plugin_edition) {
+  case ntopng_edition_community:
+    /* Ok */
+    break;
+     
+  case ntopng_edition_pro:
+    if(ntop->getPrefs()->is_pro_edition() || ntop->getPrefs()->is_enterprise_m_edition() || ntop->getPrefs()->is_enterprise_l_edition())
+      ;
+    else
+      return(false);
+    break;
+     
+  case ntopng_edition_enterprise_m:
+    if(ntop->getPrefs()->is_enterprise_m_edition() || ntop->getPrefs()->is_enterprise_l_edition())
+      ;
+    else
+      return(false);
+    break;
+     
+  case ntopng_edition_enterprise_l:
+    if(ntop->getPrefs()->is_enterprise_l_edition())
+      ;
+    else
+      return(false);
+    break;     
+  }
+  
   if(packet_interface_only && (!iface->isPacketInterface())) return(false);
   if(nedge_only && (!ntop->getPrefs()->is_nedge_edition()))  return(false);
   if(nedge_exclude && ntop->getPrefs()->is_nedge_edition())  return(false);

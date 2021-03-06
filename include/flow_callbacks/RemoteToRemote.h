@@ -28,8 +28,9 @@ class RemoteToRemote : public FlowCallback {
  private:
   
  public:
-  RemoteToRemote() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				  true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+ RemoteToRemote() : FlowCallback(ntopng_edition_community,
+				 false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+				 true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~RemoteToRemote() {};
 
   void protocolDetected(Flow *f);

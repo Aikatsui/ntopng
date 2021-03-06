@@ -67,6 +67,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new BlacklistedFlow()))             cb_all[fcb->getName()] = fcb;
   if((fcb = new InvalidDNSQuery()))             cb_all[fcb->getName()] = fcb;
   if((fcb = new LongLivedFlow()))               cb_all[fcb->getName()] = fcb;
+  if((fcb = new NedgeBlockedFlow()))            cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPProbing()))                  cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSCertificateSelfSigned()))    cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSMaliciousSignature()))       cb_all[fcb->getName()] = fcb;

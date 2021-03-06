@@ -28,8 +28,9 @@ class UDPUnidirectional : public FlowCallback {
  private:
   
  public:
-  UDPUnidirectional() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-					   true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+  UDPUnidirectional() : FlowCallback(ntopng_edition_community,
+				     false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+				     true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~UDPUnidirectional() {};
 
   void protocolDetected(Flow *f);

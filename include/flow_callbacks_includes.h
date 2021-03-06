@@ -47,9 +47,9 @@
 #include "flow_callbacks/WebMining.h"
 
 #ifdef NTOPNG_PRO
-#include "flow_callbacks/BlacklistedFlow.h"
 #include "flow_callbacks/InvalidDNSQuery.h"
 #include "flow_callbacks/LongLivedFlow.h"
+#include "flow_callbacks/NedgeBlockedFlow.h"
 #include "flow_callbacks/TCPProbing.h"
 #include "flow_callbacks/TLSCertificateSelfSigned.h"
 #include "flow_callbacks/TLSMaliciousSignature.h"

@@ -28,8 +28,9 @@ class TLSUnsafeCiphers : public FlowCallback {
  private:
   
  public:
-  TLSUnsafeCiphers() : FlowCallback(true /* Packet Interface only */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				    true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+ TLSUnsafeCiphers() : FlowCallback(ntopng_edition_community,
+				   true /* Packet Interface only */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+				   true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~TLSUnsafeCiphers() {};
 
   void protocolDetected(Flow *f);

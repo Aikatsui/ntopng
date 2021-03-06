@@ -28,7 +28,8 @@ class TCPZeroWindow : public FlowCallback {
  private:
   
  public:
- TCPZeroWindow() : FlowCallback(true /* Packet-interfaces only */, true /* Exclude for nEdge */, false /* NOT only for nEdge */,
+ TCPZeroWindow() : FlowCallback(ntopng_edition_community,
+				true /* Packet-interfaces only */, true /* Exclude for nEdge */, false /* NOT only for nEdge */,
 				false /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
   ~TCPZeroWindow() {};
 

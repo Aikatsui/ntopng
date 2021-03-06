@@ -28,7 +28,8 @@ class FlowRisk : public FlowCallback {
  private:
   
  public:
-  FlowRisk() : FlowCallback(false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+  FlowRisk() : FlowCallback(ntopng_edition_community,
+			    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
 			    true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~FlowRisk() {};
 

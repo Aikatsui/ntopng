@@ -891,4 +891,11 @@ typedef enum {
   service_unknown
 } ServiceAcceptance;
 
+typedef enum {
+  ntopng_edition_community,
+  ntopng_edition_pro,
+  ntopng_edition_enterprise_m,
+  ntopng_edition_enterprise_l
+} NtopngEdition;
+
 #endif /* _NTOP_TYPEDEFS_H_ */
