@@ -52,7 +52,7 @@ NetworkInterface::NetworkInterface(const char *name,
 
   customIftype = custom_interface_type;
   influxdb_ts_exporter = rrd_ts_exporter = NULL;
-  flow_callbacks_executor = NULL;
+  flow_callbacks_executor = prev_flow_callbacks_executor = NULL;
   hooks_engine_reload = false;
   user_scripts_reload = false;
   hooks_engine_next_reload = 0;
@@ -629,6 +629,9 @@ NetworkInterface::~NetworkInterface() {
   if(top_sites)       delete top_sites;
   if(top_os)          delete top_os;
   if(old_sites)       free(old_sites);
+
+  if(prev_flow_callbacks_executor) delete prev_flow_callbacks_executor;
+  if(flow_callbacks_executor)      delete flow_callbacks_executor;
 }
 
 /* **************************************************** */
@@ -5087,18 +5090,16 @@ void NetworkInterface::getNetworksStats(lua_State* vm, AddressTree *allowed_host
 /* Used to give the interface a new callback loader to be used */
 void NetworkInterface::reloadFlowCallbacks(FlowCallbacksLoader *fcbl) {
   /* Reload of the callbacks for this interface (e.g., interface type matters) */
-  FlowCallbacksExecutor *old, *fce = new (std::nothrow) FlowCallbacksExecutor(fcbl, this);
+  FlowCallbacksExecutor *fce = new (std::nothrow) FlowCallbacksExecutor(fcbl, this);
 
   if(fce == NULL) {
     ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to reload callbacks on interface %s", ifname);
     return;
   }
 
-  old = flow_callbacks_executor;
+  if(prev_flow_callbacks_executor) delete prev_flow_callbacks_executor;
+  prev_flow_callbacks_executor = flow_callbacks_executor;
   flow_callbacks_executor = fce;
-
-  if(old)
-    delete old;
 }
 
 /* **************************************************** */

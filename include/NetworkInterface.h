@@ -87,7 +87,7 @@ class NetworkInterface : public AlertableEntity {
 #endif
 
   /* The executor is per-interfaces, and uses the loader to configure itself and execute flow callbacks */
-  FlowCallbacksExecutor *flow_callbacks_executor;
+  FlowCallbacksExecutor *flow_callbacks_executor, *prev_flow_callbacks_executor;
 
   /* Variables used by top sites periodic update */
   u_int8_t current_cycle = 0;
