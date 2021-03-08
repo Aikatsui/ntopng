@@ -1245,10 +1245,10 @@ else
 
    -- ######################################
 
-   local alerted_status = nil
+   local predominant_alert = nil
 
    if flow["flow.alerted"] then
-      alerted_status = flow["alerted_status"]
+      predominant_alert = flow["predominant_alert"]
       local flow_alert = interface.flowAlertByKeyAndHashId(tonumber(flow_key), tonumber(flow_hash_id)) -- new API
 
       if flow_alert then
@@ -1257,7 +1257,7 @@ else
 
       local message = alert_utils.formatAlertMessage(ifid, flow_alert, json.decode(flow_alert["alert_json"]), true --[[ skip live data, we're already in the live flow page --]])
 
-      message = message .. string.format(" [%s: %d]", i18n("score"), flow["alerted_status_score"])
+      message = message .. string.format(" [%s: %d]", i18n("score"), flow["predominant_alert_score"])
 
       print("<tr><th width=30%>"..i18n("flow_details.flow_alerted").."</th><td colspan=2>")
       print(message)
@@ -1265,7 +1265,7 @@ else
    end
 
    -- Print additional flow statuses
-   if flow["status_map"] then
+   if flow["alert_map"] then
       local first = true
       local num_statuses = 0
 
@@ -1273,7 +1273,7 @@ else
 	 if t.meta and t.meta.status_key then
 	    local id = t.meta.status_key
 
-	    if id ~= flow["alerted_status"] and flow["status_map"][id] then
+	    if id ~= flow["predominant_alert"] and flow["alert_map"][id] then
 	       if first then
 		  print("<tr><th width=30%>"..i18n("flow_details.additional_flow_status").."</th><td colspan=2>")
 		  first = false

@@ -48,15 +48,15 @@ class Flow : public GenericHashEntry {
   u_int16_t cli_host_score[MAX_NUM_SCORE_CATEGORIES], srv_host_score[MAX_NUM_SCORE_CATEGORIES], flow_score;
   struct ndpi_flow_struct *ndpiFlow;
   ndpi_risk ndpi_flow_risk_bitmap;
-  /* The bitmap of all possible flow statuses set by flow user script hooks. When no status is set, the 
-     flow is in status_normal.
+  /* The bitmap of all possible flow alerts set by FlowCallback subclasses. When no alert is set, the 
+     flow is in alert_normal.
 
-     A flow can have multiple statuses but at most ONE of its statuses is the alerted status
-     of a flow, which is written into `alerted_status`.
+     A flow can have multiple alerts but at most ONE of its alerts is predominant
+     of a flow, which is written into `predominant_alert`.
   */
-  Bitmap status_map;
-  FlowStatus alerted_status;       /* This is the status which has triggered the alert */
-  u_int16_t  alerted_status_score; /* The score associated to the alerted status */
+  Bitmap alert_map;
+  FlowStatus predominant_alert;       /* This is the status which has triggered the alert */
+  u_int16_t  predominant_alert_score; /* The score associated to the alerted status */
   AlertType alert_type;
   AlertLevel alert_level;
   char *alert_status_info;        /* Alert specific status info */
@@ -271,13 +271,13 @@ class Flow : public GenericHashEntry {
        time_t _first_seen, time_t _last_seen);
   ~Flow();
 
-  inline Bitmap getStatusBitmap()     const     { return(status_map);           }
+  inline Bitmap getStatusBitmap()     const     { return(alert_map);           }
   bool setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
-  bool triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alerted_status_score, const char* alert_json);
+  bool triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
   void postFlowCallbacks();
   FlowStatus getAlertedStatus() const;
   inline AlertLevel getAlertedSeverity() const { return alert_level;          };
-  inline u_int16_t  getAlertedScore()    const { return alerted_status_score; };
+  inline u_int16_t  getAlertedScore()    const { return predominant_alert_score; };
   inline const char* getStatusInfo()     const { return(alert_status_info);   };
 
   bool isBlacklistedFlow()   const;
@@ -626,7 +626,7 @@ class Flow : public GenericHashEntry {
   inline bool isTCPReset()       const { return (!isTCPClosed()
 						 && ((src2dst_tcp_flags & TH_RST) || (dst2src_tcp_flags & TH_RST))); };
   inline bool isTCPRefused()     const { return (!isThreeWayHandshakeOK() && (dst2src_tcp_flags & TH_RST) == TH_RST); };
-  inline bool isFlowAlerted() const      { return(alerted_status != status_normal); };
+  inline bool isFlowAlerted() const      { return(predominant_alert != status_normal); };
   inline void setVRFid(u_int32_t v) { vrfId = v; }
   inline void setSrcAS(u_int32_t v) { srcAS = v; }
   inline void setDstAS(u_int32_t v) { dstAS = v; }

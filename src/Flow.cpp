@@ -47,7 +47,7 @@ Flow::Flow(NetworkInterface *_iface,
   alert_status_info = alert_status_info_shadow = NULL;
   alert_type = alert_none;
   alert_level = alert_level_none;
-  alerted_status = status_normal, alerted_status_score = 0;
+  predominant_alert = status_normal, predominant_alert_score = 0;
   ndpi_flow_risk_bitmap = 0;
   detection_completed = false;
   extra_dissection_completed = false;
@@ -2686,7 +2686,7 @@ void Flow::flow2alertJson(ndpi_serializer *s, time_t now) {
 
   ndpi_serialize_string_boolean(s, "is_flow_alert", true);
   ndpi_serialize_string_int64(s, "alert_tstamp", now);
-  ndpi_serialize_string_int64(s, "flow_status", alerted_status);
+  ndpi_serialize_string_int64(s, "flow_status", predominant_alert);
   ndpi_serialize_string_int32(s, "alert_type", alert_type);
   ndpi_serialize_string_int32(s, "alert_severity", alert_level);
 
@@ -4586,12 +4586,12 @@ void Flow::lua_get_status(lua_State* vm) const {
   lua_push_bool_table_entry(vm, "flow.idle", idle());
   lua_push_uint64_table_entry(vm, "flow.status", getAlertedStatus());
 
-  status_map.lua(vm, "status_map");
+  alert_map.lua(vm, "alert_map");
 
   if(isFlowAlerted()) {
     lua_push_bool_table_entry(vm, "flow.alerted", true);
-    lua_push_uint64_table_entry(vm, "alerted_status", getAlertedStatus());
-    lua_push_uint64_table_entry(vm, "alerted_status_score", getAlertedStatusScore());
+    lua_push_uint64_table_entry(vm, "predominant_alert", getAlertedStatus());
+    lua_push_uint64_table_entry(vm, "predominant_alert_score", getAlertedStatusScore());
     lua_push_uint64_table_entry(vm, "alerted_severity", getAlertedSeverity());
   }
 }
@@ -5145,10 +5145,10 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
   alert_status_info_shadow = alert_json ? strdup(alert_json) : NULL;
 
   // alert_status_info =  alert_status_info_shadow;  /* Set in postFlowCallbacks to avoid races */
-  alerted_status = status;
+  predominant_alert = status;
   alert_level = severity;
   alert_type = status;
-  alerted_status_score = alert_score;
+  predominant_alert_score = alert_score;
 
   /* Success - alert is dumped/notified from lua */
   return true;
@@ -5168,8 +5168,8 @@ bool Flow::setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc,
   if(status == status_normal)
     return false;
 
-  if(!status_map.issetBit(status))
-    status_map.setBit(status);
+  if(!alert_map.issetBit(status))
+    alert_map.setBit(status);
 
   flow_score += flow_inc;
 
@@ -5241,13 +5241,13 @@ void Flow::luaRetrieveExternalAlert(lua_State *vm) {
 /* *************************************** */
 
 FlowStatus Flow::getAlertedStatus() const {
-  return alerted_status;
+  return predominant_alert;
 }
 
 /* *************************************** */
 
 u_int16_t Flow::getAlertedStatusScore() const {
-  return alerted_status_score;
+  return predominant_alert_score;
 }
 
 /* *************************************** */
