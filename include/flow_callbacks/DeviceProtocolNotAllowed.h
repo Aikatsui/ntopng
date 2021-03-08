@@ -38,7 +38,7 @@ class DeviceProtocolNotAllowed : public FlowCallback {
   
   std::string getName()          const { return(std::string("device_protocol_not_allowed")); }
   ScriptCategory getCategory()   const { return script_category_security;    }
-  FlowCallbackStatus getStatus() const { return alert_device_protocol_not_allowed;        }
+  FlowAlertType getAlertType() const { return alert_device_protocol_not_allowed;        }
 };
 
 #endif /* _DEVICE_PROTOCOL_NOT_ALLOWED_H_ */

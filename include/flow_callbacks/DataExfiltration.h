@@ -37,7 +37,7 @@ class DataExfiltration : public FlowCallback {
   
   std::string getName()          const { return(std::string("data_exfiltration")); }
   ScriptCategory getCategory()   const { return script_category_security;          }
-  FlowCallbackStatus getStatus() const { return alert_data_exfiltration;          }
+  FlowAlertType getAlertType() const { return alert_data_exfiltration;          }
 };
 
 #endif /* _DATA_EXFILTRATION_H_ */

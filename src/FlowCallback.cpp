@@ -44,7 +44,7 @@ FlowCallback::~FlowCallback() {
 
 /* **************************************************** */
 
-bool FlowCallback::triggerAlert(Flow *f, FlowCallbackStatus status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
+bool FlowCallback::triggerAlert(Flow *f, FlowAlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
   bool first_alert = !f->isFlowAlerted();
   bool rv = false;
   u_int32_t buflen;

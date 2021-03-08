@@ -40,7 +40,7 @@ class UDPUnidirectional : public FlowCallback {
   
   std::string getName()          const { return(std::string("udp_unidirectional")); }
   ScriptCategory getCategory()   const { return script_category_security;    }
-  FlowCallbackStatus getStatus() const { return alert_blacklisted;        }
+  FlowAlertType getAlertType() const { return alert_blacklisted;        }
 };
 
 #endif /* _UDP_UNIDIRECTIONAL_H_ */

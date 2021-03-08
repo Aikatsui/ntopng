@@ -11,14 +11,15 @@ local NO_PEN = 0
 
 -- ##############################################
 
-local BASE_ID = 256 -- This is the first id reserved for non-flow-statuses.
+local BASE_ID = 1024 -- This is the first id reserved for non-flow-statuses.
 
 -- ##############################################
 
 local alert_keys = {
    ntopng = {
-      -- First 256 (0 to 255) IDs reserved for flow status alerts.
-      -- Flow statuses are a Bitmap of 128 bits. 256 is just to keep a safe margin.
+      -- First 1024 (0 to 1023) IDs reserved for flow status alerts.
+      -- Flow statuses are a Bitmap of 128 bits. 1024 is just to keep a safe margin
+      -- and possibly enlarge Bitmap in the future 
       status_normal                       = {NO_PEN, 0},
       status_blacklisted                  = {NO_PEN, 1},
       status_blacklisted_country          = {NO_PEN, 2},
@@ -76,14 +77,8 @@ local alert_keys = {
       status_ndpi_tls_missing_sni         = {NO_PEN, 54},
 
       --
-      -- Here we have statuses greater than 256 that are reserved for non-flows
+      -- Here we have statuses greater than 1024 that are reserved for non-flows
       --
-
-      -- Add here additional flow statuses when writing ntopng plugins.
-      -- User plugins should use statuses under key user.
-      -- WARNING: no not overlap with user; MAXIMUM status is 58 unless
-      -- class Bitmap in Flow has been extended to accomodate more than
-      -- 64 bits
       alert_blacklisted_country            = {NO_PEN, BASE_ID + 1},
       alert_broadcast_domain_too_large     = {NO_PEN, BASE_ID + 2},
       alert_device_connection              = {NO_PEN, BASE_ID + 3},

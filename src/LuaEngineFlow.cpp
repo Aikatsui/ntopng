@@ -1055,6 +1055,8 @@ static int ntop_flow_is_alerted(lua_State* vm) {
 
 /* ****************************************** */
 
+#if 0
+
 static int ntop_flow_trigger_alert(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
   AlertType status;
@@ -1124,6 +1126,8 @@ static int ntop_flow_trigger_alert(lua_State* vm) {
   lua_push_bool_table_entry(vm, "triggered", triggered);
   return(CONST_LUA_OK);
 }
+
+#endif
 
 /* ****************************************** */
 
@@ -1348,7 +1352,9 @@ static luaL_Reg _ntop_flow_reg[] = {
 
   { "getInfo",                  ntop_flow_get_info                   },
   { "getUnicastInfo",           ntop_flow_get_unicast_info           },
+#if 0
   { "triggerAlert",             ntop_flow_trigger_alert              },
+#endif
   { "getHashEntryId",           ntop_flow_get_hash_entry_id          },
   { "getICMPStatusInfo",        ntop_flow_get_icmp_alert_info       },
   { "getPredominantAlertScore",    ntop_flow_get_alert_score   },

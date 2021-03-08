@@ -38,7 +38,7 @@ class DNSDataExfiltration : public FlowCallback {
   
   std::string getName()          const { return(std::string("dns_data_exfiltration")); }
   ScriptCategory getCategory()   const { return script_category_security;          }
-  FlowCallbackStatus getStatus() const { return alert_dns_data_exfiltration;          }
+  FlowAlertType getAlertType() const { return alert_dns_data_exfiltration;          }
 };
 
 #endif /* DNS__DATA_EXFILTRATION_H_ */

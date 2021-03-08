@@ -37,7 +37,7 @@ class TLSOldProtocolVersion : public FlowCallback {
   
   std::string getName()          const { return(std::string("tls_old_protocol_version")); }
   ScriptCategory getCategory()   const { return script_category_security;                 }
-  FlowCallbackStatus getStatus() const { return alert_tls_old_protocol_version;          }
+  FlowAlertType getAlertType() const { return alert_tls_old_protocol_version;          }
 };
 
 #endif /* _TLS_OLD_PROTOCOL_VERSION_H_ */

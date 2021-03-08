@@ -5110,7 +5110,7 @@ bool Flow::hasDissectedTooManyPackets() {
 
 /* ***************************************************** */
 
-bool Flow::triggerAlert(AlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
+bool Flow::triggerAlert(FlowAlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
   bool first_alert = !isFlowAlerted();
   Host *cli_h = get_cli_host(), *srv_h = get_srv_host();
 
@@ -5157,7 +5157,7 @@ bool Flow::triggerAlert(AlertType status, AlertLevel severity, u_int16_t alert_s
   This method is called by Lua to set score and various other values of the flow
  */
 bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  AlertType status = fcb->getStatus();
+  FlowAlertType status = fcb->getAlertType();
   ScriptCategory script_category    = fcb->getCategory();
   ndpi_serializer *alert_serializer = fcb->getAlertJSON(this);
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
@@ -5237,7 +5237,7 @@ void Flow::luaRetrieveExternalAlert(lua_State *vm) {
 
 /* *************************************** */
 
-AlertType Flow::getPredominantAlert() const {
+FlowAlertType Flow::getPredominantAlert() const {
   return predominant_alert;
 }
 

@@ -415,8 +415,8 @@ typedef enum {
   alert_ndpi_dns_suspicious_traffic  = 53,
   alert_ndpi_tls_missing_sni         = 54,
 
-  STATUS_MAX_STATUS = 128 /* Constrained by `Bitmap alert_map` inside Flow.h and also by `AlertType` in this file */
-} FlowCallbackStatus;
+  MAX_FLOW_ALERT_TYPE = 128 /* Constrained by `Bitmap alert_map` inside Flow.h */
+} FlowAlertType;
 
 typedef enum {
   flow_lua_call_exec_status_ok = 0,                             /* Call executed successfully                                */

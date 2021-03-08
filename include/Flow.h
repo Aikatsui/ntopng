@@ -55,7 +55,7 @@ class Flow : public GenericHashEntry {
      of a flow, which is written into `predominant_alert`.
   */
   Bitmap alert_map;
-  AlertType predominant_alert;       /* This is the predominant alert */
+  FlowAlertType predominant_alert;       /* This is the predominant alert */
   u_int16_t  predominant_alert_score; /* The score associated to the predominant alert */
   AlertLevel alert_level;
   char *alert_info;        /* Alert specific info */
@@ -272,9 +272,9 @@ class Flow : public GenericHashEntry {
 
   inline Bitmap getAlertBitmap()     const     { return(alert_map);           }
   bool setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
-  bool triggerAlert(AlertType status, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
+  bool triggerAlert(FlowAlertType status, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
   void postFlowCallbacks();
-  AlertType getPredominantAlert() const;
+  FlowAlertType getPredominantAlert() const;
   inline AlertLevel getAlertedSeverity() const { return alert_level;          };
   inline u_int16_t  getAlertedScore()    const { return predominant_alert_score; };
   inline const char* GetAlertInfo()     const { return(alert_info);   };

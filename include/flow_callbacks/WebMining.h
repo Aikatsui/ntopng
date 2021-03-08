@@ -37,7 +37,7 @@ class WebMining : public FlowCallback {
   
   std::string getName()          const { return(std::string("web_mining"));  }
   ScriptCategory getCategory()   const { return script_category_security;    }
-  FlowCallbackStatus getStatus() const { return alert_web_mining_detected;  }
+  FlowAlertType getAlertType() const { return alert_web_mining_detected;  }
 };
 
 #endif /* _WEBMINING_H_ */
