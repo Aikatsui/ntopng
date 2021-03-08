@@ -37,9 +37,9 @@ class TCPIssues : public FlowCallback {
   void periodicUpdate(Flow *f);
   void flowEnd(Flow *f);
   
-  std::string getName()          const { return(std::string("tcp_issues_generic")); }
-  ScriptCategory getCategory()   const { return script_category_security;    }
-  FlowAlertType getAlertType() const { return alert_blacklisted;        }
+  std::string getName()        const { return(std::string("tcp_issues_generic")); }
+  ScriptCategory getCategory() const { return script_category_network;            }
+  FlowAlertType getAlertType() const { return alert_tcp_connection_issues;        }
 
   ndpi_serializer* getAlertJSON(Flow *f);
 };
