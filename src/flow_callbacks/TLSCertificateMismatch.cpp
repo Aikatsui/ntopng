@@ -33,7 +33,7 @@ void TLSCertificateMismatch::protocolDetected(Flow *f) {
     else
       c_score = 5, s_score = 10;
 
-    f->setStatus(this,
+    f->setAlert(this,
 		 alert_level_error /* TODO: read it from the config */,
 		 f_score, c_score, s_score);
   }

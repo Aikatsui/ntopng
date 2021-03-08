@@ -35,7 +35,7 @@ static int ntop_flow_get_status(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
   if(!f) return(CONST_LUA_ERROR);
 
-  f->getStatusBitmap().lua(vm, "status_map");
+  f->getAlertBitmap().lua(vm, "alert_map");
 
   return(CONST_LUA_OK);
 }
@@ -43,7 +43,7 @@ static int ntop_flow_get_status(lua_State* vm) {
 /* ****************************************** */
 
 static int ntop_flow_set_status(lua_State* vm) {
-  FlowStatus new_status;
+  AlertType new_status;
   u_int16_t flow_score, cli_score, srv_score;
   Flow *f = ntop_flow_get_context_flow(vm);
   char *script_key;
@@ -52,7 +52,7 @@ static int ntop_flow_set_status(lua_State* vm) {
   if(!f) return(CONST_LUA_ERROR);
 
   if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  new_status = (FlowStatus)lua_tonumber(vm, 1);
+  new_status = (AlertType)lua_tonumber(vm, 1);
 
   if(ntop_lua_check(vm, __FUNCTION__, 2, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
   flow_score = (u_int16_t)lua_tonumber(vm, 2);
@@ -70,7 +70,7 @@ static int ntop_flow_set_status(lua_State* vm) {
      && (ScriptCategory)lua_tointeger(vm, 6) < MAX_NUM_SCRIPT_CATEGORIES)
     script_category = (ScriptCategory)lua_tointeger(vm, 6);
 
-  // lua_pushboolean(vm, f->setStatus(new_status, flow_score, cli_score, srv_score, script_key, script_category));
+  // lua_pushboolean(vm, f->setAlert(new_status, flow_score, cli_score, srv_score, script_key, script_category));
   // TODO: remove. Statuses are only set from C++ callbacks
   lua_pushboolean(vm, false);
 
@@ -80,15 +80,15 @@ static int ntop_flow_set_status(lua_State* vm) {
 /* ****************************************** */
 
 static int ntop_flow_is_status_set(lua_State* vm) {
-  FlowStatus status;
+  AlertType status;
   Flow *f = ntop_flow_get_context_flow(vm);
 
   if(!f) return(CONST_LUA_ERROR);
 
   if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  status = (FlowStatus)lua_tonumber(vm, 1);
+  status = (AlertType)lua_tonumber(vm, 1);
 
-  lua_pushboolean(vm, f->getStatusBitmap().issetBit(status));
+  lua_pushboolean(vm, f->getAlertBitmap().issetBit(status));
   return(CONST_LUA_OK);
 }
 
@@ -402,8 +402,8 @@ static int ntop_flow_get_hash_entry_id(lua_State* vm) {
 /* ****************************************** */
 
 /* Get ICMP information that is specific for the serialization of ICMP data
- * into the flow status_info */
-static int ntop_flow_get_icmp_status_info(lua_State* vm) {
+ * into the flow alert_info */
+static int ntop_flow_get_icmp_alert_info(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
 
   if(!f) return(CONST_LUA_ERROR);
@@ -424,12 +424,12 @@ static int ntop_flow_get_icmp_status_info(lua_State* vm) {
 
 /* ****************************************** */
 
-static int ntop_flow_get_alerted_status_score(lua_State* vm) {
+static int ntop_flow_get_alert_score(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
 
   if(!f) return(CONST_LUA_ERROR);
 
-  lua_pushinteger(vm, f->getAlertedStatusScore());
+  lua_pushinteger(vm, f->getPredominantAlertScore());
 
   return(CONST_LUA_OK);
 }
@@ -466,16 +466,16 @@ static int ntop_flow_get_score(lua_State* vm) {
 
 static int ntop_flow_get_score_info(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
-  const char *status_info;
+  const char *alert_info;
 
   if(!f) return(CONST_LUA_ERROR);
 
-  status_info = f->getStatusInfo();
+  alert_info = f->GetAlertInfo();
 
   lua_newtable(vm);
-  f->getStatusBitmap().lua(vm, "status_map");
+  f->getAlertBitmap().lua(vm, "alert_map");
   lua_push_int32_table_entry(vm, "score", f->getScore());
-  if(status_info) lua_push_str_table_entry(vm, "status_info", status_info);
+  if(alert_info) lua_push_str_table_entry(vm, "alert_info", alert_info);
 
   return(CONST_LUA_OK);
 }
@@ -1034,12 +1034,12 @@ static int ntop_flow_get_mud_info(lua_State* vm) {
 
 /* ****************************************** */
 
-static int ntop_flow_get_alerted_status(lua_State* vm) {
+static int ntop_flow_get_alert(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
 
   if(!f) return(CONST_LUA_ERROR);
 
-  lua_pushinteger(vm, f->getAlertedStatus());
+  lua_pushinteger(vm, f->getPredominantAlert());
   return(CONST_LUA_OK);
 }
 
@@ -1057,12 +1057,12 @@ static int ntop_flow_is_alerted(lua_State* vm) {
 
 static int ntop_flow_trigger_alert(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
-  FlowStatus status;
+  AlertType status;
   AlertType atype;
   AlertLevel severity;
-  u_int16_t alerted_status_score;
+  u_int16_t alert_score;
   bool triggered = false;
-  const char *status_info = NULL;
+  const char *alert_info = NULL;
   u_int32_t buflen;
   time_t now;
   bool first_alert;
@@ -1073,7 +1073,7 @@ static int ntop_flow_trigger_alert(lua_State* vm) {
   first_alert = !f->isFlowAlerted();
 
   if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  status = (FlowStatus)lua_tonumber(vm, 1);
+  status = (AlertType)lua_tonumber(vm, 1);
 
   if(ntop_lua_check(vm, __FUNCTION__, 2, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
   atype = (AlertType)lua_tonumber(vm, 2);
@@ -1082,7 +1082,7 @@ static int ntop_flow_trigger_alert(lua_State* vm) {
   severity = (AlertLevel)lua_tointeger(vm, 3);
 
   if(ntop_lua_check(vm, __FUNCTION__, 4, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  alerted_status_score = lua_tointeger(vm, 4);
+  alert_score = lua_tointeger(vm, 4);
 
   if(ntop_lua_check(vm, __FUNCTION__, 5, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
   now = (time_t) lua_tonumber(vm, 5);
@@ -1091,11 +1091,11 @@ static int ntop_flow_trigger_alert(lua_State* vm) {
   status_always_notify = lua_toboolean(vm, 6);
 
   if(lua_type(vm, 7) == LUA_TSTRING)
-    status_info = lua_tostring(vm, 7);
+    alert_info = lua_tostring(vm, 7);
 
   lua_newtable(vm);
 
-  if(f->triggerAlert(status, severity, alerted_status_score, status_info)) {
+  if(f->triggerAlert(status, severity, alert_score, alert_info)) {
     /* The alert was successfully triggered */
     triggered = true;
 
@@ -1287,9 +1287,9 @@ void lua_push_rawdata_table_entry(lua_State *L, const char *key, u_int32_t len, 
 static luaL_Reg _ntop_flow_reg[] = {
 /* Public User Scripts API, documented at doc/src/api/lua_c/flow_user_scripts/flow.lua */
   { "getStatus",                ntop_flow_get_status                 },
-  { "setStatus",                ntop_flow_set_status                 },
+  { "setAlert",                ntop_flow_set_status                 },
   { "isStatusSet",              ntop_flow_is_status_set              },
-  { "getAlertedStatus",         ntop_flow_get_alerted_status         },
+  { "getPredominantAlert",         ntop_flow_get_alert         },
   { "isAlerted",                ntop_flow_is_alerted                 },
   
   { "isClientUnicast",          ntop_flow_is_client_unicast          },
@@ -1350,8 +1350,8 @@ static luaL_Reg _ntop_flow_reg[] = {
   { "getUnicastInfo",           ntop_flow_get_unicast_info           },
   { "triggerAlert",             ntop_flow_trigger_alert              },
   { "getHashEntryId",           ntop_flow_get_hash_entry_id          },
-  { "getICMPStatusInfo",        ntop_flow_get_icmp_status_info       },
-  { "getAlertedStatusScore",    ntop_flow_get_alerted_status_score   },
+  { "getICMPStatusInfo",        ntop_flow_get_icmp_alert_info       },
+  { "getPredominantAlertScore",    ntop_flow_get_alert_score   },
   { "getClientTCPIssues",       ntop_flow_get_cli_tcp_issues         },
   { "getServerTCPIssues",       ntop_flow_get_srv_tcp_issues         },
   { "getClientRetrPercentage",  ntop_flow_get_cli_retr_percentage    },

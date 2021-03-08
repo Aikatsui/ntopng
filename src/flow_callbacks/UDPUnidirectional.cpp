@@ -52,7 +52,7 @@ void UDPUnidirectional::checkFlow(Flow *f) {
   if(srv_host && (!srv_host->isLocalHost()))
     fs_score = 50;
   
-  f->setStatus(this, severity_id, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
+  f->setAlert(this, severity_id, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
 }
 
 /* ***************************************************** */

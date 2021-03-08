@@ -55,12 +55,11 @@ class Flow : public GenericHashEntry {
      of a flow, which is written into `predominant_alert`.
   */
   Bitmap alert_map;
-  FlowStatus predominant_alert;       /* This is the status which has triggered the alert */
-  u_int16_t  predominant_alert_score; /* The score associated to the alerted status */
-  AlertType alert_type;
+  AlertType predominant_alert;       /* This is the predominant alert */
+  u_int16_t  predominant_alert_score; /* The score associated to the predominant alert */
   AlertLevel alert_level;
-  char *alert_status_info;        /* Alert specific status info */
-  char *alert_status_info_shadow, *custom_flow_info;
+  char *alert_info;        /* Alert specific info */
+  char *alert_info_shadow, *custom_flow_info;
   struct {
     struct ndpi_analyze_struct *c2s, *s2c;
   } entropy;
@@ -271,14 +270,14 @@ class Flow : public GenericHashEntry {
        time_t _first_seen, time_t _last_seen);
   ~Flow();
 
-  inline Bitmap getStatusBitmap()     const     { return(alert_map);           }
-  bool setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
-  bool triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
+  inline Bitmap getAlertBitmap()     const     { return(alert_map);           }
+  bool setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
+  bool triggerAlert(AlertType status, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
   void postFlowCallbacks();
-  FlowStatus getAlertedStatus() const;
+  AlertType getPredominantAlert() const;
   inline AlertLevel getAlertedSeverity() const { return alert_level;          };
   inline u_int16_t  getAlertedScore()    const { return predominant_alert_score; };
-  inline const char* getStatusInfo()     const { return(alert_status_info);   };
+  inline const char* GetAlertInfo()     const { return(alert_info);   };
 
   bool isBlacklistedFlow()   const;
   bool isBlacklistedClient() const;
@@ -634,7 +633,7 @@ class Flow : public GenericHashEntry {
   inline void setNextAdjacentAS(u_int32_t v) { nextAdjacentAS = v; }
 
   inline ViewInterfaceFlowStats* getViewInterfaceFlowStats() { return(viewFlowStats); }
-  u_int16_t getAlertedStatusScore() const;
+  u_int16_t getPredominantAlertScore() const;
 
   inline void setFlowNwLatency(const struct timeval * const tv, bool client) {
     if(client) {

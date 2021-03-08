@@ -350,9 +350,6 @@ struct string_list {
   struct string_list *prev, *next;
 };
 
-/* Status are handled in Lua (flow_consts.lua) */
-typedef u_int8_t FlowStatus;
-
 typedef enum {
   flow_callback_protocol_detected = 0,
   flow_callback_periodic_update,
@@ -418,7 +415,7 @@ typedef enum {
   status_ndpi_dns_suspicious_traffic  = 53,
   status_ndpi_tls_missing_sni         = 54,
 
-  STATUS_MAX_STATUS = 128 /* Constrained by `Bitmap status_map` inside Flow.h and also by `FlowStatus` in this file */
+  STATUS_MAX_STATUS = 128 /* Constrained by `Bitmap status_map` inside Flow.h and also by `AlertType` in this file */
 } FlowCallbackStatus;
 
 typedef enum {

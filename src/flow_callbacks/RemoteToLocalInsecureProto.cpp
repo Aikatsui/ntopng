@@ -68,7 +68,7 @@ void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
     }
   
     if(unsafe)
-      f->setStatus(this, severity_id, f_score, c_score, s_score);
+      f->setAlert(this, severity_id, f_score, c_score, s_score);
   }
 }
 

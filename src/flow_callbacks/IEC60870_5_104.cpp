@@ -28,7 +28,7 @@ void IEC60870_5_104::protocolDetected(Flow *f) {
   if(0 /* TODO */) {
     u_int16_t c_score = 50, s_score = 10, f_score = 50;
 
-    f->setStatus(this,
+    f->setAlert(this,
 		 alert_level_error /* TODO: read it from the config */,
 		 f_score, c_score, s_score);
   }

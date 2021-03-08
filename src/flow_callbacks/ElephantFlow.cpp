@@ -28,7 +28,7 @@ void ElephantFlow::protocolDetected(Flow *f) {
   if(0 /* TODO */) {
     u_int16_t c_score = 20, s_score = 5, f_score = 20;
 
-    f->setStatus(this,
+    f->setAlert(this,
 		 alert_level_error /* TODO: read it from the config */,
 		 f_score, c_score, s_score);
   }

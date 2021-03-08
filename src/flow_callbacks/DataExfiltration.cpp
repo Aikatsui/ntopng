@@ -30,7 +30,7 @@ void DataExfiltration::periodicUpdate(Flow *f) {
     
     /* TODO Set score */
 
-    f->setStatus(this, alert_level_error /* TODO read from the config */,
+    f->setAlert(this, alert_level_error /* TODO read from the config */,
       f_score, c_score, s_score);
   }
 }

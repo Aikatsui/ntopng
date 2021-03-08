@@ -51,7 +51,7 @@ end
 -- @param alert_type_params Table `alert_type_params` as built in the `:init` method
 -- @return A human-readable string
 function alert_elephant_local_to_remote.format(ifid, alert, alert_type_params)
-   return formatElephantFlowStatus(alert_type_params, true --[[ l2r ]])
+   return formatElephantAlertType(alert_type_params, true --[[ l2r ]])
 end
 
 -- #######################################################

@@ -55,7 +55,7 @@ void TCPIssues::checkFlow(Flow *f, bool *is_client, bool *is_server, bool *is_se
     if(*is_client || *is_server) {
       u_int16_t fs_score = *is_severe ? 20 : 10;
       
-      f->setStatus(this, *is_severe ? severity_id : alert_level_info, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
+      f->setAlert(this, *is_severe ? severity_id : alert_level_info, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
     }
   }
 }

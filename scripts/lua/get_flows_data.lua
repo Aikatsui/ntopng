@@ -267,8 +267,8 @@ for _key, value in ipairs(flows_stats) do -- pairsByValues(vals, funct) do
 
    local column_proto_l4 = ''
    if value["predominant_alert"] then
-      local status_info = alert_consts.statusTypeLabel(value["predominant_alert"], true)
-      column_proto_l4 = alert_consts.statusTypeIcon(value["predominant_alert"], value["alerted_severity"]) -- "<i class='fas fa-exclamation-triangle' style=' title='"..noHtml(status_info) .."'></i> "
+      local alert_info = alert_consts.alertTypeLabel(value["predominant_alert"], true)
+      column_proto_l4 = alert_consts.alertTypeIcon(value["predominant_alert"], value["alerted_severity"]) -- "<i class='fas fa-exclamation-triangle' style=' title='"..noHtml(alert_info) .."'></i> "
    end
 
    column_proto_l4 = column_proto_l4..value["proto.l4"]

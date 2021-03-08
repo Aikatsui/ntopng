@@ -51,8 +51,8 @@ end
 
 -- ##############################################
 
-function Alert:_build_flow_status_info()
-   local flow_status_info = {
+function Alert:_build_alert_type_info()
+   local alert_type_info = {
       status_type = {
 	 status_key = self.meta.status_key,
 	 alert_type = self.meta,
@@ -63,14 +63,14 @@ function Alert:_build_flow_status_info()
    }
 
    if self.alert_attacker ~= nil then
-      flow_status_info.alert_type_params.alert_attacker = self.alert_attacker
+      alert_type_info.alert_type_params.alert_attacker = self.alert_attacker
    end
 
    if self.alert_victim ~= nil then
-      flow_status_info.alert_type_params.alert_victim = self.alert_victim
+      alert_type_info.alert_type_params.alert_victim = self.alert_victim
    end
 
-   return flow_status_info
+   return alert_type_info
 end
 
 -- ##############################################
@@ -106,7 +106,7 @@ function Alert:trigger_status(cli_score, srv_score, flow_score)
       return
    end
 
-   alerts_api.trigger_status(self:_build_flow_status_info(), self.alert_severity, cli_score, srv_score, flow_score)
+   alerts_api.trigger_status(self:_build_alert_type_info(), self.alert_severity, cli_score, srv_score, flow_score)
 end
 
 -- ##############################################

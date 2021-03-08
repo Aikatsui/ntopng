@@ -33,7 +33,7 @@ void TLSOldProtocolVersion::protocolDetected(Flow *f) {
    
     //TODO pass f->getTLSVersion()
 
-    f->setStatus(this, getSeverity(), f_score, c_score, s_score);
+    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 
 }

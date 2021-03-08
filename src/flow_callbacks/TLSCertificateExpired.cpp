@@ -39,7 +39,7 @@ void TLSCertificateExpired::protocolDetected(Flow *f) {
 
       //TODO pass flow.getTLSInfo()
 
-      f->setStatus(this, getSeverity(), f_score, c_score, s_score);
+      f->setAlert(this, getSeverity(), f_score, c_score, s_score);
     }
   }
 }

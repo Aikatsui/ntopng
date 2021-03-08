@@ -3521,8 +3521,8 @@ static bool flow_matches(Flow *f, struct flowHostRetriever *retriever) {
   int ndpi_proto, ndpi_cat;
   u_int16_t port;
   int16_t local_network_id;
-  u_int16_t vlan_id = 0, pool_filter, flow_status_filter;
-  AlertLevelGroup flow_status_severity_filter = alert_level_group_none;
+  u_int16_t vlan_id = 0, pool_filter, alert_type_filter;
+  AlertLevelGroup alert_type_severity_filter = alert_level_group_none;
   u_int8_t ip_version;
   u_int8_t l4_protocol;
   u_int8_t *mac_filter;
@@ -3721,18 +3721,18 @@ static bool flow_matches(Flow *f, struct flowHostRetriever *retriever) {
 
     /* Flow Status filter */
     if(retriever->pag
-       && retriever->pag->flowStatusFilter(&flow_status_filter)
-       && !f->getStatusBitmap().issetBit(flow_status_filter))
+       && retriever->pag->flowStatusFilter(&alert_type_filter)
+       && !f->getAlertBitmap().issetBit(alert_type_filter))
       return(false);
 
     /* Flow Status severity filter */
     if(retriever->pag
-       && retriever->pag->flowStatusFilter(&flow_status_severity_filter)) {
+       && retriever->pag->flowStatusFilter(&alert_type_severity_filter)) {
       if(!f->isFlowAlerted()
 	 || f->getAlertedSeverity() == alert_level_none
-	 || (flow_status_severity_filter == alert_level_group_notice_or_lower  && f->getAlertedSeverity() > alert_level_notice)
-	 || (flow_status_severity_filter == alert_level_group_warning          && f->getAlertedSeverity() != alert_level_warning)
-	 || (flow_status_severity_filter == alert_level_group_error_or_higher  && f->getAlertedSeverity() < alert_level_error)) 
+	 || (alert_type_severity_filter == alert_level_group_notice_or_lower  && f->getAlertedSeverity() > alert_level_notice)
+	 || (alert_type_severity_filter == alert_level_group_warning          && f->getAlertedSeverity() != alert_level_warning)
+	 || (alert_type_severity_filter == alert_level_group_error_or_higher  && f->getAlertedSeverity() < alert_level_error)) 
 	return(false);
     }
 

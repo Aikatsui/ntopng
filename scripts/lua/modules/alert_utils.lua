@@ -508,24 +508,24 @@ end
 -- #################################
 
 -- Return more information for the flow alert description
-local function getFlowStatusInfo(record, status_info)
+local function getFlowStatusInfo(record, alert_info)
    local res = ""
 
    local l7proto_name = interface.getnDPIProtoName(tonumber(record["l7_proto"]) or 0)
 
    if l7proto_name == "ICMP" then -- is ICMPv4
       -- TODO: old format - remove when the all the flow alers will be generated in lua
-      local type_code = {type = status_info["icmp.icmp_type"], code = status_info["icmp.icmp_code"]}
+      local type_code = {type = alert_info["icmp.icmp_type"], code = alert_info["icmp.icmp_code"]}
 
-      if table.empty(type_code) and status_info["icmp"] then
+      if table.empty(type_code) and alert_info["icmp"] then
 	 -- This is the new format created when setting the alert from lua
-	 type_code = {type = status_info["icmp"]["type"], code = status_info["icmp"]["code"]}
+	 type_code = {type = alert_info["icmp"]["type"], code = alert_info["icmp"]["code"]}
       end
 
-      if status_info["icmp.unreach.src_ip"] then -- TODO: old format to be removed
-	 res = string.format("[%s]", i18n("icmp_page.icmp_port_unreachable_extra", {unreach_host=status_info["icmp.unreach.dst_ip"], unreach_port=status_info["icmp.unreach.dst_port"], unreach_protocol = l4_proto_to_string(status_info["icmp.unreach.protocol"])}))
-      elseif status_info["icmp"] and status_info["icmp"]["unreach"] then -- New format
-	 res = string.format("[%s]", i18n("icmp_page.icmp_port_unreachable_extra", {unreach_host=status_info["icmp"]["unreach"]["dst_ip"], unreach_port=status_info["icmp"]["unreach"]["dst_port"], unreach_protocol = l4_proto_to_string(status_info["icmp"]["unreach"]["protocol"])}))
+      if alert_info["icmp.unreach.src_ip"] then -- TODO: old format to be removed
+	 res = string.format("[%s]", i18n("icmp_page.icmp_port_unreachable_extra", {unreach_host=alert_info["icmp.unreach.dst_ip"], unreach_port=alert_info["icmp.unreach.dst_port"], unreach_protocol = l4_proto_to_string(alert_info["icmp.unreach.protocol"])}))
+      elseif alert_info["icmp"] and alert_info["icmp"]["unreach"] then -- New format
+	 res = string.format("[%s]", i18n("icmp_page.icmp_port_unreachable_extra", {unreach_host=alert_info["icmp"]["unreach"]["dst_ip"], unreach_port=alert_info["icmp"]["unreach"]["dst_port"], unreach_protocol = l4_proto_to_string(alert_info["icmp"]["unreach"]["protocol"])}))
       else
 	 res = string.format("[%s]", icmp_utils.get_icmp_label(4 --[[ ipv4 --]], type_code["type"], type_code["code"]))
       end
@@ -548,8 +548,8 @@ local function formatRawFlow(ifid, alert, alert_json)
    end
 
    -- TODO: adapter just to be compatible with old alerts, can be removed at some point
-   if alert_json["status_info"] then
-      alert_json = json.decode(alert_json["status_info"])
+   if alert_json["alert_info"] then
+      alert_json = json.decode(alert_json["alert_info"])
    end
 
    -- active flow lookup
@@ -606,7 +606,7 @@ local function formatRawFlow(ifid, alert, alert_json)
    end
 
    if alert_json then
-      flow = flow..getFlowStatusInfo(alert, alert_json)
+      flow = flow..getAlertTypeInfo(alert, alert_json)
    end
 
    return flow
@@ -1893,7 +1893,7 @@ end
 -- #################################
 
 function alert_utils.getConfigsetAlertLink(alert_json)
-   local info = alert_json.alert_generation or (alert_json.status_info and alert_json.status_info.alert_generation)
+   local info = alert_json.alert_generation or (alert_json.alert_info and alert_json.alert_info.alert_generation)
 
    if(info and isAdministrator()) then
 	 return(' <a href="'.. ntop.getHttpPrefix() ..'/lua/admin/edit_configset.lua?'..

@@ -31,7 +31,7 @@ void TLSUnsafeCiphers::protocolDetected(Flow *f) {
     u_int16_t s_score = 5;
     u_int16_t f_score = 40;
     
-    f->setStatus(this, getSeverity(), f_score, c_score, s_score);
+    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 }
 

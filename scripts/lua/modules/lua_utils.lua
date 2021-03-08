@@ -2802,25 +2802,25 @@ end
 
 -- ###############################################
 
-function formatElephantFlowStatus(flowstatus_info, local2remote)
+function formatElephantAlertType(flowalert_info, local2remote)
    local threshold = ""
    local res = ""
 
-   if not flowstatus_info then
+   if not flowalert_info then
       return i18n("flow_details.elephant_flow")
    end
 
    if local2remote then
       res = i18n("flow_details.elephant_flow_l2r")
 
-      if flowstatus_info["elephant.l2r_threshold"] then
-	 threshold = flowstatus_info["elephant.l2r_threshold"]
+      if flowalert_info["elephant.l2r_threshold"] then
+	 threshold = flowalert_info["elephant.l2r_threshold"]
       end
    else
       res = i18n("flow_details.elephant_flow_r2l")
 
-      if flowstatus_info["elephant.r2l_threshold"] then
-	 threshold = flowstatus_info["elephant.r2l_threshold"]
+      if flowalert_info["elephant.r2l_threshold"] then
+	 threshold = flowalert_info["elephant.r2l_threshold"]
       end
    end
 

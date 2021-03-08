@@ -333,7 +333,7 @@ end
 -- See alert_consts.resetDefinitions()
 alert_consts.alert_types = {}
 local alerts_by_id      = {} -- All available alerts keyed by alert id
-local alerts_by_flow_status_id = {} -- All available FLOW alerts keyed by flow status id
+local alerts_by_alert_type_id = {} -- All available FLOW alerts keyed by flow status id
 
 local function loadAlertsDefs()
    if(false) then
@@ -417,7 +417,7 @@ function alert_consts.loadDefinition(def_script, mod_fname, script_path)
 	   return(false)
    end
 
-   if def_script.meta.status_key and alerts_by_flow_status_id[def_script.meta.status_key] then
+   if def_script.meta.status_key and alerts_by_alert_type_id[def_script.meta.status_key] then
 	   traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Status key %d redefined, skipping in %s from %s", def_script.meta.status_key, mod_fname, script_path))
 	   return(false)
    end
@@ -427,7 +427,7 @@ function alert_consts.loadDefinition(def_script, mod_fname, script_path)
    alerts_by_id[parsed_alert_key] = mod_fname
    if def_script.meta.status_key then
 	   -- Add the module to the modules table keyd by flow status - if flow status is present for this alert
-	   alerts_by_flow_status_id[def_script.meta.status_key] = mod_fname
+	   alerts_by_alert_type_id[def_script.meta.status_key] = mod_fname
    end
 
    -- Success
@@ -453,23 +453,6 @@ function alert_consts.alertTypeLabel(v, nohtml)
 
    return(i18n("unknown"))
 end
- 
--- ##############################################
-
--- @brief Returns the label of an alert, given the flow status the alert is associated to
-function alert_consts.statusTypeLabel(flow_status_key, nohtml)
-   if flow_status_key == 0 then
-      return i18n("flows_page.normal")
-   end
-
-   local alert_key = alert_consts.flowStatusTypeRaw(flow_status_key)
-
-   if alert_key then
-      return alert_consts.alertTypeLabel(alert_consts.alertType(alert_key), nohtml)
-   end
-
-   return i18n("unknown")
-end
 
 -- ##############################################
 
@@ -477,12 +460,12 @@ end
 -- @param `status info`, A human readable (localized) status info
 -- @param `alerted_severity`, Integer severity of the alert associated to this status
 -- @return The HTML with icon and ALT text, or empty if no icon is available
-function alert_consts.statusTypeIcon(status_info, alerted_severity)
+function alert_consts.alertTypeIcon(alert_info, alerted_severity)
    local severity = alert_consts.alertSeverityById(alerted_severity)
 
    if severity then
       local alert_consts = require "alert_consts"
-      return "<i class='"..severity.icon.."' title='"..noHtml(alert_consts.statusTypeLabel(status_info, true)) .."'></i> "
+      return "<i class='"..severity.icon.."' title='"..noHtml(alert_consts.alertTypeLabel(alert_info, true)) .."'></i> "
    end
 
    return ""
@@ -572,9 +555,9 @@ end
 
 -- ################################################################################
  
-function alert_consts.flowStatusTypeRaw(flow_status_type_id)
-   flow_status_type_id = tonumber(flow_status_type_id)
-   return alerts_by_flow_status_id[flow_status_type_id]
+function alert_consts.flowStatusTypeRaw(alert_type_type_id)
+   alert_type_type_id = tonumber(alert_type_type_id)
+   return alerts_by_alert_type_id[alert_type_type_id]
 end
 
  -- ################################################################################

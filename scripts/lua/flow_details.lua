@@ -802,13 +802,13 @@ else
         print("</tr>")
       end
 
-      local status_info = flow2statusinfo(flow)
+      local alert_info = flow2alertinfo(flow)
       local forbidden_proto = flow["proto.ndpi_id"]
       local forbidden_peer = nil
 
-      if status_info then
-	 forbidden_proto = status_info["devproto_forbidden_id"] or forbidden_proto
-	 forbidden_peer = status_info["devproto_forbidden_peer"]
+      if alert_info then
+	 forbidden_proto = alert_info["devproto_forbidden_id"] or forbidden_proto
+	 forbidden_peer = alert_info["devproto_forbidden_peer"]
       end
 
       local cli_mac = flow["cli.mac"] and interface.getMacInfo(flow["cli.mac"])
@@ -1275,7 +1275,7 @@ else
 
 	    if id ~= flow["predominant_alert"] and flow["alert_map"][id] then
 	       if first then
-		  print("<tr><th width=30%>"..i18n("flow_details.additional_flow_status").."</th><td colspan=2>")
+		  print("<tr><th width=30%>"..i18n("flow_details.additional_alert_type").."</th><td colspan=2>")
 		  first = false
 	       end
 

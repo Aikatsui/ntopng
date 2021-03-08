@@ -44,8 +44,7 @@ Flow::Flow(NetworkInterface *_iface,
   cli_ip_addr = srv_ip_addr = NULL;
   good_tls_hs = true, flow_dropped_counts_increased = false, vrfId = 0;
   srcAS = dstAS  = prevAdjacentAS = nextAdjacentAS = 0;
-  alert_status_info = alert_status_info_shadow = NULL;
-  alert_type = alert_none;
+  alert_info = alert_info_shadow = NULL;
   alert_level = alert_level_none;
   predominant_alert = status_normal, predominant_alert_score = 0;
   ndpi_flow_risk_bitmap = 0;
@@ -373,8 +372,8 @@ Flow::~Flow() {
   freeDPIMemory();
   if(icmp_info) delete(icmp_info);
   if(external_alert) free(external_alert);
-  if(alert_status_info) free(alert_status_info);
-  if(alert_status_info_shadow) free(alert_status_info_shadow);
+  if(alert_info) free(alert_info);
+  if(alert_info_shadow) free(alert_info_shadow);
 }
 
 /* *************************************** */
@@ -2156,8 +2155,8 @@ void Flow::lua(lua_State* vm, AddressTree * ptree,
       }
     }
 
-    if(alert_status_info)
-      lua_push_str_table_entry(vm, "status_info", alert_status_info);
+    if(alert_info)
+      lua_push_str_table_entry(vm, "alert_info", alert_info);
 
     lua_get_risk_info(vm, true);
     lua_entropy(vm);
@@ -2362,7 +2361,7 @@ void Flow::sumStats(nDPIStats *ndpi_stats, FlowStats *status_stats) {
     ndpi_stats->incFlowsStats(detected_protocol.master_protocol);
   }
 
-  status_stats->incStats(getStatusBitmap(), protocol, alert_level, getCli2SrvDSCP(), getSrv2CliDSCP());
+  status_stats->incStats(getAlertBitmap(), protocol, alert_level, getCli2SrvDSCP(), getSrv2CliDSCP());
 }
 
 /* *************************************** */
@@ -2627,7 +2626,7 @@ json_object* Flow::flow2json() {
 #endif
 
     json_object_object_add(my_object, "INTERFACE_ID", json_object_new_int(iface->get_id()));
-    json_object_object_add(my_object, "STATUS", json_object_new_int((u_int8_t)getAlertedStatus()));
+    json_object_object_add(my_object, "STATUS", json_object_new_int((u_int8_t)getPredominantAlert()));
   }
 
   return(my_object);
@@ -2676,7 +2675,7 @@ void Flow::flow2alertJson(ndpi_serializer *s, time_t now) {
   ndpi_init_serializer(&json_info, ndpi_serialization_format_json);
 
   /* AlertsManager::storeFlowAlert requires a string */
-  ndpi_serialize_string_string(s, "alert_json", alert_status_info ? alert_status_info : "");
+  ndpi_serialize_string_string(s, "alert_json", alert_info ? alert_info : "");
   ndpi_term_serializer(&json_info);
 
   ndpi_serialize_string_int32(s, "ifid", iface->get_id());
@@ -2686,8 +2685,7 @@ void Flow::flow2alertJson(ndpi_serializer *s, time_t now) {
 
   ndpi_serialize_string_boolean(s, "is_flow_alert", true);
   ndpi_serialize_string_int64(s, "alert_tstamp", now);
-  ndpi_serialize_string_int64(s, "flow_status", predominant_alert);
-  ndpi_serialize_string_int32(s, "alert_type", alert_type);
+  ndpi_serialize_string_int64(s, "alert_type", predominant_alert);
   ndpi_serialize_string_int32(s, "alert_severity", alert_level);
 
   // alert_entity MUST be in sync with alert_consts.lua flow alert entity
@@ -2974,16 +2972,16 @@ void Flow::postFlowCallbacks() {
   /* See if it is time to trigger an alert */
 
   /* TODO: Implement checks on bitmap changes, not just on predominant status changes */
-  if(getAlertedStatus() == status_normal)
+  if(getPredominantAlert() == status_normal)
     return; /* Nothing to do */
 
   /* Make the shadow status JSON the official alerted status JSON */
-  alert_status_info = alert_status_info_shadow;
+  alert_info = alert_info_shadow;
 
   /* Free the shadow that is now the official alerted status JSON */
-  if(alert_status_info_shadow){
-    free(alert_status_info_shadow);
-    alert_status_info_shadow = NULL;
+  if(alert_info_shadow){
+    free(alert_info_shadow);
+    alert_info_shadow = NULL;
   }
 
   bool first_alert = true; /* TODO: implement check !f->isFlowAlerted(); */
@@ -4584,14 +4582,14 @@ void Flow::fillZmqFlowCategory(const ParsedFlow *zflow, ndpi_protocol *res) cons
 
 void Flow::lua_get_status(lua_State* vm) const {
   lua_push_bool_table_entry(vm, "flow.idle", idle());
-  lua_push_uint64_table_entry(vm, "flow.status", getAlertedStatus());
+  lua_push_uint64_table_entry(vm, "flow.status", getPredominantAlert());
 
   alert_map.lua(vm, "alert_map");
 
   if(isFlowAlerted()) {
     lua_push_bool_table_entry(vm, "flow.alerted", true);
-    lua_push_uint64_table_entry(vm, "predominant_alert", getAlertedStatus());
-    lua_push_uint64_table_entry(vm, "predominant_alert_score", getAlertedStatusScore());
+    lua_push_uint64_table_entry(vm, "predominant_alert", getPredominantAlert());
+    lua_push_uint64_table_entry(vm, "predominant_alert_score", getPredominantAlertScore());
     lua_push_uint64_table_entry(vm, "alerted_severity", getAlertedSeverity());
   }
 }
@@ -5112,7 +5110,7 @@ bool Flow::hasDissectedTooManyPackets() {
 
 /* ***************************************************** */
 
-bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
+bool Flow::triggerAlert(AlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
   bool first_alert = !isFlowAlerted();
   Host *cli_h = get_cli_host(), *srv_h = get_srv_host();
 
@@ -5141,13 +5139,12 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
 
   /* Note: triggerAlert is called by flow.lua only after all the flow
    * status are processed (once every 5 seconds), so it is safe to use the shadow */
-  if(alert_status_info_shadow) free(alert_status_info_shadow);
-  alert_status_info_shadow = alert_json ? strdup(alert_json) : NULL;
+  if(alert_info_shadow) free(alert_info_shadow);
+  alert_info_shadow = alert_json ? strdup(alert_json) : NULL;
 
-  // alert_status_info =  alert_status_info_shadow;  /* Set in postFlowCallbacks to avoid races */
+  // alert_info =  alert_info_shadow;  /* Set in postFlowCallbacks to avoid races */
   predominant_alert = status;
   alert_level = severity;
-  alert_type = status;
   predominant_alert_score = alert_score;
 
   /* Success - alert is dumped/notified from lua */
@@ -5159,8 +5156,8 @@ bool Flow::triggerAlert(FlowStatus status, AlertLevel severity, u_int16_t alert_
 /*
   This method is called by Lua to set score and various other values of the flow
  */
-bool Flow::setStatus(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  FlowStatus status = fcb->getStatus();
+bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  AlertType status = fcb->getStatus();
   ScriptCategory script_category    = fcb->getCategory();
   ndpi_serializer *alert_serializer = fcb->getAlertJSON(this);
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
@@ -5240,13 +5237,13 @@ void Flow::luaRetrieveExternalAlert(lua_State *vm) {
 
 /* *************************************** */
 
-FlowStatus Flow::getAlertedStatus() const {
+AlertType Flow::getPredominantAlert() const {
   return predominant_alert;
 }
 
 /* *************************************** */
 
-u_int16_t Flow::getAlertedStatusScore() const {
+u_int16_t Flow::getPredominantAlertScore() const {
   return predominant_alert_score;
 }
 
