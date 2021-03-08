@@ -300,10 +300,23 @@ class Flow : public GenericHashEntry {
   inline bool isDHCP() const { return(isProto(NDPI_PROTOCOL_DHCP)); }
   inline bool isHTTP() const { return(isProto(NDPI_PROTOCOL_HTTP)); }
   inline bool isICMP() const { return(isProto(NDPI_PROTOCOL_IP_ICMP) || isProto(NDPI_PROTOCOL_IP_ICMPV6)); }
+
+  inline bool isCliDeviceAllowedProtocol() const {
+    return !cli_host || cli_host->getDeviceAllowedProtocolStatus(get_detected_protocol(), true) == device_proto_allowed;
+  }		      
+  inline bool isSrvDeviceAllowedProtocol() const {
+    return !srv_host || srv_host->getDeviceAllowedProtocolStatus(get_detected_protocol(), false) == device_proto_allowed;
+  }
   inline bool isDeviceAllowedProtocol() const {
-      return(!cli_host || !srv_host ||
-        ((cli_host->getDeviceAllowedProtocolStatus(ndpiDetectedProtocol, true) == device_proto_allowed) &&
-         (srv_host->getDeviceAllowedProtocolStatus(ndpiDetectedProtocol, false) == device_proto_allowed)));
+    return isCliDeviceAllowedProtocol() && isSrvDeviceAllowedProtocol();
+  }
+  inline u_int16_t getCliDeviceDisallowedProtocol() const {
+    DeviceProtoStatus cli_ps = cli_host->getDeviceAllowedProtocolStatus(get_detected_protocol(), true);
+    return (cli_ps == device_proto_forbidden_app) ? ndpiDetectedProtocol.app_protocol : ndpiDetectedProtocol.master_protocol;
+  }
+  inline u_int16_t getSrvDeviceDisallowedProtocol() const {
+    DeviceProtoStatus srv_ps = srv_host->getDeviceAllowedProtocolStatus(get_detected_protocol(), false);
+    return (srv_ps == device_proto_forbidden_app) ? ndpiDetectedProtocol.app_protocol : ndpiDetectedProtocol.master_protocol;
   }
   inline bool isMaskedFlow() const {
     int16_t network_id;

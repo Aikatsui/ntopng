@@ -4896,19 +4896,20 @@ void Flow::lua_device_protocol_allowed_info(lua_State *vm) {
 
   cli_ps = cli_host->getDeviceAllowedProtocolStatus(get_detected_protocol(), true);
   srv_ps = srv_host->getDeviceAllowedProtocolStatus(get_detected_protocol(), false);
-  cli_allowed = (cli_ps == device_proto_allowed);
-  srv_allowed = (srv_ps == device_proto_allowed);
+
+  cli_allowed = isCliDeviceAllowedProtocol();
+  srv_allowed = isSrvDeviceAllowedProtocol();
 
   lua_push_int32_table_entry(vm, "cli.devtype", cli_host->getMac() ? cli_host->getMac()->getDeviceType() : device_unknown);
   lua_push_int32_table_entry(vm, "srv.devtype", srv_host->getMac() ? srv_host->getMac()->getDeviceType() : device_unknown);
 
   lua_push_bool_table_entry(vm, "cli.allowed", cli_allowed);
   if(!cli_allowed)
-    lua_push_int32_table_entry(vm, "cli.disallowed_proto", (cli_ps == device_proto_forbidden_app) ? ndpiDetectedProtocol.app_protocol : ndpiDetectedProtocol.master_protocol);
+    lua_push_int32_table_entry(vm, "cli.disallowed_proto", getCliDeviceDisallowedProtocol());
 
   lua_push_bool_table_entry(vm, "srv.allowed", srv_allowed);
   if(!srv_allowed)
-    lua_push_int32_table_entry(vm, "srv.disallowed_proto", (srv_ps == device_proto_forbidden_app) ? ndpiDetectedProtocol.app_protocol : ndpiDetectedProtocol.master_protocol);
+    lua_push_int32_table_entry(vm, "srv.disallowed_proto", getSrvDeviceDisallowedProtocol());
 }
 
 /* ***************************************************** */

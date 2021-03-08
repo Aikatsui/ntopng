@@ -23,16 +23,67 @@
 #include "flow_callbacks_includes.h"
 
 void DeviceProtocolNotAllowed::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
-  if (0 /* TODO Implement check */) {
-    u_int16_t c_score = 0, s_score = 0, f_score = 0;
-    
-    /* TODO Set score */
 
-    f->setAlert(this, alert_level_error /* TODO read from the config */,
-      f_score, c_score, s_score);
+  if (!f->isDeviceAllowedProtocol()) {
+    u_int16_t c_score, s_score, f_score = 80;
+    const IpAddress *attacker, *victim;
+
+    if (!f->isCliDeviceAllowedProtocol()) {
+      c_score = 80;
+      s_score = 5;
+      attacker = f->get_cli_ip_addr();
+      victim = f->get_srv_ip_addr();
+    } else {
+      c_score = 5;
+      s_score = 80;
+      attacker = f->get_srv_ip_addr();
+      victim = f->get_cli_ip_addr();
+    }
+
+    /* TODO
+     * char buf[64];
+     * attacker->print(buf, sizeof(buf);
+     * victim->print(buf, sizeof(buf)
+     * set_attacker(attacker)
+     * set_victim(victim)
+     */
+
+    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
   }
+}
+
+/* ***************************************************** */
+
+ndpi_serializer *DeviceProtocolNotAllowed::getAlertJSON(Flow *f) {
+  ndpi_serializer *serializer;
+  Host *cli = f->get_cli_host(), *srv = f->get_srv_host();
+  DeviceType cli_dev_type = device_unknown, srv_dev_type = device_unknown; 
+
+   serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
+  
+  if (serializer == NULL)
+    return NULL;
+
+  if (ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
+    free(serializer);
+    return NULL;
+  }
+
+  if (cli && cli->getMac()) cli_dev_type = cli->getMac()->getDeviceType();
+  if (srv && srv->getMac()) srv_dev_type = srv->getMac()->getDeviceType();
+
+  ndpi_serialize_string_int32(serializer, "cli.devtype", cli_dev_type);
+  ndpi_serialize_string_int32(serializer, "srv.devtype", srv_dev_type);
+
+  if (!f->isCliDeviceAllowedProtocol()) {
+    ndpi_serialize_string_string(serializer, "devproto_forbidden_peer", "cli");
+    ndpi_serialize_string_int32(serializer, "devproto_forbidden_id", f->getCliDeviceDisallowedProtocol());
+  } else {
+    ndpi_serialize_string_string(serializer, "devproto_forbidden_peer", "srv");
+    ndpi_serialize_string_int32(serializer, "devproto_forbidden_id", f->getSrvDeviceDisallowedProtocol());
+  }
+  
+  return serializer;
 }
 
 /* ***************************************************** */

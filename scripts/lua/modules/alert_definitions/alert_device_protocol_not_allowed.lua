@@ -40,10 +40,10 @@ function alert_device_protocol_not_allowed:init(cli_devtype, srv_devtype, devpro
    self.super:init()
 
    self.alert_type_params = {
-    ["cli.devtype"] = cli_devtype,
-	 ["srv.devtype"] = srv_devtype,
-	 devproto_forbidden_peer = devproto_forbidden_peer,
-    devproto_forbidden_id = devproto_forbidden_id
+      ["cli.devtype"] = cli_devtype,
+      ["srv.devtype"] = srv_devtype,
+      devproto_forbidden_peer = devproto_forbidden_peer,
+      devproto_forbidden_id = devproto_forbidden_id
    }
 end
 
