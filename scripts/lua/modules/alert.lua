@@ -51,10 +51,10 @@ end
 
 -- ##############################################
 
+-- TODO: remove when alerts triggered from C++
 function Alert:_build_alert_type_info()
    local alert_type_info = {
       status_type = {
-	 status_key = self.meta.status_key,
 	 alert_type = self.meta,
       },
       alert_severity = self.alert_severity,
@@ -95,6 +95,7 @@ end
 
 -- ##############################################
 
+-- TODO: remove when alerts triggered from C++
 function Alert:trigger_status(cli_score, srv_score, flow_score)
    local alerts_api = require "alerts_api"
 

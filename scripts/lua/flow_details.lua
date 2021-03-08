@@ -1270,8 +1270,8 @@ else
       local num_statuses = 0
 
       for _, t in pairsByKeys(alert_consts.alert_types) do
-	 if t.meta and t.meta.status_key then
-	    local id = t.meta.status_key
+	 if t.meta and t.meta.alert_key then
+	    local id = t.meta.alert_key
 
 	    if id ~= flow["predominant_alert"] and flow["alert_map"][id] then
 	       if first then
