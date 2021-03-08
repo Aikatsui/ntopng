@@ -39,6 +39,8 @@ class RecipientQueues {
   AlertLevel minimum_severity;
   /* Only enable enqueue/dequeue for notifications falling into these categories */
   u_int8_t enabled_categories; /* MUST be large enough to contain MAX_NUM_SCRIPT_CATEGORIES */
+  /* Bool indicating whether this is a flow recipient */
+  bool flow_recipient;
 
  public:
   RecipientQueues();
@@ -75,6 +77,13 @@ class RecipientQueues {
   * @return
   */
   inline void setEnabledCategories(u_int8_t _enabled_categories) { enabled_categories = _enabled_categories; };
+  /**
+  * @brief Marks this recipient as a flow recipient
+  * @param _enabled True if the recipient is a flow recipient, false otherwise
+  *
+  * @return
+  */
+  inline void setFlowRecipient(u_int8_t _enabled) { flow_recipient = _enabled; };
   /**
    * @brief Returns queue status (drops and uses)
    * @param vm A Lua VM instance

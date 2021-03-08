@@ -496,6 +496,7 @@ class Ntop {
   time_t recipient_last_use(u_int16_t recipient_id);
   void   recipient_delete(u_int16_t recipient_id);
   void   recipient_register(u_int16_t recipient_id, AlertLevel minimum_severity, u_int8_t enabled_categories);
+  void   recipient_set_flow_recipients(u_int64_t flow_recipients);
 
   void sendNetworkInterfacesTermination();
   inline time_t getLastStatsReset() { return(last_stats_reset); }

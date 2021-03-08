@@ -61,6 +61,13 @@ class Recipients {
   */
   void register_recipient(u_int16_t recipient_id, AlertLevel minimum_severity, u_int8_t enabled_categories);
   /**
+  * @brief Sets all recipients responsible for flow alerts
+  * @param flow_recipients A bitmap of recipient ids responsible for flows
+  *
+  * @return
+  */
+  void set_flow_recipients(u_int64_t flow_recipients);
+  /**
   * @brief Marks a recipient as deleted
   * @param recipient_id An integer recipient identifier
   *

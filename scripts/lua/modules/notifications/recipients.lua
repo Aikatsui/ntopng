@@ -8,6 +8,7 @@ package.path = dirs.installdir .. "/scripts/lua/modules/pools/?.lua;" .. package
 local json = require "dkjson"
 local alert_severities = require "alert_severities"
 local alert_consts = require "alert_consts"
+local alert_severities = require "alert_severities"
 local endpoints = require("endpoints")
 
 -- ##############################################
@@ -69,9 +70,18 @@ function recipients.initialize()
    -- Register all existing recipients in C to make sure ntopng can start with all the
    -- existing recipients properly loaded and ready for notification enqueues/dequeues
    for _, recipient in pairs(recipients.get_all_recipients()) do
-      tprint(recipient)
       ntop.recipient_register(recipient.recipient_id, recipient.minimum_severity, _bitmap_from_user_script_categories(recipient.user_script_categories))
+
+
    end
+
+   -- Now specify which recipients are "flow" recipients and tell this information to C++
+
+   local pools_alert_utils = require "pools_alert_utils"
+   local flow_pools = require "flow_pools"
+
+   local all_flow_recipients = pools_alert_utils.get_entity_recipients_by_pool_id(alert_consts.alert_entities.flow.entity_id, flow_pools.DEFAULT_POOL_ID)
+   flow_pools:create():set_flow_recipients(all_flow_recipients)
 end
 
 -- ##############################################

@@ -35,6 +35,9 @@ RecipientQueues::RecipientQueues() {
 
   /* All categories enabled by default */
   enabled_categories = 0xFF;
+
+  /* Not a flow recipient by default */
+  flow_recipient = false;
 }
 
 /* *************************************** */

@@ -103,6 +103,27 @@ void Recipients::register_recipient(u_int16_t recipient_id, AlertLevel minimum_s
 
 /* *************************************** */
 
+void Recipients::set_flow_recipients(u_int64_t flow_recipients) {
+  m.lock(__FILE__, __LINE__);
+
+  for(int recipient_id = 0; recipient_id < MAX_NUM_RECIPIENTS; recipient_id++) {
+    if(recipient_queues[recipient_id]) {
+      if(flow_recipients & (1 << recipient_id)) 
+	recipient_queues[recipient_id]->setFlowRecipient(true /* This is a flow recipient */);
+      else
+	recipient_queues[recipient_id]->setFlowRecipient(false/* This is NOT a flow recipient */);
+
+      // ntop->getTrace()->traceEvent(TRACE_WARNING, "Set flow recipient [%u][%u]", recipient_id, flow_recipients & (1 << recipient_id));
+    }
+  }
+
+
+
+  m.unlock(__FILE__, __LINE__);
+}
+
+/* *************************************** */
+
 void Recipients::delete_recipient(u_int16_t recipient_id) {
   if(recipient_id >= MAX_NUM_RECIPIENTS)
     return;
