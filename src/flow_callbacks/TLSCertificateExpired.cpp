@@ -46,3 +46,20 @@ void TLSCertificateExpired::protocolDetected(Flow *f) {
 
 /* ***************************************************** */
 
+ndpi_serializer *TLSCertificateExpired::getAlertJSON(Flow *f) {
+  ndpi_serializer *serializer;
+ 
+   serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
+  
+  if (serializer == NULL)
+    return NULL;
+
+  if (ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
+    free(serializer);
+    return NULL;
+  }
+
+  f->getTLSInfo(serializer);
+  
+  return serializer;
+}

@@ -718,6 +718,9 @@ class Flow : public GenericHashEntry {
   inline u_int16_t getTLSVersion()   { return(isTLS() ? protos.tls.tls_version : 0); }
   inline u_int32_t getTLSNotBefore() { return(isTLS() ? protos.tls.notBefore   : 0); };
   inline u_int32_t getTLSNotAfter()  { return(isTLS() ? protos.tls.notAfter    : 0); };
+  inline char* getTLSCertificateIssuerDN()  { return(isTLSProto() ? protos.tls.issuerDN  : NULL); }
+  inline char* getTLSCertificateSubjectDN() { return(isTLSProto() ? protos.tls.subjectDN : NULL); }
+  void getTLSInfo(ndpi_serializer *serializer) const;
 
   inline void setTOS(u_int8_t tos, bool is_cli_tos) { if(is_cli_tos) cli2srv_tos = tos; srv2cli_tos = tos; }
   inline u_int8_t getTOS(bool is_cli_tos) const { return (is_cli_tos ? cli2srv_tos : srv2cli_tos); }
@@ -750,9 +753,6 @@ class Flow : public GenericHashEntry {
 
   inline FlowTrafficStats* getTrafficStats() { return(&stats); };
   ndpi_serializer* getAlertJSON(Flow *f);
-  
-  inline char* getTLSCertificateIssuerDN()  { return(isTLSProto() ? protos.tls.issuerDN  : NULL); }
-  inline char* getTLSCertificateSubjectDN() { return(isTLSProto() ? protos.tls.subjectDN : NULL); }
 };
 
 #endif /* _FLOW_H_ */
