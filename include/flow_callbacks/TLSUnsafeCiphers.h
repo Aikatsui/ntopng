@@ -37,7 +37,7 @@ class TLSUnsafeCiphers : public FlowCallback {
   
   std::string getName()          const { return(std::string("tls_unsafe_ciphers")); }
   ScriptCategory getCategory()   const { return script_category_security;           }
-  FlowCallbackStatus getStatus() const { return status_tls_unsafe_ciphers;          }
+  FlowCallbackStatus getStatus() const { return alert_tls_unsafe_ciphers;          }
 };
 
 #endif /* _TLS_UNSAFE_CIPHERS_H_ */

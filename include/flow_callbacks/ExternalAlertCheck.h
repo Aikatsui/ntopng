@@ -38,7 +38,7 @@ class ExternalAlertCheck : public FlowCallback {
   
   std::string getName()          const { return(std::string("external_alert_check")); }
   ScriptCategory getCategory()   const { return script_category_security;    }
-  FlowCallbackStatus getStatus() const { return status_blacklisted;        }
+  FlowCallbackStatus getStatus() const { return alert_blacklisted;        }
 };
 
 #endif /* _EXTERNAL_ALERT_CHECK_H_ */

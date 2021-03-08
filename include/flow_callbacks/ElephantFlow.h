@@ -38,7 +38,7 @@ class ElephantFlow : public FlowCallback {
 
   std::string getName()          const { return(std::string("elephant_flows"));  }
   ScriptCategory getCategory()   const { return script_category_security;        }
-  FlowCallbackStatus getStatus() const { return status_elephant_local_to_remote; }
+  FlowCallbackStatus getStatus() const { return alert_elephant_local_to_remote; }
 };
 
 #endif /* _ELEPHANT_FLOW_FLOW_H_ */

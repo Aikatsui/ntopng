@@ -46,7 +46,7 @@ Flow::Flow(NetworkInterface *_iface,
   srcAS = dstAS  = prevAdjacentAS = nextAdjacentAS = 0;
   alert_info = alert_info_shadow = NULL;
   alert_level = alert_level_none;
-  predominant_alert = status_normal, predominant_alert_score = 0;
+  predominant_alert = alert_normal, predominant_alert_score = 0;
   ndpi_flow_risk_bitmap = 0;
   detection_completed = false;
   extra_dissection_completed = false;
@@ -2972,7 +2972,7 @@ void Flow::postFlowCallbacks() {
   /* See if it is time to trigger an alert */
 
   /* TODO: Implement checks on bitmap changes, not just on predominant status changes */
-  if(getPredominantAlert() == status_normal)
+  if(getPredominantAlert() == alert_normal)
     return; /* Nothing to do */
 
   /* Make the shadow status JSON the official alerted status JSON */
@@ -3000,8 +3000,8 @@ void Flow::postFlowCallbacks() {
   if(!first_alert)
     ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
 
-  if(false /* status_always_notify */)
-    ndpi_serialize_string_boolean(&flow_json, "status_always_notify", true);
+  if(false /* alert_always_notify */)
+    ndpi_serialize_string_boolean(&flow_json, "alert_always_notify", true);
 
   flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
 
@@ -5162,7 +5162,7 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
   ndpi_serializer *alert_serializer = fcb->getAlertJSON(this);
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
 
-  if(status == status_normal)
+  if(status == alert_normal)
     return false;
 
   if(!alert_map.issetBit(status))

@@ -37,7 +37,7 @@ class TLSCertificateExpired : public FlowCallback {
   
   std::string getName()          const { return(std::string("tls_certificate_expired")); }
   ScriptCategory getCategory()   const { return script_category_security;                }
-  FlowCallbackStatus getStatus() const { return status_tls_certificate_expired;          }
+  FlowCallbackStatus getStatus() const { return alert_tls_certificate_expired;          }
 };
 
 #endif /* _TLS_CERTIFICATE_EXPIRED_H_ */

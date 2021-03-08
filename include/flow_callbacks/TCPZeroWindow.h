@@ -38,7 +38,7 @@ class TCPZeroWindow : public FlowCallback {
   
   std::string getName()          const { return(std::string("zero_tcp_window")); }
   ScriptCategory getCategory()   const { return script_category_network;         }
-  FlowCallbackStatus getStatus() const { return status_zero_tcp_window;          }
+  FlowCallbackStatus getStatus() const { return alert_zero_tcp_window;          }
 };
 
 #endif /* _TCP_ZERO_WINDOW_FLOW_CALLBACK_H_ */

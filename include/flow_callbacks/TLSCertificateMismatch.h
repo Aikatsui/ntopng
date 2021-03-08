@@ -38,7 +38,7 @@ class TLSCertificateMismatch : public FlowCallback {
   
   std::string getName()          const { return(std::string("tls_certificate_mismatch")); }
   ScriptCategory getCategory()   const { return script_category_security;                 }
-  FlowCallbackStatus getStatus() const { return status_tls_certificate_mismatch;          }
+  FlowCallbackStatus getStatus() const { return alert_tls_certificate_mismatch;          }
 };
 
 #endif /* _TLS_CERTIFICATE_MISMATCH_FLOW_CALLBACK_H_ */

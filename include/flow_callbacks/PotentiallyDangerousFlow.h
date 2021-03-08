@@ -37,7 +37,7 @@ class PotentiallyDangerousFlow : public FlowCallback {
   
   std::string getName()          const { return(std::string("potentially_dangerous")); }
   ScriptCategory getCategory()   const { return script_category_security;              }
-  FlowCallbackStatus getStatus() const { return status_potentially_dangerous;          }
+  FlowCallbackStatus getStatus() const { return alert_potentially_dangerous;          }
 };
 
 #endif /* _POTENTIALLY_DANGEROUS_FLOW_H_ */

@@ -38,7 +38,7 @@ class BlacklistedFlow : public FlowCallback {
   
   std::string getName()          const { return(std::string("blacklisted")); }
   ScriptCategory getCategory()   const { return script_category_security;    }
-  FlowCallbackStatus getStatus() const { return status_blacklisted;        }
+  FlowCallbackStatus getStatus() const { return alert_blacklisted;        }
 };
 
 #endif /* _BLACKLISTED_FLOW_H_ */

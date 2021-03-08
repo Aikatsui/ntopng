@@ -39,7 +39,7 @@ class TCPIssues : public FlowCallback {
   
   std::string getName()          const { return(std::string("tcp_issues_generic")); }
   ScriptCategory getCategory()   const { return script_category_security;    }
-  FlowCallbackStatus getStatus() const { return status_blacklisted;        }
+  FlowCallbackStatus getStatus() const { return alert_blacklisted;        }
 
   ndpi_serializer* getAlertJSON(Flow *f);
 };

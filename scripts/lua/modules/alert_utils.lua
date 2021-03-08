@@ -508,7 +508,7 @@ end
 -- #################################
 
 -- Return more information for the flow alert description
-local function getFlowStatusInfo(record, alert_info)
+local function getAlertTypeInfo(record, alert_info)
    local res = ""
 
    local l7proto_name = interface.getnDPIProtoName(tonumber(record["l7_proto"]) or 0)

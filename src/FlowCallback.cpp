@@ -64,8 +64,8 @@ bool FlowCallback::triggerAlert(Flow *f, FlowCallbackStatus status, AlertLevel s
     if(!first_alert)
       ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
 
-    if(false /* status_always_notify */)
-      ndpi_serialize_string_boolean(&flow_json, "status_always_notify", true);
+    if(false /* alert_always_notify */)
+      ndpi_serialize_string_boolean(&flow_json, "alert_always_notify", true);
 
     flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
 

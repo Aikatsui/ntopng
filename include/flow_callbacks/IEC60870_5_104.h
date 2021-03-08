@@ -37,7 +37,7 @@ class IEC60870_5_104 : public FlowCallback {
   
   std::string getName()          const { return(std::string("iec60870_5_104")); }
   ScriptCategory getCategory()   const { return script_category_security;       }
-  FlowCallbackStatus getStatus() const { return status_iec_invalid_transition;  }
+  FlowCallbackStatus getStatus() const { return alert_iec_invalid_transition;  }
 };
 
 #endif /* _IEC60870_5_104_FLOW_CALLBACK_H_ */

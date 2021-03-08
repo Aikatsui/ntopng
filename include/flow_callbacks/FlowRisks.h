@@ -37,7 +37,7 @@ class FlowRisks : public FlowCallback {
   
   std::string getName()          const { return(std::string("flow_risks")); }
   ScriptCategory getCategory()   const { return script_category_security;   }
-  FlowCallbackStatus getStatus() const { return status_flow_risk;           }
+  FlowCallbackStatus getStatus() const { return alert_flow_risk;           }
 };
 
 #endif /* _FLOW_RISK_H_ */

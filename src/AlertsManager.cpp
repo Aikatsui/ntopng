@@ -199,7 +199,6 @@ int AlertsManager::openStore() {
 	   "first_seen       INTEGER NOT NULL, "
 	   "community_id     TEXT DEFAULT NULL, "
 	   "score            INTEGER NOT NULL DEFAULT 0, "
-	   "alert_type      INTEGER NOT NULL DEFAULT 0,  "
 	   "flow_risk_bitmap INTEGER NOT NULL DEFAULT 0   "
 	   ");"
 	   "CREATE INDEX IF NOT EXISTS t3i_tstamp    ON %s(alert_tstamp); "
@@ -224,7 +223,6 @@ int AlertsManager::openStore() {
 	   "CREATE INDEX IF NOT EXISTS t3i_commid    ON %s(community_id); "
 	   "CREATE INDEX IF NOT EXISTS t3i_clocal    ON %s(cli_localhost); "
 	   "CREATE INDEX IF NOT EXISTS t3i_slocal    ON %s(srv_localhost); "
-	   "CREATE INDEX IF NOT EXISTS t3i_status    ON %s(alert_type); "
 	   "CREATE INDEX IF NOT EXISTS t3i_hash      ON %s(vlan_id, proto, l7_master_proto, l7_proto, l7_cat, cli_addr, srv_addr, cli_port, srv_port); ",
 	   ALERTS_MANAGER_FLOWS_TABLE_NAME,
 	   NDPI_PROTOCOL_UNKNOWN,
@@ -241,7 +239,7 @@ int AlertsManager::openStore() {
 	   ALERTS_MANAGER_FLOWS_TABLE_NAME, ALERTS_MANAGER_FLOWS_TABLE_NAME,
 	   ALERTS_MANAGER_FLOWS_TABLE_NAME, ALERTS_MANAGER_FLOWS_TABLE_NAME,
 	   ALERTS_MANAGER_FLOWS_TABLE_NAME, ALERTS_MANAGER_FLOWS_TABLE_NAME,
-	   ALERTS_MANAGER_FLOWS_TABLE_NAME, ALERTS_MANAGER_FLOWS_TABLE_NAME);
+	   ALERTS_MANAGER_FLOWS_TABLE_NAME);
   m.lock(__FILE__, __LINE__);
   rc = exec_query(create_query, NULL, NULL);
   if(rc == SQLITE_ERROR) ntop->getTrace()->traceEvent(TRACE_ERROR, "SQL Error: %s", sqlite3_errmsg(db));
@@ -555,7 +553,7 @@ int AlertsManager::storeFlowAlert(lua_State *L, int index, u_int64_t *rowid) {
   time_t tstamp = 0;
   AlertType alert_type = 0;
   AlertLevel alert_severity = alert_level_none;
-  AlertType status = status_normal;
+  AlertType status = alert_normal;
   const char *alert_json = "";
   u_int16_t vlan_id = 0;
   u_int8_t protocol = 0;
