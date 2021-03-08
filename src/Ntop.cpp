@@ -1091,8 +1091,8 @@ void Ntop::recipient_delete(u_int16_t recipient_id) {
 
 /* ******************************************* */
 
-void Ntop::recipient_register(u_int16_t recipient_id) {
-  recipients.register_recipient(recipient_id);
+void Ntop::recipient_register(u_int16_t recipient_id, AlertLevel minimum_severity, u_int8_t enabled_categories) {
+  recipients.register_recipient(recipient_id, minimum_severity, enabled_categories);
   /* Trigger a reload of periodic scripts to refresh them with new recipients */
   reloadPeriodicScripts();
 }

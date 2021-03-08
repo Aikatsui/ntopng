@@ -35,6 +35,11 @@ class RecipientQueues {
   /* Timestamp of the last dequeue, regardless of queue priority */
   time_t last_use;
 
+  /* Minimum severity for notifications enqueued to this recipient */
+  AlertLevel minimum_severity;
+  /* Only enable enqueue/dequeue for notifications falling into these categories */
+  u_int8_t enabled_categories; /* MUST be large enough to contain MAX_NUM_SCRIPT_CATEGORIES */
+
  public:
   RecipientQueues();
   ~RecipientQueues();
@@ -56,6 +61,20 @@ class RecipientQueues {
   * @return True if the enqueue succeeded, false otherwise
   */
   bool enqueue(RecipientNotificationPriority prio, const AlertFifoItem* const notification);
+  /**
+  * @brief Sets the minimum severity for notifications to use this recipient
+  * @param minimum_severity The minimum severity for notifications to use this recipient
+  *
+  * @return
+  */
+  inline void setMinimumSeverity(AlertLevel _minimum_severity) { minimum_severity = _minimum_severity; };
+  /**
+  * @brief Sets enabled notification categories to use this recipient
+  * @param enabled_categories A bitmap of notification categories to use this recipient
+  *
+  * @return
+  */
+  inline void setEnabledCategories(u_int8_t _enabled_categories) { enabled_categories = _enabled_categories; };
   /**
    * @brief Returns queue status (drops and uses)
    * @param vm A Lua VM instance

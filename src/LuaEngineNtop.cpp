@@ -5650,11 +5650,19 @@ static int ntop_recipient_delete(lua_State* vm) {
 
 static int ntop_recipient_register(lua_State* vm) {
   u_int16_t recipient_id;
+  AlertLevel minimum_severity = alert_level_none;
+  u_int8_t enabled_categories = 0xFF; /* MUST be large enough to contain MAX_NUM_SCRIPT_CATEGORIES */
 
   if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
   recipient_id = lua_tointeger(vm, 1);
 
-  ntop->recipient_register(recipient_id);
+  if(ntop_lua_check(vm, __FUNCTION__, 2, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
+  minimum_severity = (AlertLevel)lua_tointeger(vm, 2);
+
+  if(ntop_lua_check(vm, __FUNCTION__, 3, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
+  enabled_categories = lua_tointeger(vm, 3);
+
+  ntop->recipient_register(recipient_id, minimum_severity, enabled_categories);
 
   lua_pushnil(vm);
 

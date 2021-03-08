@@ -27,8 +27,14 @@ RecipientQueues::RecipientQueues() {
   for(int i = 0; i < RECIPIENT_NOTIFICATION_MAX_NUM_PRIORITIES; i++)
     queues_by_prio[i] = NULL,
       drops_by_prio[i] = 0,
-      uses_by_prio[i] = 0,
-      last_use = 0;
+      uses_by_prio[i] = 0;
+  last_use = 0;
+
+  /* No minimum severity */
+  minimum_severity = alert_level_none;
+
+  /* All categories enabled by default */
+  enabled_categories = 0xFF;
 }
 
 /* *************************************** */
@@ -64,6 +70,7 @@ bool RecipientQueues::enqueue(RecipientNotificationPriority prio, const AlertFif
   if(prio >= RECIPIENT_NOTIFICATION_MAX_NUM_PRIORITIES
      || !notification
      || !notification->alert
+     || notification->alert_severity < minimum_severity
      || (!queues_by_prio[prio] &&
 	 !(queues_by_prio[prio] = new (nothrow) AlertFifoQueue(ALERTS_NOTIFICATIONS_QUEUE_SIZE)))) {
     /* Queue not available */

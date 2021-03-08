@@ -83,7 +83,7 @@ bool Recipients::enqueue(u_int16_t recipient_id, RecipientNotificationPriority p
 
 /* *************************************** */
 
-void Recipients::register_recipient(u_int16_t recipient_id) {  
+void Recipients::register_recipient(u_int16_t recipient_id, AlertLevel minimum_severity, u_int8_t enabled_categories) {  
   if(recipient_id >= MAX_NUM_RECIPIENTS)
     return;
 
@@ -91,6 +91,12 @@ void Recipients::register_recipient(u_int16_t recipient_id) {
 
   if(!recipient_queues[recipient_id])
     recipient_queues[recipient_id] = new (nothrow) RecipientQueues();
+
+  if(recipient_queues[recipient_id])
+    recipient_queues[recipient_id]->setMinimumSeverity(minimum_severity),
+      recipient_queues[recipient_id]->setEnabledCategories(enabled_categories);
+
+  // ntop->getTrace()->traceEvent(TRACE_WARNING, "registered [%u][%u][%u]", recipient_id, minimum_severity, enabled_categories);
 
   m.unlock(__FILE__, __LINE__);
 }

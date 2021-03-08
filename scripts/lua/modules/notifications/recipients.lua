@@ -26,6 +26,18 @@ local default_builtin_minimum_severity = alert_severities.info.severity_id -- mi
 
 -- ##############################################
 
+local function _bitmap_from_user_script_categories(user_script_categories)
+   local bitmap = 0
+
+   for _, category_id in ipairs(user_script_categories) do
+      bitmap = bitmap | (1 << category_id)
+   end
+
+   return bitmap
+end
+
+-- ##############################################
+
 -- @brief Performs Initialization operations performed during startup
 function recipients.initialize()
    -- Initialize builtin recipients, that is, recipients always existing an not editable from the UI
@@ -57,7 +69,8 @@ function recipients.initialize()
    -- Register all existing recipients in C to make sure ntopng can start with all the
    -- existing recipients properly loaded and ready for notification enqueues/dequeues
    for _, recipient in pairs(recipients.get_all_recipients()) do
-      ntop.recipient_register(recipient.recipient_id)
+      tprint(recipient)
+      ntop.recipient_register(recipient.recipient_id, recipient.minimum_severity, _bitmap_from_user_script_categories(recipient.user_script_categories))
    end
 end
 
@@ -264,7 +277,7 @@ function recipients.add_recipient(endpoint_id, endpoint_recipient_name, user_scr
 	       _set_endpoint_recipient_params(endpoint_id, recipient_id, endpoint_recipient_name, user_script_categories, minimum_severity, safe_params)
 
 	       -- Finally, register the recipient in C so we can start enqueuing/dequeuing notifications
-	       ntop.recipient_register(recipient_id)
+	       ntop.recipient_register(recipient_id, minimum_severity, _bitmap_from_user_script_categories(user_script_categories))
 
 	       -- Set a flag to indicate that a recipient has been created
 	       if not ec.endpoint_conf.builtin and isEmptyString(ntop.getPref(recipients.FIRST_RECIPIENT_CREATED_CACHE_KEY)) then
@@ -331,7 +344,7 @@ function recipients.edit_recipient(recipient_id, endpoint_recipient_name, user_s
 
 	       -- Finally, register the recipient in C to make sure also the C knows about this edit
 	       -- and periodic scripts can be reloaded
-	       ntop.recipient_register(tonumber(rc["endpoint_id"]))
+	       ntop.recipient_register(tonumber(rc["endpoint_id"]), minimum_severity, _bitmap_from_user_script_categories(user_script_categories))
 
 	       res = {status = "OK"}
 	    end
