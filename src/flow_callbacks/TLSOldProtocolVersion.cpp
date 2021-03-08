@@ -31,8 +31,6 @@ void TLSOldProtocolVersion::protocolDetected(Flow *f) {
     u_int16_t s_score =  5;
     u_int16_t f_score = 30;
    
-    //TODO pass f->getTLSVersion()
-
     f->setAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 
@@ -40,3 +38,20 @@ void TLSOldProtocolVersion::protocolDetected(Flow *f) {
 
 /* ***************************************************** */
 
+ndpi_serializer *TLSOldProtocolVersion::getAlertJSON(Flow *f) {
+  ndpi_serializer *serializer;
+ 
+   serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
+  
+  if (serializer == NULL)
+    return NULL;
+
+  if (ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
+    free(serializer);
+    return NULL;
+  }
+
+  ndpi_serialize_string_int32(serializer, "tls_version", f->getTLSVersion());
+  
+  return serializer;
+}
