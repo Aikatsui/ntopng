@@ -7,7 +7,6 @@
 local alert_keys = require "alert_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -20,7 +19,6 @@ local alert_suspicious_file_transfer = classes.class(alert)
 -- ##############################################
 
 alert_suspicious_file_transfer.meta = {
-   status_key = status_keys.ntopng.status_suspicious_file_transfer,
    alert_key = alert_keys.ntopng.alert_suspicious_file_transfer,
    i18n_title = "alerts_dashboard.suspicious_file_transfer",
    icon = "fas fa-file-download",

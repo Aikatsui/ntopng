@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
 local flow_risk_utils = require "flow_risk_utils"
@@ -21,7 +20,6 @@ local alert_flow_risk = classes.class(alert)
 -- ##############################################
 
 alert_flow_risk.meta = {
-   status_key = status_keys.ntopng.status_flow_risk,
    alert_key = alert_keys.ntopng.alert_flow_risk,
    i18n_title = "alerts_dashboard.flow_risk",
    icon = "fas fa-exclamation",

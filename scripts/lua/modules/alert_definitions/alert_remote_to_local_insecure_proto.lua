@@ -9,7 +9,6 @@ package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
 local format_utils = require "format_utils"
 local json = require("dkjson")
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -22,7 +21,6 @@ local alert_remote_to_local_insecure_proto = classes.class(alert)
 -- ##############################################
 
 alert_remote_to_local_insecure_proto.meta = {
-   status_key = status_keys.ntopng.status_remote_to_local_insecure_proto,
    alert_key = alert_keys.ntopng.alert_remote_to_local_insecure_proto,
    i18n_title = "alerts_dashboard.remote_to_local_insecure_proto",
    icon = "fas fa-exclamation",

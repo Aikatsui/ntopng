@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -18,7 +17,6 @@ local alert_zero_tcp_window = classes.class(alert)
 -- ##############################################
 
 alert_zero_tcp_window.meta = {
-   status_key = status_keys.ntopng.status_zero_tcp_window,
    alert_key = alert_keys.ntopng.alert_zero_tcp_window,
    i18n_title = "zero_tcp_window.zero_tcp_window_title",
    icon = "fas fa-arrow-circle-up",

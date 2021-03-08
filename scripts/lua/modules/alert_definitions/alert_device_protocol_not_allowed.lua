@@ -7,7 +7,6 @@
 local alert_keys = require "alert_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -20,7 +19,6 @@ local alert_device_protocol_not_allowed = classes.class(alert)
 -- ##############################################
 
 alert_device_protocol_not_allowed.meta = {
-   status_key = status_keys.ntopng.status_device_protocol_not_allowed,
    alert_key = alert_keys.ntopng.alert_device_protocol_not_allowed,
    i18n_title = "alerts_dashboard.suspicious_device_protocol",
    icon = "fas fa-exclamation",

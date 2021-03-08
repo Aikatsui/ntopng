@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
 local format_utils = require("format_utils")
@@ -21,8 +20,7 @@ local alert_flow_low_goodput = classes.class(alert)
 -- ##############################################
 
 alert_flow_low_goodput.meta = {
-   status_key = status_keys.ntopng.status_low_goodput,
-   alert_key = alert_keys.ntopng.alert_flow_low_goodput,
+   alert_key = alert_keys.ntopng.alert_low_goodput,
    i18n_title = "alerts_dashboard.flow_low_goodput",
    icon = "fas fa-exclamation",
 }

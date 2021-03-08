@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -18,7 +17,6 @@ local alert_longlived = classes.class(alert)
 -- ##############################################
 
 alert_longlived.meta = {
-   status_key = status_keys.ntopng.status_longlived,
    alert_key = alert_keys.ntopng.alert_longlived,
    i18n_title = "flow_details.longlived_flow",
    icon = "fas fa-exclamation",

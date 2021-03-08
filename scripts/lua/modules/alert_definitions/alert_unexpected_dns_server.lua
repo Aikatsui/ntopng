@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -18,7 +17,6 @@ local alert_unexpected_dns_server = classes.class(alert)
 -- ##############################################
 
 alert_unexpected_dns_server.meta = {
-   status_key = status_keys.ntopng.status_unexpected_dns_server,
    alert_key = alert_keys.ntopng.alert_unexpected_dns_server,
    i18n_title = "unexpected_dns.alert_unexpected_dns_title",
    icon = "fas fa-exclamation",

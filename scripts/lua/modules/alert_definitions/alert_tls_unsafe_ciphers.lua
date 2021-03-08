@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -18,7 +17,6 @@ local alert_tls_unsafe_ciphers = classes.class(alert)
 -- ##############################################
 
 alert_tls_unsafe_ciphers.meta = {
-   status_key = status_keys.ntopng.status_tls_unsafe_ciphers,
    alert_key = alert_keys.ntopng.alert_tls_unsafe_ciphers,
    i18n_title = "flow_details.tls_unsafe_ciphers",
    icon = "fas fa-exclamation",

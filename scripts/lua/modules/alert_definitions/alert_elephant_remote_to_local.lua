@@ -8,7 +8,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -21,7 +20,6 @@ local alert_elephant_remote_to_local = classes.class(alert)
 -- ##############################################
 
 alert_elephant_remote_to_local.meta = {
-   status_key = status_keys.ntopng.status_elephant_remote_to_local,
    alert_key = alert_keys.ntopng.alert_elephant_remote_to_local,
    i18n_title = "flow_details.elephant_flow_r2l",
    icon = "fas fa-exclamation",

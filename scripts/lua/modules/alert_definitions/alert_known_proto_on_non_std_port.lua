@@ -7,7 +7,6 @@
 local alert_keys = require "alert_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -20,7 +19,6 @@ local alert_known_proto_on_non_std_port = classes.class(alert)
 -- ##############################################
 
 alert_known_proto_on_non_std_port.meta = {   
-   status_key = status_keys.ntopng.status_known_proto_on_non_std_port,
    alert_key = alert_keys.ntopng.alert_known_proto_on_non_std_port,
    i18n_title = "alerts_dashboard.known_proto_on_non_std_port",
    icon = "fas fa-exclamation",

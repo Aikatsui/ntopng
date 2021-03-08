@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -18,7 +17,6 @@ local alert_tcp_connection_refused = classes.class(alert)
 -- ##############################################
 
 alert_tcp_connection_refused.meta = {
-   status_key = status_keys.ntopng.status_tcp_connection_refused,
    alert_key = alert_keys.ntopng.alert_tcp_connection_refused,
    i18n_title = "flow_details.tcp_connection_refused",
    icon = "fas fa-exclamation",

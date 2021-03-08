@@ -7,7 +7,6 @@
 local alert_keys = require "alert_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -20,8 +19,7 @@ local alert_flow_blacklisted = classes.class(alert)
 -- ##############################################
 
 alert_flow_blacklisted.meta = {
-   status_key = status_keys.ntopng.status_blacklisted,
-   alert_key = alert_keys.ntopng.status_blacklisted, -- MERGED with status, will be removed
+   alert_key = alert_keys.ntopng.alert_blacklisted,
    i18n_title = "alerts_dashboard.blacklisted_flow",
    icon = "fas fa-exclamation",
    has_victim = true,

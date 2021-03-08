@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -18,7 +17,6 @@ local alert_tls_old_protocol_version = classes.class(alert)
 -- ##############################################
 
 alert_tls_old_protocol_version.meta = {
-   status_key = status_keys.ntopng.status_tls_old_protocol_version,
    alert_key = alert_keys.ntopng.alert_tls_old_protocol_version,
    i18n_title = "flow_details.tls_old_protocol_version",
    icon = "fas fa-exclamation",

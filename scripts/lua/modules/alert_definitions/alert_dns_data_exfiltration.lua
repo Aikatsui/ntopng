@@ -5,7 +5,6 @@
 -- ##############################################
 
 local alert_keys = require "alert_keys"
-local status_keys = require "status_keys"
 -- Import the classes library.
 local classes = require "classes"
 -- Make sure to import the Superclass!
@@ -18,7 +17,6 @@ local alert_dns_data_exfiltration = classes.class(alert)
 -- ##############################################
 
 alert_dns_data_exfiltration.meta = {
-   status_key = status_keys.ntopng.status_dns_data_exfiltration,
    alert_key = alert_keys.ntopng.alert_dns_data_exfiltration,
    i18n_title = "flow_details.dns_data_exfiltration",
    icon = "fas fa-exclamation",

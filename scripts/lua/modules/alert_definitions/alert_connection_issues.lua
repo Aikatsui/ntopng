@@ -7,7 +7,6 @@
 local alert_keys = require "alert_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 
-local status_keys = require "status_keys"
 local format_utils = require "format_utils"
 -- Import the classes library.
 local classes = require "classes"
@@ -21,8 +20,7 @@ local alert_connection_issues = classes.class(alert)
 -- ##############################################
 
 alert_connection_issues.meta = {
-   status_key = status_keys.ntopng.status_tcp_connection_issues,
-   alert_key = alert_keys.ntopng.alert_connection_issues,
+   alert_key = alert_keys.ntopng.alert_tcp_connection_issues,
    i18n_title = "alerts_dashboard.connection_issues",
    icon = "fas fa-exclamation",
 }
