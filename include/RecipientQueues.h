@@ -97,6 +97,12 @@ class RecipientQueues {
    * @return An epoch with the last use, or 0 if never used.
    */
   inline time_t get_last_use() const { return last_use; };
+  /**
+   * @brief Returns true if the recipient is a flow recipient
+   *
+   * @return A boolean
+   */
+  inline bool isFlowRecipient() const { return flow_recipient; };
 };
 
 #endif /* _RECIPIENT_QUEUES_ */

@@ -490,6 +490,7 @@ class Ntop {
   inline void setnDPICleanupNeeded(bool needed)           { ndpi_cleanup_needed = needed; }
   inline FifoSerializerQueue* getInternalAlertsQueue()    { return(internal_alerts_queue);  }
   void lua_alert_queues_stats(lua_State* vm);
+  bool   recipients_enqueue(RecipientNotificationPriority prio, AlertFifoItem *notification, bool flow_only);
   bool   recipient_enqueue(u_int16_t recipient_id, RecipientNotificationPriority prio, const AlertFifoItem* const notification);
   bool   recipient_dequeue(u_int16_t recipient_id, RecipientNotificationPriority prio, AlertFifoItem *notification);
   void   recipient_stats(u_int16_t recipient_id, lua_State* vm);
@@ -497,6 +498,7 @@ class Ntop {
   void   recipient_delete(u_int16_t recipient_id);
   void   recipient_register(u_int16_t recipient_id, AlertLevel minimum_severity, u_int8_t enabled_categories);
   void   recipient_set_flow_recipients(u_int64_t flow_recipients);
+
 
   void sendNetworkInterfacesTermination();
   inline time_t getLastStatsReset() { return(last_stats_reset); }

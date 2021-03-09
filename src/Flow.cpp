@@ -3008,20 +3008,16 @@ void Flow::postFlowCallbacks() {
   /* TODO: read all the recipients responsible for flows, and enqueue only to them */
   /* Currenty, we forcefully enqueue only to the builtin sqlite */
     
-  if((notification.alert = strdup(flow_str))) {
-    notification.alert_severity = getAlertedSeverity();
+  notification.alert = (char*)flow_str;
+  notification.alert_severity = getAlertedSeverity();
+  /* TODO: add script information */
 
-    rv = ntop->recipient_enqueue(0/* SQLite builtin*/,
-				 getAlertedSeverity() >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
-				 &notification);
-  }
+  rv = ntop->recipients_enqueue(getAlertedSeverity() >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
+				&notification,
+				true /* Flow recipients only */);
 
-  if(!rv) {
+  if(!rv)
     getInterface()->incNumDroppedAlerts(1);
-
-    if(notification.alert)
-      free(notification.alert);
-  }
 
   ndpi_term_serializer(&flow_json);
 }

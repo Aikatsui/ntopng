@@ -52,6 +52,15 @@ class Recipients {
   */
   bool enqueue(u_int16_t recipient_id, RecipientNotificationPriority prio, const AlertFifoItem* const notification);
   /**
+  * @brief Enqueues a notification to all available recipients
+  * @param prio The priority of the notification
+  * @param notification The notification to be enqueued
+  * @param flow_only A boolean, indicating whether the notification has only to be enqueued for flow recipients
+  *
+  * @return True if the enqueue succeeded, false otherwise
+  */
+  bool enqueue(RecipientNotificationPriority prio, const AlertFifoItem* const notification, bool flow_only);
+  /**
   * @brief Registers a recipient identified with `recipient_id` so its notification can be enqueued/dequeued
   * @param recipient_id An integer recipient identifier
   * @param minimum_severity The minimum severity for notifications to use this recipient

@@ -5550,17 +5550,16 @@ static int ntop_recipient_enqueue(lua_State* vm) {
   if(ntop_lua_check(vm, __FUNCTION__, 4, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
   alert_severity = (AlertLevel)lua_tonumber(vm, 4);
 
-  if(ntop_lua_check(vm, __FUNCTION__, 5, LUA_TNUMBER) == CONST_LUA_OK)
+  if(lua_type(vm, 5) == LUA_TNUMBER)
     script_category = (ScriptCategory)lua_tonumber(vm, 5);
 
-  if((notification.alert = strdup(alert))) {
-    notification.alert_severity = alert_severity;
-    notification.script_category = script_category;
+  notification.alert = (char*)alert;
+  notification.alert_severity = alert_severity;
+  notification.script_category = script_category;
 
-    rv = ntop->recipient_enqueue(recipient_id,
-				 high_priority ? recipient_notification_priority_high : recipient_notification_priority_low,
-				 &notification);
-  }
+  rv = ntop->recipient_enqueue(recipient_id,
+			       high_priority ? recipient_notification_priority_high : recipient_notification_priority_low,
+			       &notification);
 
   if(!rv) {
     NetworkInterface *iface = getCurrentInterface(vm);
@@ -5570,9 +5569,6 @@ static int ntop_recipient_enqueue(lua_State* vm) {
       if(ctx->threaded_activity_stats)
 	ctx->threaded_activity_stats->setAlertsDrops();
     }
-
-    if(notification.alert)
-      free(notification.alert);
   }
 
   lua_pushboolean(vm, rv);

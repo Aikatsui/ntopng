@@ -1059,6 +1059,12 @@ void Ntop::lua_alert_queues_stats(lua_State* vm) {
 
 /* ******************************************* */
 
+bool Ntop::recipients_enqueue(RecipientNotificationPriority prio, AlertFifoItem *notification, bool flow_only) {
+  return recipients.enqueue(prio, notification, flow_only);
+}
+
+/* ******************************************* */
+
 bool Ntop::recipient_enqueue(u_int16_t recipient_id, RecipientNotificationPriority prio, const AlertFifoItem* const notification) {
   return recipients.enqueue(recipient_id, prio, notification);
 }

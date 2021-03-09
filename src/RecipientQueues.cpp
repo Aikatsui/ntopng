@@ -82,12 +82,15 @@ bool RecipientQueues::enqueue(RecipientNotificationPriority prio, const AlertFif
     return false;
   }
 
-  /* Enqueue the notification */
-  res = queues_by_prio[prio]->enqueue(*notification);
+  /* Enqueue the notification (allocate memory for the alert string) */
+  AlertFifoItem q = *notification;
+  if((q.alert = strdup(notification->alert)))
+    res = queues_by_prio[prio]->enqueue(q);
 
-  if(!res)
+  if(!res) {
     drops_by_prio[prio]++;
-  else
+    if(q.alert) free(q.alert);
+  } else
     uses_by_prio[prio]++;
 
   return res;
