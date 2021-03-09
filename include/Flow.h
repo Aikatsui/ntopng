@@ -459,6 +459,7 @@ class Flow : public GenericHashEntry {
   inline float get_pkts_thpt()           const { return(pkts_thpt_cli2srv + pkts_thpt_srv2cli);                   };
   inline float get_bytes_thpt()          const { return(bytes_thpt_cli2srv + bytes_thpt_srv2cli);                 };
   inline float get_goodput_bytes_thpt()  const { return(goodput_bytes_thpt_cli2srv + goodput_bytes_thpt_srv2cli); };
+  inline float get_goodput_ratio()       const { return((float)(100*get_goodput_bytes()) / ((float)get_bytes() + 1)); };
   inline time_t get_partial_first_seen() const { return(last_db_dump.first_seen); };
   inline time_t get_partial_last_seen()  const { return(last_db_dump.last_seen);  };
   inline u_int32_t get_duration()        const { return((u_int32_t)(get_last_seen() - get_first_seen())); };

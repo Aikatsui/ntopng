@@ -31,6 +31,7 @@ void UDPUnidirectional::checkFlow(Flow *f) {
   if(f->get_protocol() != IPPROTO_UDP)                  return; /* Non UDP traffic        */
   if(f->get_bytes_srv2cli() && f->get_bytes_srv2cli())  return; /* Two way communications */
   if(!f->get_cli_ip_addr()->isNonEmptyUnicastAddress()) return; /* No client IP           */
+  if(!f->get_srv_ip_addr()->isNonEmptyUnicastAddress()) return; /* Multicast server        */
   
   switch(f->get_detected_protocol().app_protocol) {
   case NDPI_PROTOCOL_MDNS:

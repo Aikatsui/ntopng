@@ -27,17 +27,22 @@
 
 class LowGoodputFlow : public FlowCallback {
  private:
+  void checkLowGoodput(Flow *f);
+
  public:
   LowGoodputFlow() : FlowCallback(ntopng_edition_community,
 				  false /* All interfaces */, true /* Exclude for nEdge */, false /* Only for nEdge */,
-				  false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
+				  false /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
   virtual ~LowGoodputFlow() {};
 
   void periodicUpdate(Flow *f);
+  void flowEnd(Flow *f);
+
+  ndpi_serializer *getAlertJSON(Flow *f);
 
   std::string getName()          const { return(std::string("low_goodput")); }
-  ScriptCategory getCategory()   const { return script_category_network; }
-  FlowAlertType getAlertType() const { return alert_low_goodput;      }
+  ScriptCategory getCategory()   const { return script_category_network;     }
+  FlowAlertType getAlertType() const { return alert_low_goodput;             }
 };
 
 #endif /* _LOW_GOODPUT_FLOW_H_ */
