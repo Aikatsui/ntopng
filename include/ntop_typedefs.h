@@ -390,7 +390,7 @@ typedef enum {
   alert_web_mining_detected              = 27,
   alert_tls_certificate_selfsigned       = 28,
   alert_suspicious_file_transfer         = 29,
-  alert_known_proto_on_non_std_port      = 30,
+  alert_known_proto_on_non_std_port      = 30, /* TODO rename to alert_ndpi_known_protocol_on_non_standard_port */
   alert_flow_risk                        = 31,
   alert_unexpected_dhcp_server           = 32,
   alert_unexpected_dns_server            = 33,
@@ -415,6 +415,15 @@ typedef enum {
   alert_ndpi_unsafe_protocol             = 52,
   alert_ndpi_dns_suspicious_traffic      = 53,
   alert_ndpi_tls_missing_sni             = 54,
+
+  /* TODO check and add support for the below flow risks:
+  alert_ndpi_binary_application_transfer (with c_score = s_score = f_score = 200)
+  alert_ndpi_http_suspicious_content
+  alert_ndpi_risky_asn
+  alert_ndpi_risky_domain
+  alert_ndpi_malicious_ja3
+  alert_ndpi_malicious_sha1
+  */
 
   MAX_FLOW_ALERT_TYPE = 128 /* Constrained by `Bitmap alert_map` inside Flow.h */
 } FlowAlertType;

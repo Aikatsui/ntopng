@@ -19,12 +19,28 @@
  *
  */
 
+#ifndef _FLOW_RISK_NDPI_UNSAFE_PROTOCOL_H_
+#define _FLOW_RISK_NDPI_UNSAFE_PROTOCOL_H_
+
 #include "ntop_includes.h"
-#include "flow_callbacks_includes.h"
 
-void FlowRisks::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-}
+class FlowRiskUnsafeProtocol : public FlowRisk {
+ private:
+  ndpi_risk_enum handledRisk() { return NDPI_UNSAFE_PROTOCOL; }
 
-/* ***************************************************** */
+  /* Uncomment to override the default scores:
+  u_int16_t getClientScore() { return 50; }
+  u_int16_t getServerScore() { return 50; }
+  u_int16_t getFlowScore()   { return 50; }
+  */
 
+ public:
+  FlowRiskUnsafeProtocol() : FlowRisk() {};
+  ~FlowRiskUnsafeProtocol() {};
+
+  std::string getName()        const { return(std::string("ndpi_unsafe_protocol")); }
+  ScriptCategory getCategory() const { return script_category_security;             }
+  FlowAlertType getAlertType() const { return alert_ndpi_unsafe_protocol;           }
+};
+
+#endif

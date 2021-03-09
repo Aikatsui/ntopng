@@ -19,25 +19,28 @@
  *
  */
 
-#ifndef _FLOW_RISK_H_
-#define _FLOW_RISK_H_
+#ifndef _FLOW_RISK_NDPI_HTTP_NUMERIC_IP_HOST_H_
+#define _FLOW_RISK_NDPI_HTTP_NUMERIC_IP_HOST_H_
 
 #include "ntop_includes.h"
 
-class FlowRisks : public FlowCallback {
+class FlowRiskHTTPNumericIPHost : public FlowRisk {
  private:
-  
- public:
-  FlowRisks() : FlowCallback(ntopng_edition_community,
-			    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-			    true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
-  ~FlowRisks() {};
+  ndpi_risk_enum handledRisk() { return NDPI_HTTP_NUMERIC_IP_HOST; }
 
-  void protocolDetected(Flow *f);
-  
-  std::string getName()          const { return(std::string("flow_risks")); }
-  ScriptCategory getCategory()   const { return script_category_security;   }
-  FlowAlertType getAlertType() const { return alert_flow_risk;           }
+  /* Uncomment to override the default scores:
+  u_int16_t getClientScore() { return 50; }
+  u_int16_t getServerScore() { return 50; }
+  u_int16_t getFlowScore()   { return 50; }
+  */
+
+ public:
+  FlowRiskHTTPNumericIPHost() : FlowRisk() {};
+  ~FlowRiskHTTPNumericIPHost() {};
+
+  std::string getName()        const { return(std::string("ndpi_http_numeric_ip_host")); }
+  ScriptCategory getCategory() const { return script_category_security;              }
+  FlowAlertType getAlertType() const { return alert_ndpi_http_numeric_ip_host;       }
 };
 
-#endif /* _FLOW_RISK_H_ */
+#endif
