@@ -41,7 +41,7 @@ class ElephantFlow : public FlowCallback {
   void flowEnd(Flow *f);
 
   bool loadConfiguration(json_object *config);
-  virtual ndpi_serializer* getAlertJSON(Flow *f);
+  ndpi_serializer* getAlertJSON(Flow *f);
 
   std::string getName()        const { return(std::string("elephant_flows"));  }
   ScriptCategory getCategory() const { return script_category_security;        }
