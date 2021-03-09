@@ -454,24 +454,6 @@ static int ntop_flow_get_score(lua_State* vm) {
   return(CONST_LUA_OK);
 }
 
-/* ****************************************** */
-
-static int ntop_flow_get_score_info(lua_State* vm) {
-  Flow *f = ntop_flow_get_context_flow(vm);
-  const char *alert_info;
-
-  if(!f) return(CONST_LUA_ERROR);
-
-  alert_info = f->GetAlertInfo();
-
-  lua_newtable(vm);
-  f->getAlertBitmap().lua(vm, "alert_map");
-  lua_push_int32_table_entry(vm, "score", f->getScore());
-  if(alert_info) lua_push_str_table_entry(vm, "alert_info", alert_info);
-
-  return(CONST_LUA_OK);
-}
-
 #endif
 
 /* ****************************************** */
@@ -1367,9 +1349,6 @@ static luaL_Reg _ntop_flow_reg[] = {
   { "isNotPurged",              ntop_flow_is_not_purged              },
   { "getTCPStats",              ntop_flow_get_tcp_stats              },
   { "getBlacklistedInfo",       ntop_flow_get_blacklisted_info       },
-#ifdef NTOPNG_PRO
-  { "getScoreInfo",             ntop_flow_get_score_info             },
-#endif
   { "retrieveExternalAlertInfo", ntop_flow_retrieve_external_alert_info },
   { "getDeviceProtoAllowedInfo", ntop_flow_get_device_proto_allowed_info},
   { "getClient2ServerIAT",      ntop_flow_get_cli2srv_iat            },

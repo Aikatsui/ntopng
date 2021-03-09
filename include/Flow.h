@@ -277,7 +277,6 @@ class Flow : public GenericHashEntry {
   FlowAlertType getPredominantAlert() const;
   inline AlertLevel getAlertedSeverity() const { return alert_level;          };
   inline u_int16_t  getAlertedScore()    const { return predominant_alert_score; };
-  inline const char* GetAlertInfo()     const { return(alert_info);   };
 
   bool isBlacklistedFlow()   const;
   bool isBlacklistedClient() const;
