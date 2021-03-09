@@ -59,8 +59,7 @@ class Flow : public GenericHashEntry {
   volatile u_int16_t  predominant_alert_score;       /* The score associated to the predominant alert */
   volatile FlowAlertType predominant_alert_enqueued; /* This is the most recent predominant alert enqueued to recipients */
   volatile AlertLevel predominant_alert_level;
-  char *alert_info;        /* Alert specific info */
-  char *alert_info_shadow, *custom_flow_info;
+  char *custom_flow_info;
   struct {
     struct ndpi_analyze_struct *c2s, *s2c;
   } entropy;
@@ -261,7 +260,7 @@ class Flow : public GenericHashEntry {
   void luaScore(lua_State* vm);
   void luaIEC104(lua_State* vm);
   void callFlowUpdate(time_t t);
-  bool setPredominantAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
+  bool setPredominantAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t predominant_alert_score);
   
  public:
   Flow(NetworkInterface *_iface,

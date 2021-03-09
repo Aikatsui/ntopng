@@ -2811,7 +2811,7 @@ function formatElephantAlertType(flowalert_info)
    end
 
    local l2r_bytes = bytesToSize(flowalert_info["l2r_bytes"])
-   tprint(flowalert_info)
+
    if flowalert_info["l2r_bytes"] > flowalert_info["l2r_threshold"] then
       l2r_bytes = l2r_bytes .." > "..bytesToSize(flowalert_info["l2r_threshold"])
    end
@@ -2823,7 +2823,7 @@ function formatElephantAlertType(flowalert_info)
 
    res = i18n("flow_details.elephant_flow")
    res = string.format("%s<sup><i class='fas fa-info-circle' aria-hidden='true' title='"..i18n("flow_details.elephant_flow_descr").."'></i></sup>", res)
-   res = string.format("%s [%s]", res, i18n("flow_details.elephant_exceeded", {l2r = l2r_bytes, r2l = r2l_bytes}))
+   res = string.format("%s %s", res, i18n("flow_details.elephant_exceeded", {l2r = l2r_bytes, r2l = r2l_bytes}))
 
    return res
 end

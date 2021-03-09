@@ -79,12 +79,26 @@ ScriptCategory FlowCallbacksExecutor::getAlertCategory(FlowAlertType fat) const 
 
 /* **************************************************** */
 
+/* NOTE: memory MUST be freed by the caller */
 char *FlowCallbacksExecutor::getAlertJSON(FlowAlertType fat, Flow *f) const {
+  ndpi_serializer *alert_json_serializer = NULL;
+  char *json_string = NULL;
+  u_int32_t json_string_len;
   std::map<FlowAlertType, FlowCallback*>::const_iterator it = alert_type_to_callback.find(fat);
 
-  if(it != alert_type_to_callback.end())
-    return it->second->getAlertJSONStr(f);
+  if(it == alert_type_to_callback.end())
+    return NULL; /* Callback not found */
 
-  /* TODO */
-  return NULL;
+  alert_json_serializer = it->second->getAlertJSON(f);
+
+  if(alert_json_serializer) {
+    json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
+    json_string = json_string ? strdup(json_string) : NULL; /* Allocate memory */
+    ndpi_term_serializer(alert_json_serializer);
+  } else {
+    json_string = it->second->getAlertJSONStr(f); /* Already allocated */
+  }
+
+  /* Always allocated in memory (must be freed) */
+  return json_string;
 }

@@ -44,7 +44,6 @@ Flow::Flow(NetworkInterface *_iface,
   cli_ip_addr = srv_ip_addr = NULL;
   good_tls_hs = true, flow_dropped_counts_increased = false, vrfId = 0;
   srcAS = dstAS  = prevAdjacentAS = nextAdjacentAS = 0;
-  alert_info = alert_info_shadow = NULL;
   predominant_alert_level = alert_level_none;
   predominant_alert = predominant_alert_enqueued = alert_normal, predominant_alert_score = 0;
   ndpi_flow_risk_bitmap = 0;
@@ -372,8 +371,6 @@ Flow::~Flow() {
   freeDPIMemory();
   if(icmp_info) delete(icmp_info);
   if(external_alert) free(external_alert);
-  if(alert_info) free(alert_info);
-  if(alert_info_shadow) free(alert_info_shadow);
 }
 
 /* *************************************** */
@@ -2155,8 +2152,11 @@ void Flow::lua(lua_State* vm, AddressTree * ptree,
       }
     }
 
-    if(alert_info)
-      lua_push_str_table_entry(vm, "alert_info", alert_info);
+    char *alert_json = getInterface()->getAlertJSON(getPredominantAlert(), this);
+    if(alert_json) {
+      lua_push_str_table_entry(vm, "alert_info", alert_json);
+      free(alert_json);
+    }
 
     lua_get_risk_info(vm, true);
     lua_entropy(vm);
@@ -2669,14 +2669,13 @@ u_char* Flow::getCommunityId(u_char *community_id, u_int community_id_len) {
 /* Create a JSON in the alerts format
  * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
 void Flow::flow2alertJson(ndpi_serializer *s, time_t now) {
-  ndpi_serializer json_info;
   char buf[64];
   u_char community_id[200];
-  ndpi_init_serializer(&json_info, ndpi_serialization_format_json);
+  char *alert_json = getInterface()->getAlertJSON(getPredominantAlert(), this);
 
   /* AlertsManager::storeFlowAlert requires a string */
-  ndpi_serialize_string_string(s, "alert_json", alert_info ? alert_info : "");
-  ndpi_term_serializer(&json_info);
+  ndpi_serialize_string_string(s, "alert_json", alert_json ? alert_json : "");
+  if(alert_json) free(alert_json);
 
   ndpi_serialize_string_int32(s, "ifid", iface->get_id());
   ndpi_serialize_string_string(s, "action", "store");
@@ -2975,15 +2974,6 @@ void Flow::enqueuePredominantAlert() {
   if(cur_predominant_alert == alert_normal                  /* No alert (should not occur) */
      || predominant_alert_enqueued == cur_predominant_alert /* Predominant alert already enqueued */)
     return; /* Nothing to do */
-
-  /* Make the shadow status JSON the official alerted status JSON */
-  alert_info = alert_info_shadow;
-
-  /* Free the shadow that is now the official alerted status JSON */
-  if(alert_info_shadow){
-    free(alert_info_shadow);
-    alert_info_shadow = NULL;
-  }
 
   bool first_alert = true; /* TODO: implement check !f->isFlowAlerted(); */
   bool rv = false;
@@ -5161,7 +5151,7 @@ bool Flow::hasDissectedTooManyPackets() {
 
 /* ***************************************************** */
 
-bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
+bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int16_t alert_score) {
   bool first_alert = !isFlowAlerted();
   Host *cli_h = get_cli_host(), *srv_h = get_srv_host();
 
@@ -5188,12 +5178,6 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
     }
   }
 
-  /* Note: setPredominantAlert is called by flow.lua only after all the flow
-   * status are processed (once every 5 seconds), so it is safe to use the shadow */
-  if(alert_info_shadow) free(alert_info_shadow);
-  alert_info_shadow = alert_json ? strdup(alert_json) : NULL;
-
-  // alert_info =  alert_info_shadow;  /* Set in enqueuePredominantAlert to avoid races */
   predominant_alert = status;
   predominant_alert_level = severity;
   predominant_alert_score = alert_score;
@@ -5211,12 +5195,6 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
   FlowAlertType alert_type = fcb->getAlertType();
   ScriptCategory script_category = fcb->getCategory();
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
-  ndpi_serializer *alert_json_serializer = NULL;
-  char *alert_json_str = NULL;
-
-  alert_json_serializer = fcb->getAlertJSON(this);
-  if (alert_json_serializer == NULL)
-    alert_json_str = fcb->getAlertJSONStr(this);
 
   if(alert_type == alert_normal)
     return false;
@@ -5243,25 +5221,9 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
   if(!isFlowAlerted() /* Flow is not yet alerted */
      || getAlertedScore() < flow_inc /* The score of the current alerted alert_type is less than the score of this alert_type */
      || getAlertedSeverity() < severity) {
-    u_int32_t json_string_len;
-    char *json_string;
-    
-    if(alert_json_serializer)
-      json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
-    else if (alert_json_str)
-      json_string = alert_json_str;
-    else
-      json_string = NULL;
-    
-    setPredominantAlert(alert_type, severity, flow_inc, json_string);
+    setPredominantAlert(alert_type, severity, flow_inc);
   }
-  
-  if(alert_json_serializer)
-    ndpi_term_serializer(alert_json_serializer);
 
-  if (alert_json_str)
-    free(alert_json_str);
-  
   return true;
 }
 
