@@ -23,15 +23,14 @@
 #include "flow_callbacks_includes.h"
 
 void UDPUnidirectional::checkFlow(Flow *f) {
-  Host *cli_host = f->get_cli_host();
-  Host *srv_host = f->get_srv_host();
+  int16_t network_id;
   u_int16_t fs_score = 10;
   
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
 
-  if(f->get_protocol() != IPPROTO_UDP)   return; /* Non UDP traffic        */
-  if(f->get_bytes_srv2cli() == 0)        return; /* Two way communications */
-  if((!cli_host) || cli_host->get_ip()->isEmpty()) return; /* No client IP */
+  if(f->get_protocol() != IPPROTO_UDP)                  return; /* Non UDP traffic        */
+  if(f->get_bytes_srv2cli() && f->get_bytes_srv2cli())  return; /* Two way communications */
+  if(!f->get_cli_ip_addr()->isNonEmptyUnicastAddress()) return; /* No client IP           */
   
   switch(f->get_detected_protocol().app_protocol) {
   case NDPI_PROTOCOL_MDNS:
@@ -42,14 +41,13 @@ void UDPUnidirectional::checkFlow(Flow *f) {
   case NDPI_PROTOCOL_SFLOW:
   case NDPI_PROTOCOL_NETFLOW:
     return; /* Whitelisted protocol */
-    break;
 
   default:
     /* No whitelist */
     break;
   }
 
-  if(srv_host && (!srv_host->isLocalHost()))
+  if(!f->get_srv_ip_addr()->isLocalHost(&network_id))
     fs_score = 50;
   
   f->setAlert(this, severity_id, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
@@ -57,7 +55,6 @@ void UDPUnidirectional::checkFlow(Flow *f) {
 
 /* ***************************************************** */
 
-void UDPUnidirectional::protocolDetected(Flow *f)   { checkFlow(f); }
 void UDPUnidirectional::periodicActivities(Flow *f) { checkFlow(f); }
 void UDPUnidirectional::flowEnd(Flow *f)            { checkFlow(f); }
   

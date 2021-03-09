@@ -31,10 +31,9 @@ class UDPUnidirectional : public FlowCallback {
  public:
   UDPUnidirectional() : FlowCallback(ntopng_edition_community,
 				     false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				     true /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
+				     false /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
   ~UDPUnidirectional() {};
   
-  void protocolDetected(Flow *f);
   void periodicActivities(Flow *f);
   void flowEnd(Flow *f);
   
