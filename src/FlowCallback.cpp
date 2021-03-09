@@ -74,6 +74,7 @@ bool FlowCallback::triggerAlert(Flow *f, FlowAlertType status, AlertLevel severi
     
     if((notification.alert = strdup(flow_str))) {
       notification.alert_severity = severity;
+      notification.script_category = script_category_other; /* TODO: change */
 
       rv = ntop->recipient_enqueue(0/* SQLite builtin*/,
 				   severity >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,

@@ -207,6 +207,7 @@ typedef enum {
 /* Used to queue/dequeue elements in recipient queues via AlertFifoQueue.h */
 typedef struct {
   AlertLevel alert_severity;
+  ScriptCategory script_category;
   char *alert;
 } AlertFifoItem;
 
