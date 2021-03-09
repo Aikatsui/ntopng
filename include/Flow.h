@@ -260,6 +260,7 @@ class Flow : public GenericHashEntry {
   void luaScore(lua_State* vm);
   void luaIEC104(lua_State* vm);
   void callFlowUpdate(time_t t);
+  bool setPredominantAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
   
  public:
   Flow(NetworkInterface *_iface,
@@ -272,7 +273,6 @@ class Flow : public GenericHashEntry {
 
   inline Bitmap getAlertBitmap()     const     { return(alert_map);           }
   bool setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
-  bool triggerAlert(FlowAlertType status, AlertLevel severity, u_int16_t predominant_alert_score, const char* alert_json);
   void postFlowCallbacks();
   FlowAlertType getPredominantAlert() const;
   inline AlertLevel getAlertedSeverity() const { return alert_level;          };

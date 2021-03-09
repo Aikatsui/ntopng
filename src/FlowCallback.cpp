@@ -44,60 +44,6 @@ FlowCallback::~FlowCallback() {
 
 /* **************************************************** */
 
-bool FlowCallback::triggerAlert(Flow *f, FlowAlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
-  bool first_alert = !f->isFlowAlerted();
-  bool rv = false;
-  u_int32_t buflen;
-  AlertFifoItem notification;
-
-  /* Logic similar to ntop_flow_trigger_alert */
-  if(f->triggerAlert(status, severity, alert_score, alert_json)) {
-    /* The alert was successfully triggered */
-    ndpi_serializer flow_json;
-    const char *flow_str;
-
-    ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
-
-    /* Only proceed if there is some space in the queues */
-    f->flow2alertJson(&flow_json, time(NULL));
-
-    if(!first_alert)
-      ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
-
-    if(false /* alert_always_notify */)
-      ndpi_serialize_string_boolean(&flow_json, "alert_always_notify", true);
-
-    flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
-
-    /* TODO: read all the recipients responsible for flows, and enqueue only to them */
-    /* Currenty, we forcefully enqueue only to the builtin sqlite */
-    
-    if((notification.alert = strdup(flow_str))) {
-      notification.alert_severity = severity;
-      notification.script_category = script_category_other; /* TODO: change */
-
-      rv = ntop->recipient_enqueue(0/* SQLite builtin*/,
-				   severity >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
-				   &notification);
-    }
-
-    if(!rv) {
-      NetworkInterface *iface = f->getInterface();
-      if(iface)
-	iface->incNumDroppedAlerts(1);
-
-      if(notification.alert)
-	free(notification.alert);
-    }
-
-    ndpi_term_serializer(&flow_json);
-  }
-
-  return true;
-}
-
-/* **************************************************** */
-
 bool FlowCallback::isCallbackCompatibleWithInterface(NetworkInterface *iface) {
   /* Check first if the license allows plugin to be enabled */
   switch(plugin_edition) {

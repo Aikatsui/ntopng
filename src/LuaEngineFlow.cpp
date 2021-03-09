@@ -1029,82 +1029,6 @@ static int ntop_flow_is_alerted(lua_State* vm) {
 
 /* ****************************************** */
 
-#if 0
-
-static int ntop_flow_trigger_alert(lua_State* vm) {
-  Flow *f = ntop_flow_get_context_flow(vm);
-  AlertType status;
-  AlertType atype;
-  AlertLevel severity;
-  u_int16_t alert_score;
-  bool triggered = false;
-  const char *alert_info = NULL;
-  u_int32_t buflen;
-  time_t now;
-  bool first_alert;
-  bool status_always_notify;
-
-  if(!f) return(CONST_LUA_ERROR);
-
-  first_alert = !f->isFlowAlerted();
-
-  if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  status = (AlertType)lua_tonumber(vm, 1);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 2, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  atype = (AlertType)lua_tonumber(vm, 2);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 3, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  severity = (AlertLevel)lua_tointeger(vm, 3);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 4, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  alert_score = lua_tointeger(vm, 4);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 5, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  now = (time_t) lua_tonumber(vm, 5);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 6, LUA_TBOOLEAN) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  status_always_notify = lua_toboolean(vm, 6);
-
-  if(lua_type(vm, 7) == LUA_TSTRING)
-    alert_info = lua_tostring(vm, 7);
-
-  lua_newtable(vm);
-
-  if(f->triggerAlert(status, severity, alert_score, alert_info)) {
-    /* The alert was successfully triggered */
-    triggered = true;
-
-    ndpi_serializer flow_json;
-    const char *flow_str;
-
-    ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
-
-    /* Only proceed if there is some space in the queues */
-    f->flow2alertJson(&flow_json, now);
-
-    if(!first_alert)
-      ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
-
-    if(status_always_notify)
-      ndpi_serialize_string_boolean(&flow_json, "status_always_notify", true);
-
-    flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
-
-    if(flow_str)
-      lua_push_str_table_entry(vm, "alert_json", flow_str);
-
-    ndpi_term_serializer(&flow_json);
-  }
-
-  lua_push_bool_table_entry(vm, "triggered", triggered);
-  return(CONST_LUA_OK);
-}
-
-#endif
-
-/* ****************************************** */
-
 static int ntop_flow_is_blacklisted(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
 
@@ -1326,9 +1250,6 @@ static luaL_Reg _ntop_flow_reg[] = {
 
   { "getInfo",                  ntop_flow_get_info                   },
   { "getUnicastInfo",           ntop_flow_get_unicast_info           },
-#if 0
-  { "triggerAlert",             ntop_flow_trigger_alert              },
-#endif
   { "getHashEntryId",           ntop_flow_get_hash_entry_id          },
   { "getICMPStatusInfo",        ntop_flow_get_icmp_alert_info       },
   { "getPredominantAlertScore",    ntop_flow_get_alert_score   },

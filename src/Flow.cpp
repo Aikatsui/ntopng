@@ -3010,6 +3010,7 @@ void Flow::postFlowCallbacks() {
     
   notification.alert = (char*)flow_str;
   notification.alert_severity = getAlertedSeverity();
+  notification.script_category = getInterface()->getAlertCategory(getPredominantAlert());
   /* TODO: add script information */
 
   rv = ntop->recipients_enqueue(getAlertedSeverity() >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
@@ -5157,7 +5158,7 @@ bool Flow::hasDissectedTooManyPackets() {
 
 /* ***************************************************** */
 
-bool Flow::triggerAlert(FlowAlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
+bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json) {
   bool first_alert = !isFlowAlerted();
   Host *cli_h = get_cli_host(), *srv_h = get_srv_host();
 
@@ -5184,7 +5185,7 @@ bool Flow::triggerAlert(FlowAlertType status, AlertLevel severity, u_int16_t ale
     }
   }
 
-  /* Note: triggerAlert is called by flow.lua only after all the flow
+  /* Note: setPredominantAlert is called by flow.lua only after all the flow
    * status are processed (once every 5 seconds), so it is safe to use the shadow */
   if(alert_info_shadow) free(alert_info_shadow);
   alert_info_shadow = alert_json ? strdup(alert_json) : NULL;
@@ -5204,7 +5205,7 @@ bool Flow::triggerAlert(FlowAlertType status, AlertLevel severity, u_int16_t ale
   This method is called by Lua to set score and various other values of the flow
  */
 bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  FlowAlertType status = fcb->getAlertType();
+  FlowAlertType alert_type = fcb->getAlertType();
   ScriptCategory script_category = fcb->getCategory();
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
   ndpi_serializer *alert_json_serializer = NULL;
@@ -5214,11 +5215,11 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
   if (alert_json_serializer == NULL)
     alert_json_str = fcb->getAlertJSONStr(this);
 
-  if(status == alert_normal)
+  if(alert_type == alert_normal)
     return false;
 
-  if(!alert_map.issetBit(status))
-    alert_map.setBit(status);
+  if(!alert_map.issetBit(alert_type))
+    alert_map.setBit(alert_type);
 
   flow_score += flow_inc;
 
@@ -5235,9 +5236,9 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
   if(unsafeGetServer())
     srv_host_score[score_category] += unsafeGetServer()->incScoreValue(srv_inc, score_category, false /* as server */);
 
-  /* Check if also the predominant status should be updated */
+  /* Check if also the predominant alert_type should be updated */
   if(!isFlowAlerted() /* Flow is not yet alerted */
-     || getAlertedScore() < flow_inc /* The score of the current alerted status is less than the score of this status */
+     || getAlertedScore() < flow_inc /* The score of the current alerted alert_type is less than the score of this alert_type */
      || getAlertedSeverity() < severity) {
     u_int32_t json_string_len;
     char *json_string;
@@ -5249,7 +5250,7 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
     else
       json_string = NULL;
     
-    triggerAlert(status, severity, flow_inc, json_string);
+    setPredominantAlert(alert_type, severity, flow_inc, json_string);
   }
   
   if(alert_json_serializer)

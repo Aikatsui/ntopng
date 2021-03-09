@@ -33,7 +33,6 @@ class FlowCallback {
   
  protected:
   AlertLevel severity_id;
-  bool triggerAlert(Flow *f, FlowAlertType status, AlertLevel severity, u_int16_t alert_score, const char *alert_json);
 
  public:
   FlowCallback(NtopngEdition _edition, bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only,
