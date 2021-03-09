@@ -23,15 +23,12 @@
 #include "flow_callbacks_includes.h"
 
 void RemoteToRemote::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
-  if (0 /* TODO Implement check */) {
-    u_int16_t c_score = 0, s_score = 0, f_score = 0;
+  if (f->isRemoteToRemote() && f->isUnicast()) {
+    u_int16_t c_score = 10;
+    u_int16_t s_score = 10;
+    u_int16_t f_score = 10;
     
-    /* TODO Set score */
-
-    f->setAlert(this, alert_level_error /* TODO read from the config */,
-      f_score, c_score, s_score);
+    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 }
 

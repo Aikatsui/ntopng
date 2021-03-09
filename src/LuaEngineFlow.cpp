@@ -140,31 +140,23 @@ static int ntop_flow_is_server_noip(lua_State* vm) {
 
 static int ntop_flow_is_unicast(lua_State* vm) {
   Flow *f = ntop_flow_get_context_flow(vm);
-  const IpAddress *cli_ip, *srv_ip;
 
   if(!f) return(CONST_LUA_ERROR);
 
-  cli_ip = f->get_cli_ip_addr();
-  srv_ip = f->get_srv_ip_addr();
+  lua_pushboolean(vm, f->isUnicast());
 
-  lua_pushboolean(vm, (cli_ip && srv_ip &&
-      !cli_ip->isBroadMulticastAddress() && !srv_ip->isBroadMulticastAddress()));
   return(CONST_LUA_OK);
 }
 
 /* ****************************************** */
 
 static int ntop_flow_is_remote_to_remote(lua_State* vm) {
-  Host *cli_host, *srv_host;
   Flow *f = ntop_flow_get_context_flow(vm);
 
   if(!f) return(CONST_LUA_ERROR);
 
-  cli_host = f->get_cli_host();
-  srv_host = f->get_srv_host();
+  lua_pushboolean(vm, f->isRemoteToRemote());
 
-  lua_pushboolean(vm, (cli_host && srv_host &&
-      !cli_host->isLocalHost() && !srv_host->isLocalHost()));
   return(CONST_LUA_OK);
 }
 

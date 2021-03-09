@@ -408,7 +408,9 @@ class Flow : public GenericHashEntry {
   inline bool isThreeWayHandshakeOK()    const { return(twh_ok);                          };
   inline bool isDetectionCompleted()     const { return(detection_completed);             };
   inline bool isOneWay()                 const { return(get_packets() && (!get_packets_cli2srv() || !get_packets_srv2cli())); };
-  inline bool isBidirectional()          const { return(get_packets_cli2srv() && get_packets_srv2cli());                      };
+  inline bool isBidirectional()          const { return(get_packets_cli2srv() && get_packets_srv2cli()); };
+  inline bool isRemoteToRemote()         const { return (cli_host && srv_host && !cli_host->isLocalHost() && !srv_host->isLocalHost()); };
+  inline bool isUnicast()                const { return (cli_ip_addr && srv_ip_addr && !cli_ip_addr->isBroadMulticastAddress() && !srv_ip_addr->isBroadMulticastAddress()); };
   inline void* get_cli_id()              const { return(cli_id);                          };
   inline void* get_srv_id()              const { return(srv_id);                          };
   inline u_int32_t get_cli_ipv4()        const { return(cli_host->get_ip()->get_ipv4());  };
