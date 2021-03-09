@@ -28,9 +28,7 @@ void WebMining::protocolDetected(Flow *f) {
     if(!strcmp(f->get_protocol_category_name(), "Mining")) {
     u_int16_t c_score = 50, s_score = 10, f_score = 50;
    
-    f->setAlert(this,
-		 alert_level_error /* TODO: read it from the config */,
-		 f_score, c_score, s_score);
+    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 }
 
