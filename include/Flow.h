@@ -273,7 +273,9 @@ class Flow : public GenericHashEntry {
 
   inline Bitmap getAlertBitmap()     const     { return(alert_map);           }
   bool setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
-  void postFlowCallbacks();
+  /* Enqueues the predominant alert of the flow to all available flow recipients */
+  void enqueuePredominantAlert();
+
   FlowAlertType getPredominantAlert() const;
   inline AlertLevel getAlertedSeverity() const { return alert_level;          };
   inline u_int16_t  getAlertedScore()    const { return predominant_alert_score; };

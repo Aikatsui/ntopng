@@ -2968,7 +2968,7 @@ void Flow::callFlowUpdate(time_t t) {
 
 /* *************************************** */
 
-void Flow::postFlowCallbacks() {
+void Flow::enqueuePredominantAlert() {
   /* See if it is time to trigger an alert */
 
   /* TODO: Implement checks on bitmap changes, not just on predominant status changes */
@@ -5190,7 +5190,7 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
   if(alert_info_shadow) free(alert_info_shadow);
   alert_info_shadow = alert_json ? strdup(alert_json) : NULL;
 
-  // alert_info =  alert_info_shadow;  /* Set in postFlowCallbacks to avoid races */
+  // alert_info =  alert_info_shadow;  /* Set in enqueuePredominantAlert to avoid races */
   predominant_alert = status;
   alert_level = severity;
   predominant_alert_score = alert_score;

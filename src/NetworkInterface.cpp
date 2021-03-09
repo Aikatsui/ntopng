@@ -2392,7 +2392,7 @@ u_int64_t NetworkInterface::dequeueFlows(SPSCQueue<Flow *> *q, u_int budget) {
   while(q->isNotEmpty()) {
     Flow *f = q->dequeue();
 
-    f->postFlowCallbacks();
+    f->enqueuePredominantAlert();
 
 #if DEBUG_FLOW_CALLBACKS
     ntop->getTrace()->traceEvent(TRACE_NORMAL, "Dequeued flow");
