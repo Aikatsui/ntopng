@@ -39,9 +39,30 @@ FlowCallbacksExecutor::~FlowCallbacksExecutor() {
 
 /* **************************************************** */
 
+void FlowCallbacksExecutor::loadFlowCallbacksAlerts(std::list<FlowCallback*> *cb_list) {
+  for(std::list<FlowCallback*>::const_iterator it = cb_list->begin(); it != cb_list->end(); ++it) {
+    FlowAlertType alert_type = (*it)->getAlertType();
+
+    if(alert_type_to_callback.find(alert_type) != alert_type_to_callback.end()) {
+      /* Entry already existing, check if this is the same callback */
+      if(alert_type_to_callback[alert_type] != *it) /* Another callback providing the same alert */
+	ntop->getTrace()->traceEvent(TRACE_ERROR, "Duplicate callback for the same status [%s][was: %s]", (*it)->getName().c_str(), alert_type_to_callback[alert_type]->getName().c_str());
+    } else {
+      /* New entry */
+      alert_type_to_callback[alert_type] = *it;
+    }
+  }
+}
+
+/* **************************************************** */
+
 void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
   protocol_detected = fcl->getProtocolDetectedCallbacks(iface);
   periodic_update   = fcl->getPeriodicUpdateCallbacks(iface);
   flow_end          = fcl->getFlowEndCallbacks(iface);
+
+  loadFlowCallbacksAlerts(protocol_detected),
+    loadFlowCallbacksAlerts(periodic_update),
+    loadFlowCallbacksAlerts(flow_end);
 }
 
