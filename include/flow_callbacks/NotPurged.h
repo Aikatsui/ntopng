@@ -26,18 +26,20 @@
 
 class NotPurged : public FlowCallback {
  private:
+  void checkNotPurged(Flow *f);
   
  public:
  NotPurged() : FlowCallback(ntopng_edition_community,
 			    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-			    false /* has_protocol_detected */, true /* has_periodic_update */, false /* has_flow_end */) {};
+			    false /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {};
   ~NotPurged() {};
 
-  void protocolDetected(Flow *f);
+  void periodicUpdate(Flow *f);
+  void flowEnd(Flow *f);
   
   std::string getName()          const { return(std::string("not_purged")); }
   ScriptCategory getCategory()   const { return script_category_internals;  }
-  FlowAlertType getAlertType() const { return alert_not_purged;          }
+  FlowAlertType getAlertType() const   { return alert_internals;            }
 };
 
 #endif /* _NOT_PURGED_FLOW_CALLBACK_H_ */

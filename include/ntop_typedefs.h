@@ -374,7 +374,7 @@ typedef enum {
   alert_longlived                        = 11,
   alert_low_goodput                      = 12,
   alert_malicious_signature              = 13,
-  alert_not_purged                       = 14,
+  alert_internals                        = 14,
   alert_potentially_dangerous            = 15,
   alert_remote_to_remote                 = 16,
   alert_suspicious_tcp_probing           = 17,
