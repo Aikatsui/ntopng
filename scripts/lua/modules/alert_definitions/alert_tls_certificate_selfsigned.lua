@@ -53,7 +53,15 @@ function alert_tls_certificate_selfsigned.format(ifid, alert, alert_type_params)
    local crts = {}
    crts[#crts + 1] = alert_type_params["tls_crt.issuerDN"]
 
-   return string.format("[Issuer/Subject: %s]", table.concat(crts, " - "))
+   if alert_type_params["protos.tls.issuerDN"] then
+      crts[#crts + 1] = "Issuer: "..alert_type_params["protos.tls.issuerDN"]
+   end
+
+   if alert_type_params["protos.tls.subjectDN"] then
+      crts[#crts + 1] = "Subject: "..alert_type_params["protos.tls.subjectDN"]
+   end
+
+   return string.format("%s", table.concat(crts, " / "))
 end
 
 -- #######################################################
