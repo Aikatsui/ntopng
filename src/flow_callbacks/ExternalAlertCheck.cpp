@@ -28,8 +28,6 @@ void ExternalAlertCheck::protocolDetected(Flow *f) {
     u_int16_t s_score = 100;
     u_int16_t f_score = 100;
 
-    //TODO if f->getExternalSource() = 'suricata' compute score with ids_utils.computeScore
- 
     f->setAlert(this, getSeverity(), f_score, c_score, s_score);
     f->setAlert(this, f->getExternalSeverity(), f_score, c_score, s_score);
   }
@@ -47,5 +45,3 @@ char* ExternalAlertCheck::getAlertJSONStr(Flow *f) {
 
   return strdup(json);
 }
-
-/* ***************************************************** */

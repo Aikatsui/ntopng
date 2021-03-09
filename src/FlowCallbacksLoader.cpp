@@ -47,7 +47,9 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new DeviceProtocolNotAllowed()))    cb_all[fcb->getName()] = fcb;
   if((fcb = new DNSDataExfiltration()))         cb_all[fcb->getName()] = fcb;
   if((fcb = new ElephantFlow()))                cb_all[fcb->getName()] = fcb;
+#ifndef NTOPNG_PRO
   if((fcb = new ExternalAlertCheck()))          cb_all[fcb->getName()] = fcb;
+#endif
   if((fcb = new FlowRiskDNSSuspiciousTraffic())) cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskHTTPNumericIPHost()))   cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskHTTPSuspiciousHeader())) cb_all[fcb->getName()] = fcb;
@@ -78,6 +80,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
 
 #ifdef NTOPNG_PRO
   if((fcb = new BlacklistedFlow()))             cb_all[fcb->getName()] = fcb;
+  if((fcb = new ExternalAlertCheckPro()))       cb_all[fcb->getName()] = fcb;
   if((fcb = new InvalidDNSQuery()))             cb_all[fcb->getName()] = fcb;
   if((fcb = new LongLivedFlow()))               cb_all[fcb->getName()] = fcb;
   if((fcb = new NedgeBlockedFlow()))            cb_all[fcb->getName()] = fcb;

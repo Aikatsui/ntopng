@@ -58,6 +58,7 @@
 #include "flow_callbacks/WebMining.h"
 
 #ifdef NTOPNG_PRO
+#include "flow_callbacks/ExternalAlertCheckPro.h"
 #include "flow_callbacks/InvalidDNSQuery.h"
 #include "flow_callbacks/LongLivedFlow.h"
 #include "flow_callbacks/NedgeBlockedFlow.h"
