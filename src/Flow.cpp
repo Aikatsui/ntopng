@@ -45,7 +45,7 @@ Flow::Flow(NetworkInterface *_iface,
   good_tls_hs = true, flow_dropped_counts_increased = false, vrfId = 0;
   srcAS = dstAS  = prevAdjacentAS = nextAdjacentAS = 0;
   alert_info = alert_info_shadow = NULL;
-  alert_level = alert_level_none;
+  predominant_alert_level = alert_level_none;
   predominant_alert = predominant_alert_enqueued = alert_normal, predominant_alert_score = 0;
   ndpi_flow_risk_bitmap = 0;
   detection_completed = false;
@@ -299,7 +299,7 @@ Flow::~Flow() {
     Perform other operations to decrease counters increased by flow user script hooks (we're in the same thread)
    */
   if(isFlowAlerted()) {
-    iface->decNumAlertedFlows(this, alert_level);
+    iface->decNumAlertedFlows(this, predominant_alert_level);
     if(cli_u) cli_u->decNumAlertedFlows(true /* As client */);
     if(srv_u) srv_u->decNumAlertedFlows(false /* As server */);
 
@@ -2361,7 +2361,7 @@ void Flow::sumStats(nDPIStats *ndpi_stats, FlowStats *status_stats) {
     ndpi_stats->incFlowsStats(detected_protocol.master_protocol);
   }
 
-  status_stats->incStats(getAlertBitmap(), protocol, alert_level, getCli2SrvDSCP(), getSrv2CliDSCP());
+  status_stats->incStats(getAlertBitmap(), protocol, predominant_alert_level, getCli2SrvDSCP(), getSrv2CliDSCP());
 }
 
 /* *************************************** */
@@ -2686,7 +2686,7 @@ void Flow::flow2alertJson(ndpi_serializer *s, time_t now) {
   ndpi_serialize_string_boolean(s, "is_flow_alert", true);
   ndpi_serialize_string_int64(s, "alert_tstamp", now);
   ndpi_serialize_string_int64(s, "alert_type", predominant_alert);
-  ndpi_serialize_string_int32(s, "alert_severity", alert_level);
+  ndpi_serialize_string_int32(s, "alert_severity", predominant_alert_level);
 
   // alert_entity MUST be in sync with alert_consts.lua flow alert entity
   ndpi_serialize_string_int32(s, "alert_entity", alert_entity_flow);
@@ -4589,7 +4589,7 @@ void Flow::lua_get_status(lua_State* vm) const {
   if(isFlowAlerted()) {
     lua_push_bool_table_entry(vm, "flow.alerted", true);
     lua_push_uint64_table_entry(vm, "predominant_alert", getPredominantAlert());
-    lua_push_uint64_table_entry(vm, "predominant_alert_score", getPredominantAlertScore());
+    lua_push_uint64_table_entry(vm, "predominant_alert_score", getAlertedScore());
     lua_push_uint64_table_entry(vm, "alerted_severity", getAlertedSeverity());
   }
 }
@@ -5182,8 +5182,8 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
     if(srv_h)
       srv_h->incTotalAlerts(status);
   } else { /* Not the first alert triggered for this flow */
-    if(alert_level != severity) { /* If the new severity is different from the old severity ...*/
-      iface->decNumAlertedFlows(this, alert_level); /* Decrease the value previously increased for the former level */
+    if(predominant_alert_level != severity) { /* If the new severity is different from the old severity ...*/
+      iface->decNumAlertedFlows(this, predominant_alert_level); /* Decrease the value previously increased for the former level */
       iface->incNumAlertedFlows(this, severity);    /* Increase the value for the newly set level*/
     }
   }
@@ -5195,7 +5195,7 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
 
   // alert_info =  alert_info_shadow;  /* Set in enqueuePredominantAlert to avoid races */
   predominant_alert = status;
-  alert_level = severity;
+  predominant_alert_level = severity;
   predominant_alert_score = alert_score;
 
   /* Success - alert is dumped/notified from lua */
@@ -5308,18 +5308,6 @@ void Flow::luaRetrieveExternalAlert(lua_State *vm) {
     free(json);
   } else
     lua_pushnil(vm);
-}
-
-/* *************************************** */
-
-FlowAlertType Flow::getPredominantAlert() const {
-  return predominant_alert;
-}
-
-/* *************************************** */
-
-u_int16_t Flow::getPredominantAlertScore() const {
-  return predominant_alert_score;
 }
 
 /* *************************************** */

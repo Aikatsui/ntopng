@@ -58,7 +58,7 @@ class Flow : public GenericHashEntry {
   volatile FlowAlertType predominant_alert;          /* This is the predominant alert */
   volatile u_int16_t  predominant_alert_score;       /* The score associated to the predominant alert */
   volatile FlowAlertType predominant_alert_enqueued; /* This is the most recent predominant alert enqueued to recipients */
-  volatile AlertLevel alert_level;
+  volatile AlertLevel predominant_alert_level;
   char *alert_info;        /* Alert specific info */
   char *alert_info_shadow, *custom_flow_info;
   struct {
@@ -277,9 +277,9 @@ class Flow : public GenericHashEntry {
   /* Enqueues the predominant alert of the flow to all available flow recipients */
   void enqueuePredominantAlert();
 
-  FlowAlertType getPredominantAlert() const;
-  inline AlertLevel getAlertedSeverity() const { return alert_level;          };
-  inline u_int16_t  getAlertedScore()    const { return predominant_alert_score; };
+  inline FlowAlertType getPredominantAlert() const { return predominant_alert;       };
+  inline AlertLevel getAlertedSeverity()     const { return predominant_alert_level; };
+  inline u_int16_t  getAlertedScore()        const { return predominant_alert_score; };
 
   bool isBlacklistedFlow()   const;
   bool isBlacklistedClient() const;

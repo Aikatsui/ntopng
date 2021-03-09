@@ -421,7 +421,7 @@ static int ntop_flow_get_alert_score(lua_State* vm) {
 
   if(!f) return(CONST_LUA_ERROR);
 
-  lua_pushinteger(vm, f->getPredominantAlertScore());
+  lua_pushinteger(vm, f->getAlertedScore());
 
   return(CONST_LUA_OK);
 }
@@ -1251,8 +1251,8 @@ static luaL_Reg _ntop_flow_reg[] = {
   { "getInfo",                  ntop_flow_get_info                   },
   { "getUnicastInfo",           ntop_flow_get_unicast_info           },
   { "getHashEntryId",           ntop_flow_get_hash_entry_id          },
-  { "getICMPStatusInfo",        ntop_flow_get_icmp_alert_info       },
-  { "getPredominantAlertScore",    ntop_flow_get_alert_score   },
+  { "getICMPStatusInfo",        ntop_flow_get_icmp_alert_info        },
+  { "getPredominantAlertScore", ntop_flow_get_alert_score            },
   { "getClientTCPIssues",       ntop_flow_get_cli_tcp_issues         },
   { "getServerTCPIssues",       ntop_flow_get_srv_tcp_issues         },
   { "getClientRetrPercentage",  ntop_flow_get_cli_retr_percentage    },
