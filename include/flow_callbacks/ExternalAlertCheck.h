@@ -34,11 +34,11 @@ class ExternalAlertCheck : public FlowCallback {
   ~ExternalAlertCheck() {};
 
   void protocolDetected(Flow *f);
-  bool loadConfiguration(json_object *config);
   
   std::string getName()        const { return(std::string("external_alert_check")); }
   ScriptCategory getCategory() const { return script_category_security;             }
   FlowAlertType getAlertType() const { return alert_external;                       }
+  char* getAlertJSONStr(Flow *f);
 };
 
 #endif /* _EXTERNAL_ALERT_CHECK_H_ */

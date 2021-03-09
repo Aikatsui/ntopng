@@ -5209,9 +5209,14 @@ bool Flow::triggerAlert(FlowAlertType status, AlertLevel severity, u_int16_t ale
  */
 bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   FlowAlertType status = fcb->getAlertType();
-  ScriptCategory script_category    = fcb->getCategory();
-  ndpi_serializer *alert_serializer = fcb->getAlertJSON(this);
+  ScriptCategory script_category = fcb->getCategory();
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
+  ndpi_serializer *alert_json_serializer = NULL;
+  char *alert_json_str = NULL;
+
+  alert_json_serializer = fcb->getAlertJSON(this);
+  if (alert_json_serializer == NULL)
+    alert_json_str = fcb->getAlertJSONStr(this);
 
   if(status == alert_normal)
     return false;
@@ -5241,16 +5246,21 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
     u_int32_t json_string_len;
     char *json_string;
     
-    if(alert_serializer)
-      json_string = ndpi_serializer_get_buffer(alert_serializer, &json_string_len);
+    if(alert_json_serializer)
+      json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
+    else if (alert_json_str)
+      json_string = alert_json_str;
     else
       json_string = NULL;
     
     triggerAlert(status, severity, flow_inc, json_string);
   }
   
-  if(alert_serializer)
-    ndpi_term_serializer(alert_serializer);
+  if(alert_json_serializer)
+    ndpi_term_serializer(alert_json_serializer);
+
+  if (alert_json_str)
+    free(alert_json_str);
   
   return true;
 }
@@ -5275,13 +5285,27 @@ void Flow::setExternalAlert(json_object *a) {
 
 /* *************************************** */
 
-void Flow::luaRetrieveExternalAlert(lua_State *vm) {
-  if(external_alert) {
-    lua_pushstring(vm, external_alert);
+char *Flow::retrieveExternalAlert() {
+  char *json = NULL;
 
-    /* Must delete the data to avoid returning it in the next call */
-    free(external_alert);
+  if (external_alert) {
+    json = external_alert;
+
+    /* Must clear the data to avoid returning it in the next call */
     external_alert = NULL;
+  }
+
+  return json;  
+}
+
+/* *************************************** */
+
+void Flow::luaRetrieveExternalAlert(lua_State *vm) {
+  char *json = retrieveExternalAlert();
+
+  if (json) {
+    lua_pushstring(vm, json);
+    free(json);
   } else
     lua_pushnil(vm);
 }

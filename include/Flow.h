@@ -613,8 +613,11 @@ class Flow : public GenericHashEntry {
   inline const char* getHTTPMethod()  const { return isHTTP() ? ndpi_http_method2str(protos.http.last_method) : (char*)"";        };
   inline char* getHTTPContentType()   const { return(isHTTP() ? protos.http.last_content_type : (char*)""); };
 
+  bool hasExternalAlert() const { return external_alert != NULL; };
   void setExternalAlert(json_object *a);
+  char *retrieveExternalAlert();
   void luaRetrieveExternalAlert(lua_State *vm);
+
   u_int32_t getSrvTcpIssues();
   u_int32_t getCliTcpIssues();
   double getCliRetrPercentage();
@@ -767,7 +770,6 @@ class Flow : public GenericHashEntry {
   u_char* getCommunityId(u_char *community_id, u_int community_id_len);
 
   inline FlowTrafficStats* getTrafficStats() { return(&stats); };
-  ndpi_serializer* getAlertJSON(Flow *f);
 };
 
 #endif /* _FLOW_H_ */

@@ -52,10 +52,12 @@ class FlowCallback {
   void addCallback(std::list<FlowCallback*> *l, NetworkInterface *iface, FlowCallbacks callback);
   virtual bool loadConfiguration(json_object *config);
   
-  virtual std::string getName()          const = 0;
-  virtual ScriptCategory getCategory()   const = 0;
+  virtual std::string getName()        const = 0;
+  virtual ScriptCategory getCategory() const = 0;
   virtual FlowAlertType getAlertType() const = 0;
+
   virtual ndpi_serializer* getAlertJSON(Flow *f) { return(NULL); }
+  virtual char* getAlertJSONStr(Flow *f) { return(NULL); }
 };
 
 #endif /* _FLOW_CALLBACK_H_ */

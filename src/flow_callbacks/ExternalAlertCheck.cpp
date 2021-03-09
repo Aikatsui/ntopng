@@ -23,41 +23,23 @@
 #include "flow_callbacks_includes.h"
 
 void ExternalAlertCheck::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
-  if(f->isBlacklistedFlow()) {
-    u_int16_t c_score, s_score, f_score = 100;
-    
-    if(f->isBlacklistedServer())
-      c_score = SCORE_MAX_SCRIPT_VALUE, s_score = 5;
-    else
-      c_score = 5, s_score = 10;
+  if (f->hasExternalAlert()) { 
+    u_int16_t c_score = 100;
+    u_int16_t s_score = 100;
+    u_int16_t f_score = 100;
 
-    f->setAlert(this,
-		 alert_level_error /* TODO: read it from the config */,
-		 f_score, c_score, s_score);
+    //TODO
+    //- handle ids_utils.computeScore
+    //- read severity_id from alert
+
+    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 }
 
 /* ***************************************************** */
 
-/*
-  "script_conf": {
-  "severity": {
-  "syslog_severity": 3,
-  "severity_id": 5,
-  "i18n_title": "alerts_dashboard.error",
-  "emoji": "❗",
-  "icon": "fas fa-exclamation-triangle text-danger",
-  "label": "badge-danger"
-  }
-  }
-*/
-bool ExternalAlertCheck::loadConfiguration(json_object *config) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  FlowCallback::loadConfiguration(config); /* Parse parameters in common */
-
-  /* Parse additional parameters */
-  
-  return(true);
+char* ExternalAlertCheck::getAlertJSONStr(Flow *f) {
+  return f->retrieveExternalAlert();
 }
+
+/* ***************************************************** */
