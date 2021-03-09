@@ -724,6 +724,10 @@ class NetworkInterface : public AlertableEntity {
   inline StatsManager  *getStatsManager()          { return statsManager;  };
   AlertsManager *getAlertsManager() const;
   AlertsQueue* getAlertsQueue() const;
+
+  ScriptCategory getAlertCategory(FlowAlertType fat) const;
+  char *getAlertJSON(FlowAlertType fat, Flow *f) const;
+
   void listHTTPHosts(lua_State *vm, char *key);
 #ifdef NTOPNG_PRO
   void refreshL7Rules();

@@ -66,3 +66,25 @@ void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
     loadFlowCallbacksAlerts(flow_end);
 }
 
+/* **************************************************** */
+
+ScriptCategory FlowCallbacksExecutor::getAlertCategory(FlowAlertType fat) const {
+  std::map<FlowAlertType, FlowCallback*>::const_iterator it = alert_type_to_callback.find(fat);
+
+  if(it != alert_type_to_callback.end())
+    return it->second->getCategory();
+
+  return script_category_other;
+}
+
+/* **************************************************** */
+
+char *FlowCallbacksExecutor::getAlertJSON(FlowAlertType fat, Flow *f) const {
+  std::map<FlowAlertType, FlowCallback*>::const_iterator it = alert_type_to_callback.find(fat);
+
+  if(it != alert_type_to_callback.end())
+    return it->second->getAlertJSONStr(f);
+
+  /* TODO */
+  return NULL;
+}
