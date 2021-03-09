@@ -76,7 +76,9 @@ Flow::Flow(NetworkInterface *_iface,
   bytes_thpt_srv2cli  = 0, goodput_bytes_thpt_srv2cli = 0;
   pkts_thpt_cli2srv = 0, pkts_thpt_srv2cli = 0;
   top_bytes_thpt = 0, top_goodput_bytes_thpt = 0, applLatencyMsec = 0;
-  external_alert = NULL;
+  external_alert.json = NULL;
+  external_alert.source = NULL;
+  external_alert.severity_id = alert_level_none;
   trigger_immediate_periodic_update = false;
   next_call_periodic_update = 0;
 
@@ -370,7 +372,8 @@ Flow::~Flow() {
 
   freeDPIMemory();
   if(icmp_info) delete(icmp_info);
-  if(external_alert) free(external_alert);
+  if(external_alert.json) free(external_alert.json);
+  if(external_alert.source) free(external_alert.source);
 }
 
 /* *************************************** */
@@ -5230,45 +5233,40 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
 /* *************************************** */
 
 void Flow::setExternalAlert(json_object *a) {
-  if(!iface->hasSeenExternalAlerts())
-    iface->setSeenExternalAlerts();
-
-  if(!external_alert) {
-    /* In order to avoid concurrency issues with the getter, at most
-     * 1 pending external alert is supported. */
-    external_alert = strdup(json_object_to_json_string(a));
-
+ 
+  /* In order to avoid concurrency issues with the getter, at most
+   * 1 pending external alert is supported. */
+  if(!external_alert.json) {
+    json_object *val;
+ 
+    if(!iface->hasSeenExternalAlerts())
+      iface->setSeenExternalAlerts();
+ 
+    if(json_object_object_get_ex(a, "source", &val))
+      external_alert.source = (char *) json_object_get_string(val);
+ 
+    if(json_object_object_get_ex(a, "severity_id", &val))
+      external_alert.severity_id = (AlertLevel) json_object_get_int(val);
+    else
+      external_alert.severity_id = alert_level_warning;
+ 
+    external_alert.json = strdup(json_object_to_json_string(a));
+ 
     /* Manually trigger a periodic update to process the alert */
     trigger_immediate_periodic_update = true;
   }
-
+ 
   json_object_put(a);
 }
 
 /* *************************************** */
 
-char *Flow::retrieveExternalAlert() {
-  char *json = NULL;
-
-  if (external_alert) {
-    json = external_alert;
-
-    /* Must clear the data to avoid returning it in the next call */
-    external_alert = NULL;
-  }
-
-  return json;  
-}
-
-/* *************************************** */
-
 void Flow::luaRetrieveExternalAlert(lua_State *vm) {
-  char *json = retrieveExternalAlert();
-
-  if (json) {
-    lua_pushstring(vm, json);
-    free(json);
-  } else
+  char *json = getExternalAlert();
+ 
+  if (json)
+     lua_pushstring(vm, json);
+  else
     lua_pushnil(vm);
 }
 

@@ -97,7 +97,11 @@ class Flow : public GenericHashEntry {
   u_int32_t last_conntrack_update; 
   u_int32_t marker;
 #endif
-  char *external_alert;
+  struct {
+    AlertLevel severity_id;
+    char *source;
+    char *json;
+  } external_alert;
   bool trigger_immediate_periodic_update; /* needed to process external alerts */
   time_t next_call_periodic_update; /* The time at which the periodic lua script on this flow shall be called */
   u_int32_t periodic_update_ctr;
@@ -622,9 +626,11 @@ class Flow : public GenericHashEntry {
   inline const char* getHTTPMethod()  const { return isHTTP() ? ndpi_http_method2str(protos.http.last_method) : (char*)"";        };
   inline char* getHTTPContentType()   const { return(isHTTP() ? protos.http.last_content_type : (char*)""); };
 
-  bool hasExternalAlert() const { return external_alert != NULL; };
   void setExternalAlert(json_object *a);
-  char *retrieveExternalAlert();
+  inline bool hasExternalAlert() const { return external_alert.json != NULL; };
+  inline char *getExternalAlert() { return external_alert.json; };
+  inline char *getExternalSource() { return external_alert.source; };
+  inline AlertLevel getExternalSeverity() { return external_alert.severity_id; };
   void luaRetrieveExternalAlert(lua_State *vm);
 
   u_int32_t getSrvTcpIssues();
