@@ -1058,9 +1058,7 @@ extern struct ntopngLuaContext* getUserdata(struct lua_State *vm);
 /*
   Queue lengths for user-script queues
  */
-#define MAX_US_PROTOCOL_DETECTED_QUEUE_LEN 131072
-#define MAX_US_FLOW_END_QUEUE_LEN          131072
-#define MAX_US_PERIODIC_UPDATE_QUEUE_LEN   16384  /* Smaller, lower-priority */
+#define MAX_FLOW_CALLBACKS_QUEUE_LEN       131072
 
 /*
   user-script lua engine lifetime 

@@ -105,7 +105,7 @@ class NetworkInterface : public AlertableEntity {
   /* Queues for the execution of flow user scripts.
      See scripts/plugins/examples/example/user_scripts/flow/example.lua for the callbacks
    */
-  SPSCQueue<Flow *> *hookProtocolDetected, *hookPeriodicUpdate, *hookFlowEnd;
+  SPSCQueue<Flow *> *callbacksQueue;
 
   /*
     Flag to indicate whether a flow JSON should be dumped along with the flow. Flow JSON contain
@@ -194,13 +194,11 @@ class NetworkInterface : public AlertableEntity {
   LocalTrafficStats localStats;
   int pcap_datalink_type; /**< Datalink type of pcap. */
   pthread_t pollLoop,
-    flowDumpLoop /* Thread for the database dump of flows */;
-
-  volatile bool hooks_engine_reload;      /* Boolean indicating whether the hooksEngine should be reloaded */
+    flowDumpLoop /* Thread for the database dump of flows */,
+    callbacksLoop /* Thread for the execution of flow user script hooks */;
   volatile bool user_scripts_reload;      /* Boolean indicating whether a reload of user scripts has been requested */
-  time_t        hooks_engine_next_reload; /* The minimunm time for the next reload of the hooksEngine */
-  Condvar       hooks_condition;          /* Condition variable used to wait when no flows have been enqueued for hooks exec. */
-  bool pollLoopCreated, flowDumpLoopCreated;
+  Condvar       flow_callbacks_condvar;   /* Condition variable used to wait when no flows have been enqueued for hooks exec. */
+  bool pollLoopCreated, flowDumpLoopCreated, flowCallbacksLoopCreated;
   bool has_too_many_hosts, has_too_many_flows, mtuWarningShown;
   bool flow_dump_disabled;
   u_int32_t ifSpeed, numL2Devices, numHosts, numLocalHosts, scalingFactor;
@@ -340,6 +338,12 @@ class NetworkInterface : public AlertableEntity {
     ethStats.incProtoStats(proto, num_pkts, num_bytes);
   };
 
+  /*
+    Dequeues flows from `q` up to `budget` and executes `flow_lua_callback` on each of them.
+    The number of flows dequeued is returned.
+   */
+  u_int64_t dequeueFlows(SPSCQueue<Flow *> *q, u_int budget);
+
  public:
   /**
   * @brief A Constructor
@@ -351,6 +355,7 @@ class NetworkInterface : public AlertableEntity {
   NetworkInterface(const char *name, const char *custom_interface_type = NULL);
   virtual ~NetworkInterface();
 
+  bool initFlowCallbacksLoop(); /* Initialize the loop to dequeue flows for the execution of user script hooks */
   bool initFlowDump(u_int8_t num_dump_interfaces);
   u_int32_t getASesHashSize();
   u_int32_t getOSesHashSize();
@@ -452,7 +457,7 @@ class NetworkInterface : public AlertableEntity {
   /*
     Enqueue flows for the execution of periodic scripts
    */
-  bool hookEnqueue(time_t t, Flow *f);
+  bool callbacksEnqueue(Flow *f);
   /*
     Enqueue flows to be processed by the view interfaces.
     Viewed interface enqueue flows using this method so that the view
@@ -957,6 +962,7 @@ class NetworkInterface : public AlertableEntity {
   inline u_int32_t getNumEngagedAlerts()    const         { return num_alerts_engaged; };
   void releaseAllEngagedAlerts();
 
+  virtual void flowCallbacksLoop(); /* Body of the loop that dequeues flows for the execution of user script hooks */
   virtual void dumpFlowLoop(); /* Body of the loop that dequeues flows for the database dump */
   void incNumQueueDroppedFlows(u_int32_t num);
   /*
@@ -967,6 +973,12 @@ class NetworkInterface : public AlertableEntity {
   void execProtocolDetectedCallbacks(Flow *f);
   void execPeriodicUpdateCallbacks(Flow *f);
   void execFlowEndCallbacks(Flow *f);
+  /*
+    Dequeues enqueued flows to execute user script callbacks.
+    Budgets indicate how many flows should be dequeued (if available) to perform protocol detected, active,
+    and idle callbacks.
+   */
+  virtual u_int64_t dequeueFlowsForCallbacks(u_int budget);
 };
 
 #endif /* _NETWORK_INTERFACE_H_ */

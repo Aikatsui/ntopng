@@ -676,7 +676,6 @@ typedef struct {
 class NetworkStats;
 class Host;
 class Flow;
-class FlowAlertCheckLuaEngine;
 class ThreadedActivity;
 class ThreadedActivityStats;
 

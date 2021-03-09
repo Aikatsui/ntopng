@@ -31,6 +31,8 @@ extern int ntop_lua_check(lua_State* vm, const char* func, int pos, int expected
 
 static bool help_printed = false;
 
+#define DEBUG_FLOW_CALLBACKS 1
+
 #define IMPLEMENT_SMART_FRAGMENTS
 
 /* **************************************************** */
@@ -53,9 +55,7 @@ NetworkInterface::NetworkInterface(const char *name,
   customIftype = custom_interface_type;
   influxdb_ts_exporter = rrd_ts_exporter = NULL;
   flow_callbacks_executor = prev_flow_callbacks_executor = NULL;
-  hooks_engine_reload = false;
   user_scripts_reload = false;
-  hooks_engine_next_reload = 0;
   flows_dump_json = true; /* JSON dump enabled by default, possibly disabled in NetworkInterface::startFlowDumping */
   flows_dump_json_use_labels = false; /* Dump of JSON labels disabled by default, possibly enabled in NetworkInterface::startFlowDumping */
   memset(ifMac, 0, sizeof(ifMac));
@@ -152,7 +152,7 @@ NetworkInterface::NetworkInterface(const char *name,
 
   if(id >= 0) {
     last_pkt_rcvd = last_pkt_rcvd_remote = 0, pollLoopCreated = false,
-      flowDumpLoopCreated = false, bridge_interface = false;
+      flowDumpLoopCreated = false, flowCallbacksLoopCreated = false, bridge_interface = false;
     next_idle_flow_purge = next_idle_host_purge = next_idle_other_purge = 0;
     cpu_affinity = -1 /* no affinity */,
       has_vlan_packets = has_ebpf_events = false;
@@ -335,12 +335,7 @@ void NetworkInterface::init() {
 
   idleFlowsToDump = activeFlowsToDump = NULL;
   
-  /*
-    Initialize user-script queues
-  */
-  hookProtocolDetected = new (std::nothrow) SPSCQueue<Flow *>(MAX_US_PROTOCOL_DETECTED_QUEUE_LEN, "hookProtocolDetected");
-  hookPeriodicUpdate   = new (std::nothrow) SPSCQueue<Flow *>(MAX_US_PERIODIC_UPDATE_QUEUE_LEN, "hookPeriodicUpdate");
-  hookFlowEnd          = new (std::nothrow) SPSCQueue<Flow *>(MAX_US_FLOW_END_QUEUE_LEN, "hookFlowEnd");
+  callbacksQueue = new (std::nothrow) SPSCQueue<Flow *>(MAX_FLOW_CALLBACKS_QUEUE_LEN, "callbacksQueue");
 
   PROFILING_INIT();
 }
@@ -621,9 +616,7 @@ NetworkInterface::~NetworkInterface() {
   if(mdns)                  delete mdns; /* Leave it at the end so the mdns resolver has time to initialize */
   if(ifname)                free(ifname);
 
-  if(hookProtocolDetected) delete hookProtocolDetected;
-  if(hookPeriodicUpdate)   delete hookPeriodicUpdate;
-  if(hookFlowEnd)          delete hookFlowEnd;
+  if(callbacksQueue)        delete callbacksQueue;
 
   addRedisSitesKey();
   if(top_sites)       delete top_sites;
@@ -636,27 +629,9 @@ NetworkInterface::~NetworkInterface() {
 
 /* **************************************************** */
 
-bool NetworkInterface::hookEnqueue(time_t t, Flow *f) {
+bool NetworkInterface::callbacksEnqueue(Flow *f) {
   bool ret = false;
-  SPSCQueue<Flow *> *selected_queue = NULL;
-
-  /*
-    Choose the right queue to perform the enqueue
-   */
-
-  switch(f->get_state()) {
-  case hash_entry_state_flow_protocoldetected:
-    selected_queue = hookProtocolDetected;
-    break;
-  case hash_entry_state_active:
-    selected_queue = hookPeriodicUpdate;
-    break;
-  case hash_entry_state_idle:
-    selected_queue = hookFlowEnd;
-    break;
-  default:
-    break;
-  }
+  SPSCQueue<Flow *> *selected_queue = callbacksQueue;
 
   /* Perform the actual enqueue */
   if(selected_queue) {
@@ -670,7 +645,7 @@ bool NetworkInterface::hookEnqueue(time_t t, Flow *f) {
       /*
 	Signal the waiter on the condition variable
        */
-      hooks_condition.signal();
+      flow_callbacks_condvar.signal();
 
       ret = true;
     } else {
@@ -2411,6 +2386,72 @@ void NetworkInterface::pollQueuedeCompanionEvents() {
 
 /* **************************************************** */
 
+u_int64_t NetworkInterface::dequeueFlows(SPSCQueue<Flow *> *q, u_int budget) {
+  u_int64_t num_done = 0;
+
+  while(q->isNotEmpty()) {
+    Flow *f = q->dequeue();
+
+    /*
+      Execute the callback (if the engine is available)
+     */
+
+#if DEBUG_FLOW_CALLBACKS
+    ntop->getTrace()->traceEvent(TRACE_NORMAL, "Dequeued flow");
+#endif
+
+    /*
+      Now that the job is done, the reference counter to the flow can be decreased.
+     */
+    f->decUses();
+
+    num_done++;
+    if(budget > 0 /* Budget requested */
+       && num_done >= budget /* Budget exceeded */)
+      break;
+  }
+
+  return num_done;
+}
+
+/* **************************************************** */
+
+u_int64_t NetworkInterface::dequeueFlowsForCallbacks(u_int budget) {
+  u_int64_t num_done = dequeueFlows(callbacksQueue, budget);
+
+#ifndef WIN32
+  if(num_done == 0) {
+    /*
+      No flow was dequeued. Let's wait for at most 1s. Cannot wait indefinitely
+      as we must ensure purgeQueuedIdleFlows() gets executed, and also to exit when it's
+      time to shutdown.
+    */
+    struct timespec hooks_wait_expire;
+
+    hooks_wait_expire.tv_sec = time(NULL) + 1,
+      hooks_wait_expire.tv_nsec = 0;
+
+    flow_callbacks_condvar.timedWait(&hooks_wait_expire);
+  }
+#endif
+
+  /* Purging of idle flows is done here as it involves decreasing certain hosts counters (such as host scores)
+     that are increased by flow user script hooks. Hence, by executing the purging here in this thread, we ensure
+     consistency of counters.
+  */
+  num_done += purgeQueuedIdleFlows();
+
+#if DEBUG_FLOW_CALLBACKS
+  if(num_done > 0)
+    ntop->getTrace()->traceEvent(TRACE_NORMAL, "Dequeued flows total [%u]", num_done);
+#endif
+
+
+  return num_done;
+}
+
+/* **************************************************** */
+
 void NetworkInterface::incNumQueueDroppedFlows(u_int32_t num) {
   /*
     For viewed interface, the dumper database is the one belonging to the overlying view interface.
@@ -2530,6 +2571,40 @@ u_int64_t NetworkInterface::dequeueFlowsForDump(u_int idle_flows_budget, u_int a
 
 /* **************************************************** */
 
+void NetworkInterface::flowCallbacksLoop() {
+  ntop->getTrace()->traceEvent(TRACE_NORMAL,
+			       "Started flow user script hooks loop on interface %s [id: %u]...",
+			       get_description(), get_id());
+
+  /* Wait until it starts up */
+  while(!isRunning()) _usleep(10000);
+
+  /* Now operational */
+  while(isRunning()) {
+    /*
+      Dequeue flows for dump.
+
+      To guarantee some sort of fairness and prioritization, different numbers are used for each
+      of the three queues. Higher numbers are used for queues with higher-priority.
+     */
+    u_int64_t n = dequeueFlowsForCallbacks(32 /* budget */);
+
+    if(n == 0) {
+      /*
+	If windows, sleep if nothing was done during the previous cycle.
+	On non-windows, there's nothing do to as signal/waits are implemented to throttle the speed
+      */
+#ifdef WIN32
+      _usleep(10000);
+#endif
+    }
+  }
+
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Flow dump thread completed for %s", get_name());
+}
+
+/* **************************************************** */
+
 void NetworkInterface::dumpFlowLoop() {
   ntop->getTrace()->traceEvent(TRACE_NORMAL,
 			       "Started flow dump loop on interface %s [id: %u]...",
@@ -2555,6 +2630,15 @@ void NetworkInterface::dumpFlowLoop() {
   }
 
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "Flow dump loop completed for %s", get_name());
+}
+
+/* **************************************************** */
+
+static void* callbacksLoop(void* ptr) {
+  NetworkInterface *_if = (NetworkInterface*)ptr;
+
+  _if->flowCallbacksLoop();
+  return(NULL);
 }
 
 /* **************************************************** */
@@ -2648,8 +2732,9 @@ void NetworkInterface::shutdown() {
   if(running) {
     running = false;
 
-    if(pollLoopCreated)     pthread_join(pollLoop, &res);
-    if(flowDumpLoopCreated) pthread_join(flowDumpLoop, &res);
+    if(pollLoopCreated)          pthread_join(pollLoop, &res);
+    if(flowDumpLoopCreated)      pthread_join(flowDumpLoop, &res);
+    if(flowCallbacksLoopCreated) pthread_join(callbacksLoop, &res);
 
     /* purgeIdle one last time to make sure all entries will be marked as idle */
     purgeIdle(time(NULL), true, true);
@@ -5599,16 +5684,14 @@ void NetworkInterface::lua_periodic_activities_stats(lua_State *vm) {
 /* **************************************************** */
 
 void NetworkInterface::lua_queues_stats(lua_State *vm) {
-  if(idleFlowsToDump)      idleFlowsToDump->lua(vm);
-  if(activeFlowsToDump)    activeFlowsToDump->lua(vm);
-  if(hookProtocolDetected) hookProtocolDetected->lua(vm);
-  if(hookPeriodicUpdate)   hookPeriodicUpdate->lua(vm);
-  if(hookFlowEnd)          hookFlowEnd->lua(vm);
+  if(idleFlowsToDump)   idleFlowsToDump->lua(vm);
+  if(activeFlowsToDump) activeFlowsToDump->lua(vm);
+  if(callbacksQueue)    callbacksQueue->lua(vm);
 }
 
 /* **************************************************** */
 
-void NetworkInterface::runHousekeepingTasks() {  
+void NetworkInterface::runHousekeepingTasks() {
   periodicStatsUpdate();
 }
 
@@ -7199,6 +7282,28 @@ void NetworkInterface::updateBroadcastDomains(u_int16_t vlan_id,
 
 /* *************************************** */
 
+/* 
+   Start the thread for the execution of flow user script hooks
+ */
+bool NetworkInterface::initFlowCallbacksLoop() {
+  if(isView()) /* Don't init the loop for view interfaces: the loop is run by every viewed interface independently */
+    return true;
+
+  pthread_create(&callbacksLoop, NULL, ::callbacksLoop, (void*)this);
+  flowCallbacksLoopCreated = true;
+
+#ifdef __linux__
+  char buf[16];
+    
+  snprintf(buf, sizeof(buf), "hooks ifid %u", get_id());
+  pthread_setname_np(callbacksLoop, buf);
+#endif
+
+  return true;
+}
+
+/* *************************************** */
+
 /*
   Put here all the code that is executed when the NIC initialization
   is succesful
@@ -8579,18 +8684,21 @@ void NetworkInterface::incrOS(char *hostname) {
 
 void NetworkInterface::execProtocolDetectedCallbacks(Flow *f) {
   flow_callbacks_executor->execProtocolDetectedCallback(f);
+  callbacksEnqueue(f);
 };
 
 /* *************************************** */
 
 void NetworkInterface::execPeriodicUpdateCallbacks(Flow *f) {
   flow_callbacks_executor->execPeriodicUpdateCallback(f);
+  callbacksEnqueue(f);
 };
 
 /* *************************************** */
 
 void NetworkInterface::execFlowEndCallbacks(Flow *f) {
   flow_callbacks_executor->execFlowEndCallback(f);
+  callbacksEnqueue(f);
 };
 
 /* *************************************** */
