@@ -46,7 +46,7 @@ Flow::Flow(NetworkInterface *_iface,
   srcAS = dstAS  = prevAdjacentAS = nextAdjacentAS = 0;
   alert_info = alert_info_shadow = NULL;
   alert_level = alert_level_none;
-  predominant_alert = alert_normal, predominant_alert_score = 0;
+  predominant_alert = predominant_alert_enqueued = alert_normal, predominant_alert_score = 0;
   ndpi_flow_risk_bitmap = 0;
   detection_completed = false;
   extra_dissection_completed = false;
@@ -2970,9 +2970,10 @@ void Flow::callFlowUpdate(time_t t) {
 
 void Flow::enqueuePredominantAlert() {
   /* See if it is time to trigger an alert */
+  FlowAlertType cur_predominant_alert = getPredominantAlert();
 
-  /* TODO: Implement checks on bitmap changes, not just on predominant status changes */
-  if(getPredominantAlert() == alert_normal)
+  if(cur_predominant_alert == alert_normal                  /* No alert (should not occur) */
+     || predominant_alert_enqueued == cur_predominant_alert /* Predominant alert already enqueued */)
     return; /* Nothing to do */
 
   /* Make the shadow status JSON the official alerted status JSON */
@@ -3010,15 +3011,17 @@ void Flow::enqueuePredominantAlert() {
     
   notification.alert = (char*)flow_str;
   notification.alert_severity = getAlertedSeverity();
-  notification.script_category = getInterface()->getAlertCategory(getPredominantAlert());
+  notification.script_category = getInterface()->getAlertCategory(cur_predominant_alert);
   /* TODO: add script information */
 
-  rv = ntop->recipients_enqueue(getAlertedSeverity() >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
+  rv = ntop->recipients_enqueue(notification.alert_severity >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
 				&notification,
 				true /* Flow recipients only */);
 
   if(!rv)
     getInterface()->incNumDroppedAlerts(1);
+  else
+    predominant_alert_enqueued = cur_predominant_alert; /* Remember this predominant status that has been successfully enqueued */
 
   ndpi_term_serializer(&flow_json);
 }

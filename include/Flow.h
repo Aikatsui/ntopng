@@ -55,9 +55,10 @@ class Flow : public GenericHashEntry {
      of a flow, which is written into `predominant_alert`.
   */
   Bitmap alert_map;
-  FlowAlertType predominant_alert;       /* This is the predominant alert */
-  u_int16_t  predominant_alert_score; /* The score associated to the predominant alert */
-  AlertLevel alert_level;
+  volatile FlowAlertType predominant_alert;          /* This is the predominant alert */
+  volatile u_int16_t  predominant_alert_score;       /* The score associated to the predominant alert */
+  volatile FlowAlertType predominant_alert_enqueued; /* This is the most recent predominant alert enqueued to recipients */
+  volatile AlertLevel alert_level;
   char *alert_info;        /* Alert specific info */
   char *alert_info_shadow, *custom_flow_info;
   struct {
