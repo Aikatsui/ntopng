@@ -368,8 +368,8 @@ typedef enum {
   alert_device_protocol_not_allowed      = 5,
   alert_dns_data_exfiltration            = 6,
   alert_dns_invalid_query                = 7,
-  alert_elephant_local_to_remote         = 8,
-  alert_elephant_remote_to_local         = 9,
+  alert_elephant_flow                    = 8,
+  alert_elephant_remote_to_local         = 9, /* No longer used, can be recycled */
   alert_external                         = 10,
   alert_longlived                        = 11,
   alert_low_goodput                      = 12,

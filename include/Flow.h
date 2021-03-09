@@ -412,6 +412,14 @@ class Flow : public GenericHashEntry {
   inline bool isOneWay()                 const { return(get_packets() && (!get_packets_cli2srv() || !get_packets_srv2cli())); };
   inline bool isBidirectional()          const { return(get_packets_cli2srv() && get_packets_srv2cli()); };
   inline bool isRemoteToRemote()         const { return (cli_host && srv_host && !cli_host->isLocalHost() && !srv_host->isLocalHost()); };
+  inline bool isLocalToRemote() const {
+    int16_t network_id;
+    return get_cli_ip_addr()->isLocalHost(&network_id) && !get_srv_ip_addr()->isLocalHost(&network_id);
+  };
+  inline bool isRemoteToLocal() const {
+    int16_t network_id;
+    return !get_cli_ip_addr()->isLocalHost(&network_id) && get_srv_ip_addr()->isLocalHost(&network_id);
+  };
   inline bool isUnicast()                const { return (cli_ip_addr && srv_ip_addr && !cli_ip_addr->isBroadMulticastAddress() && !srv_ip_addr->isBroadMulticastAddress()); };
   inline void* get_cli_id()              const { return(cli_id);                          };
   inline void* get_srv_id()              const { return(srv_id);                          };

@@ -26,19 +26,26 @@
 
 class ElephantFlow : public FlowCallback {
  private:
+  u_int64_t r2l_bytes_threshold /* Remote to local threshold */, l2r_bytes_threshold /* Local to remote threshold */;
+  void checkElephantFlow(Flow *f);
 
  public:
  ElephantFlow() : FlowCallback(ntopng_edition_community,
 			       false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-			       true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+			       false /* has_protocol_detected */, true /* has_periodic_update */, true /* has_flow_end */) {
+    r2l_bytes_threshold = l2r_bytes_threshold = (u_int64_t)-1 /* No threshold */;
+  };
   ~ElephantFlow() {};
 
-  void protocolDetected(Flow *f);
-  bool loadConfiguration(json_object *config);
+  void periodicUpdate(Flow *f);
+  void flowEnd(Flow *f);
 
-  std::string getName()          const { return(std::string("elephant_flows"));  }
-  ScriptCategory getCategory()   const { return script_category_security;        }
-  FlowAlertType getAlertType() const { return alert_elephant_local_to_remote; }
+  bool loadConfiguration(json_object *config);
+  virtual ndpi_serializer* getAlertJSON(Flow *f);
+
+  std::string getName()        const { return(std::string("elephant_flows"));  }
+  ScriptCategory getCategory() const { return script_category_security;        }
+  FlowAlertType getAlertType() const { return alert_elephant_flow;             }
 };
 
 #endif /* _ELEPHANT_FLOW_FLOW_H_ */
