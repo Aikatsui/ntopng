@@ -46,7 +46,6 @@
 #include "flow_callbacks/FlowRiskURLPossibleXSS.h"
 #include "flow_callbacks/FlowRiskURLPossibleRCEInjection.h"
 #include "flow_callbacks/FlowRiskURLPossibleSQLInjection.h"
-#include "flow_callbacks/IEC60870_5_104.h"
 #include "flow_callbacks/LowGoodputFlow.h"
 #include "flow_callbacks/NotPurged.h"
 #include "flow_callbacks/PotentiallyDangerousFlow.h"
@@ -59,6 +58,7 @@
 
 #ifdef NTOPNG_PRO
 #include "flow_callbacks/ExternalAlertCheckPro.h"
+#include "flow_callbacks/IEC60870_5_104.h"
 #include "flow_callbacks/InvalidDNSQuery.h"
 #include "flow_callbacks/LongLivedFlow.h"
 #include "flow_callbacks/NedgeBlockedFlow.h"

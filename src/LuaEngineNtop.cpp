@@ -5672,8 +5672,6 @@ static int ntop_recipient_register(lua_State* vm) {
 /* ****************************************** */
 
 static int ntop_recipient_set_flow_recipients(lua_State* vm) {
-  u_int16_t recipient_id;
-  AlertLevel minimum_severity = alert_level_none;
   u_int64_t flow_recipients = (u_int64_t)-1; /* MUST be large enough to contain MAX_NUM_RECIPIENTS */
 
   if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
