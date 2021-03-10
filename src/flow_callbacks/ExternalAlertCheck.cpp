@@ -47,7 +47,7 @@ void ExternalAlertCheck::flowEnd(Flow *f) {
 /* ***************************************************** */
 
 char* ExternalAlertCheck::getAlertJSONStr(Flow *f) {
-  char *json;
+  const char *json;
 
   json = f->getExternalAlert();
 

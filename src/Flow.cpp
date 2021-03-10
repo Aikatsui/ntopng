@@ -372,7 +372,7 @@ Flow::~Flow() {
 
   freeDPIMemory();
   if(icmp_info) delete(icmp_info);
-  if(external_alert.json) free(external_alert.json);
+  if(external_alert.json) json_object_put(external_alert.json);
   if(external_alert.source) free(external_alert.source);
 }
 
@@ -5353,19 +5353,17 @@ void Flow::setExternalAlert(json_object *a) {
     else
       external_alert.severity_id = alert_level_warning;
  
-    external_alert.json = strdup(json_object_to_json_string(a));
+    external_alert.json = a;
 
     /* Manually trigger a periodic update to process the alert */
     trigger_immediate_periodic_update = true;
   }
- 
-  json_object_put(a);
 }
 
 /* *************************************** */
 
 void Flow::luaRetrieveExternalAlert(lua_State *vm) {
-  char *json = getExternalAlert();
+  const char *json = getExternalAlert();
  
   if (json)
      lua_pushstring(vm, json);
