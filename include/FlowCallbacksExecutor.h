@@ -56,6 +56,8 @@ class FlowCallbacksExecutor { /* One instance per ntopng Interface */
 
   ScriptCategory getAlertCategory(FlowAlertType fat) const;
   char* getAlertJSON(FlowAlertType fat, Flow *f) const;
+
+  FlowCallback* getFlowCallback(FlowAlertType ft) { return(alert_type_to_callback[ft]); }
 };
 
 #endif /* _FLOW_CALLBACKS_EXECUTOR_H_ */

@@ -244,30 +244,25 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 	    it = type_i_transitions.find(transition);
 
 	    if(it == type_i_transitions.end()) {
-	      json_object *my_object;
-
 	      if(f->get_duration() > ntop->getPrefs()->getIEC60870LearingPeriod()) {
+		FlowCallback *cb = f->getInterface()->getFlowCallbackExecutor()->getFlowCallback(alert_iec_invalid_transition);
+
+		if(cb != NULL) {
+		  ndpi_serializer *serializer = cb->getBaseAlertJSON(f);
+		
 #ifdef IEC60870_TRACE
-		ntop->getTrace()->traceEvent(TRACE_NORMAL, "Found new transition %u -> %u", last_type_i, type_id);
+		  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Found new transition %u -> %u", last_type_i, type_id);
 #endif
-
-		if((my_object = json_object_new_object()) != NULL) {
-		  const char *json;
-
-		  json_object_object_add(my_object, "timestamp", json_object_new_int(packet_time->tv_sec));
-		  json_object_object_add(my_object, "flow_key", json_object_new_int(f->key()));
-		  json_object_object_add(my_object, "flow_hash_entry_id", json_object_new_int(f->get_hash_entry_id()));
-		  json_object_object_add(my_object, "from", json_object_new_int(last_type_i));
-		  json_object_object_add(my_object, "to", json_object_new_int(type_id));
-
-		  json = json_object_to_json_string(my_object);
-
-#ifdef DEBUG_IEC60870
-		  ntop->getTrace()->traceEvent(TRACE_WARNING, "[%s] Alert %s", __FUNCTION__, json);
-#endif
-
-		  ntop->getRedis()->rpush(CONST_IEC104_FLOW_ALERT_QUEUE, json, 1024 /* Max queue size */);
-		  json_object_put(my_object); /* Free memory */
+		  
+		  if(serializer != NULL) {
+		    ndpi_serialize_string_uint32(serializer, "timestamp", packet_time->tv_sec);
+		    ndpi_serialize_string_uint32(serializer, "flow_key", f->key());
+		    ndpi_serialize_string_uint32(serializer, "flow_hash_entry_id", f->get_hash_entry_id());
+		    ndpi_serialize_string_uint32(serializer, "from", last_type_i);
+		    ndpi_serialize_string_uint32(serializer, "to", type_id);
+		    		    
+		    f->triggerAlertSync(cb, cb->getSeverity(), 50 /* flow score */, 50 /* cli score */, 10 /* server score */, serializer);
+		  }
 		}
 		
 		type_i_transitions[transition] = 2; /* Post Learning */
@@ -296,6 +291,7 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 	  }
 
 	  if(alerted) {
+#if 0
 	    json_object *my_object;
 
 	    if((my_object = json_object_new_object()) != NULL) {
@@ -323,6 +319,7 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 
 	      json_object_put(my_object); /* Free memory */
 	    }
+#endif
 	  }
 
 	  /* Discard typeIds 127..255 */

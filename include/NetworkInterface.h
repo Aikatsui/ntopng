@@ -983,6 +983,7 @@ class NetworkInterface : public AlertableEntity {
     and idle callbacks.
    */
   virtual u_int64_t dequeueFlowsForCallbacks(u_int budget);
+  inline FlowCallbacksExecutor* getFlowCallbackExecutor() { return(flow_callbacks_executor); }
 };
 
 #endif /* _NETWORK_INTERFACE_H_ */

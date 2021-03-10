@@ -535,8 +535,6 @@
 /* Maximum line lenght for the line protocol to write timeseries */
 #define LINE_PROTOCOL_MAX_LINE             512
 
-#define CONST_IEC104_ALERT_QUEUE           "ntopng.iec104_alert_queue"
-#define CONST_IEC104_FLOW_ALERT_QUEUE      "ntopng.iec104_flow_alert_queue"
 #define CONST_IEC104_LEARNING_TIME         21600 /* 6 hours */
 #define CONST_INFLUXDB_FILE_QUEUE          "ntopng.influx_file_queue"
 #define CONST_INFLUXDB_FLUSH_TIME          10 /* sec */
