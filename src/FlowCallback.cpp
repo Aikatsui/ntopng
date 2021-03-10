@@ -26,6 +26,8 @@
 FlowCallback::FlowCallback(NtopngEdition _edition,
 			   bool _packet_interface_only, bool _nedge_exclude, bool _nedge_only,
 			   bool _has_protocol_detected, bool _has_periodic_update, bool _has_flow_end) {
+  packet_interface_only = nedge_exclude = nedge_only = has_protocol_detected = has_periodic_update = has_flow_end = 0;
+
   if(_packet_interface_only)  packet_interface_only = 1;
   if(_nedge_exclude)          nedge_exclude = 1;
   if(_nedge_only)             nedge_only = 1;
