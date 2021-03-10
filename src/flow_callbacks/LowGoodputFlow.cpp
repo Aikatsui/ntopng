@@ -72,17 +72,10 @@ void LowGoodputFlow::flowEnd(Flow *f) {
 /* ***************************************************** */
 
 ndpi_serializer *LowGoodputFlow::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer;
+  ndpi_serializer *serializer = getBaseAlertJSON(f);
 
-  serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
-  
   if(serializer == NULL)
     return NULL;
-
-  if(ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
-    free(serializer);
-    return NULL;
-  }
 
   ndpi_serialize_string_float(serializer, "goodput_ratio", f->get_goodput_ratio(), "%f");
 

@@ -25,18 +25,11 @@
 /* ***************************************************** */
 
 ndpi_serializer *FlowRiskSSHObsolete::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer;
+  ndpi_serializer *serializer = getBaseAlertJSON(f);
   ndpi_risk_enum risk_id = NDPI_SSH_OBSOLETE_SERVER_VERSION_OR_CIPHER; /* TODO also handle NDPI_SSH_OBSOLETE_CLIENT_VERSION_OR_CIPHER */
 
-  serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
-  
-  if (serializer == NULL)
+  if(serializer == NULL)
     return NULL;
-
-  if (ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
-    free(serializer);
-    return NULL;
-  }
 
   ndpi_serialize_string_int32(serializer, "risk_id", risk_id);
 

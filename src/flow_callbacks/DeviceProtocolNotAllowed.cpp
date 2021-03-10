@@ -55,19 +55,12 @@ void DeviceProtocolNotAllowed::protocolDetected(Flow *f) {
 /* ***************************************************** */
 
 ndpi_serializer *DeviceProtocolNotAllowed::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer;
+  ndpi_serializer *serializer = getBaseAlertJSON(f);
   Host *cli = f->get_cli_host(), *srv = f->get_srv_host();
   DeviceType cli_dev_type = device_unknown, srv_dev_type = device_unknown; 
 
-   serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
-  
-  if (serializer == NULL)
+  if(serializer == NULL)
     return NULL;
-
-  if (ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
-    free(serializer);
-    return NULL;
-  }
 
   if (cli && cli->getMac()) cli_dev_type = cli->getMac()->getDeviceType();
   if (srv && srv->getMac()) srv_dev_type = srv->getMac()->getDeviceType();

@@ -25,17 +25,10 @@
 /* ***************************************************** */
 
 ndpi_serializer *FlowRiskBinaryApplicationTransfer::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer;
+  ndpi_serializer *serializer = getBaseAlertJSON(f);
 
-  serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
-  
-  if (serializer == NULL)
+  if(serializer == NULL)
     return NULL;
-
-  if (ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
-    free(serializer);
-    return NULL;
-  }
 
   f->getHTTPInfo(serializer);
 

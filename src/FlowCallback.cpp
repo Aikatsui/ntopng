@@ -133,3 +133,24 @@ bool FlowCallback::loadConfiguration(json_object *config) {
   
   return(rc);
 }
+
+/* ***************************************************** */
+
+ndpi_serializer* FlowCallback::getBaseAlertJSON(Flow *f) {
+  ndpi_serializer *serializer;
+
+  serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
+  
+  if(serializer == NULL)
+    return NULL;
+
+  if(ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
+    free(serializer);
+    return NULL;
+  }
+
+  /* Add here minimum information */
+  // ndpi_serialize_string_uint64(serializer, "longlived.threshold", longlived_threshold);
+
+  return serializer;
+}

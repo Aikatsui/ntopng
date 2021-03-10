@@ -30,7 +30,15 @@ class FlowCallback {
   u_int8_t has_protocol_detected:1, has_periodic_update:1, has_flow_end:1, packet_interface_only:1, nedge_exclude:1, nedge_only:1, enabled:1/* , _unused:1 */;
  
   bool isCallbackCompatibleWithInterface(NetworkInterface *iface);
-  
+
+ protected:
+  /* 
+     MUST always be called for all alerts to get minimal JSON information.
+     Caller can then extend the returned ndpi_serializer with additional information.
+     NOTE: this should not be overridden.
+  */
+  ndpi_serializer* getBaseAlertJSON(Flow *f);
+
  protected:
   AlertLevel severity_id;
 
@@ -55,8 +63,8 @@ class FlowCallback {
   virtual ScriptCategory getCategory() const = 0;
   virtual FlowAlertType getAlertType() const = 0;
 
-  virtual ndpi_serializer* getAlertJSON(Flow *f) { return(NULL); }
-  virtual char* getAlertJSONStr(Flow *f) { return(NULL); }
+  virtual ndpi_serializer* getAlertJSON(Flow *f) { return getBaseAlertJSON(f); }
+  virtual char* getAlertJSONStr(Flow *f)         { return(NULL);               }
 };
 
 #endif /* _FLOW_CALLBACK_H_ */
