@@ -43,6 +43,7 @@
 #include "flow_callbacks/FlowRiskTLSMissingSNI.h"
 #include "flow_callbacks/FlowRiskTLSNotCarryingHTTPS.h"
 #include "flow_callbacks/FlowRiskTLSSuspiciousESNIUsage.h"
+#include "flow_callbacks/FlowRiskUnhandled.h"
 #include "flow_callbacks/FlowRiskUnsafeProtocol.h"
 #include "flow_callbacks/FlowRiskURLPossibleXSS.h"
 #include "flow_callbacks/FlowRiskURLPossibleRCEInjection.h"

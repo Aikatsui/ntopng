@@ -64,6 +64,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new FlowRiskTLSMissingSNI()))                       cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskTLSNotCarryingHTTPS()))                 cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskTLSSuspiciousESNIUsage()))              cb_all[fcb->getName()] = fcb;
+  if((fcb = new FlowRiskUnhandled()))                           cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskUnsafeProtocol()))                      cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleXSS()))                      cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleRCEInjection()))             cb_all[fcb->getName()] = fcb;
