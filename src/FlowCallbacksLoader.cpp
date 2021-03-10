@@ -66,6 +66,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new FlowRiskURLPossibleXSS()))                      cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleRCEInjection()))             cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleSQLInjection()))             cb_all[fcb->getName()] = fcb;
+  if((fcb = new IEC60870_5_104()))                              cb_all[fcb->getName()] = fcb;
   if((fcb = new LowGoodputFlow()))                              cb_all[fcb->getName()] = fcb;
   if((fcb = new NotPurged()))                                   cb_all[fcb->getName()] = fcb;  
   if((fcb = new PotentiallyDangerousFlow()))                    cb_all[fcb->getName()] = fcb;
@@ -82,7 +83,6 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new DNSDataExfiltration()))                         cb_all[fcb->getName()] = fcb;
   if((fcb = new ElephantFlow()))                                cb_all[fcb->getName()] = fcb;
   if((fcb = new ExternalAlertCheckPro()))                       cb_all[fcb->getName()] = fcb;
-  if((fcb = new IEC60870_5_104()))                              cb_all[fcb->getName()] = fcb;
   if((fcb = new InvalidDNSQuery()))                             cb_all[fcb->getName()] = fcb;
   if((fcb = new LongLivedFlow()))                               cb_all[fcb->getName()] = fcb;
   if((fcb = new NedgeBlockedFlow()))                            cb_all[fcb->getName()] = fcb;
