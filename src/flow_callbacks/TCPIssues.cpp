@@ -29,8 +29,6 @@ static const u_int16_t severe_issues_ratio = 3;  // 1/3
 /* ******************************************** */
 
 void TCPIssues::checkFlow(Flow *f, bool *is_client, bool *is_server, bool *is_severe, bool trigger_alert) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
   if(f->get_protocol() != IPPROTO_TCP) return; /* Non TCP traffic */
 
   if(f->getCliTcpIssues() > min_pkt_threshold) {

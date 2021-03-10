@@ -23,8 +23,6 @@
 #include "flow_callbacks_includes.h"
 
 void WebMining::protocolDetected(Flow *f) {
-    ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
     if(!strcmp(f->get_protocol_category_name(), "Mining")) {
     u_int16_t c_score = 50, s_score = 10, f_score = 50;
    

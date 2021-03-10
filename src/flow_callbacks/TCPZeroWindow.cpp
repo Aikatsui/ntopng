@@ -26,8 +26,6 @@ void TCPZeroWindow::protocolDetected(Flow *f) {
   bool as_client, as_server;
   u_int16_t c_score, s_score, f_score = 30;
 
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
   f->triggerZeroWindowAlert(&as_client, &as_server);
 
   if(as_client || as_server) {

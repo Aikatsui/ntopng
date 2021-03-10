@@ -23,8 +23,6 @@
 #include "flow_callbacks_includes.h"
 
 void PotentiallyDangerousFlow::protocolDetected(Flow *f) {
-    ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
     if(!strcmp(f->get_protocol_breed_name(), "Dangerous")) {
     u_int16_t c_score = 20, s_score = 5, f_score = 20;
     

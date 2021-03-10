@@ -23,8 +23,6 @@
 #include "flow_callbacks_includes.h"
 
 void BlacklistedFlow::protocolDetected(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
   if(f->isBlacklistedFlow()) {
     u_int16_t c_score, s_score, f_score = 100;
     
@@ -52,7 +50,6 @@ void BlacklistedFlow::protocolDetected(Flow *f) {
   }
 */
 bool BlacklistedFlow::loadConfiguration(json_object *config) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
   FlowCallback::loadConfiguration(config); /* Parse parameters in common */
 
   /* Parse additional parameters */

@@ -60,16 +60,12 @@ void LowGoodputFlow::checkLowGoodput(Flow *f) {
 /* ***************************************************** */
 
 void LowGoodputFlow::periodicUpdate(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
   checkLowGoodput(f);
 }
 
 /* ***************************************************** */
 
 void LowGoodputFlow::flowEnd(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
   checkLowGoodput(f);
 }
 

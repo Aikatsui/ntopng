@@ -26,8 +26,6 @@ void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
   Host *cli_host = f->get_cli_host();
   Host *srv_host = f->get_srv_host();
 
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
   if(cli_host && srv_host && (!cli_host->isLocalHost()) && srv_host->isLocalHost()) {
     /* Remote to local */
     bool unsafe;

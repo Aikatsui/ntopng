@@ -26,8 +26,6 @@ void UDPUnidirectional::checkFlow(Flow *f) {
   int16_t network_id;
   u_int16_t fs_score = 10;
   
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
   if(f->get_protocol() != IPPROTO_UDP)                  return; /* Non UDP traffic        */
   if(f->get_bytes_srv2cli() && f->get_bytes_srv2cli())  return; /* Two way communications */
   if(!f->get_cli_ip_addr()->isNonEmptyUnicastAddress()) return; /* No client IP           */

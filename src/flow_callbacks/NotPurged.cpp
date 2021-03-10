@@ -25,8 +25,6 @@
 /* ***************************************************** */
 
 void NotPurged::checkNotPurged(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-  
   if(f->isNotPurged()) {
     u_int16_t c_score = 0, s_score = 0, f_score = 100;
 
@@ -37,16 +35,12 @@ void NotPurged::checkNotPurged(Flow *f) {
 /* ***************************************************** */
 
 void NotPurged::periodicUpdate(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
   checkNotPurged(f);
 }
 
 /* ***************************************************** */
 
 void NotPurged::flowEnd(Flow *f) {
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
-
   checkNotPurged(f);
 }
 

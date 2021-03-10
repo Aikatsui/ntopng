@@ -31,7 +31,7 @@ extern int ntop_lua_check(lua_State* vm, const char* func, int pos, int expected
 
 static bool help_printed = false;
 
-#define DEBUG_FLOW_CALLBACKS 1
+//#define DEBUG_FLOW_CALLBACKS 1
 
 #define IMPLEMENT_SMART_FRAGMENTS
 
