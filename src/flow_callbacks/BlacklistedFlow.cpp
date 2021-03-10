@@ -23,7 +23,9 @@
 #include "flow_callbacks_includes.h"
 
 void BlacklistedFlow::protocolDetected(Flow *f) {
-  if(f->isBlacklistedFlow()) {
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "%s()", __FUNCTION__);
+  
+  if(true || f->isBlacklistedFlow()) {
     u_int16_t c_score, s_score, f_score = 100;
     
     if(f->isBlacklistedServer())
@@ -31,7 +33,8 @@ void BlacklistedFlow::protocolDetected(Flow *f) {
     else
       c_score = 5, s_score = 10;
 
-    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
+    for(int i = 0; i < 3; i++)
+      f->triggerAlertSync(this, getSeverity(), f_score, c_score, s_score);
   }
 }
 

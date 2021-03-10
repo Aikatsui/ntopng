@@ -2656,7 +2656,7 @@ static int ntop_get_interface_flow_alert_by_key_and_hash_id(lua_State* vm) {
 
     ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
 
-    f->flow2alertJson(&flow_json, time(NULL));
+    f->flow2alertJson(&flow_json, time(NULL), f->getPredominantAlert());
 
     flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
 

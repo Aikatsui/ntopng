@@ -42,43 +42,6 @@ static int ntop_flow_get_status(lua_State* vm) {
 
 /* ****************************************** */
 
-static int ntop_flow_set_status(lua_State* vm) {
-  AlertType new_status;
-  u_int16_t flow_score, cli_score, srv_score;
-  Flow *f = ntop_flow_get_context_flow(vm);
-  char *script_key;
-  ScriptCategory script_category = script_category_other;
-
-  if(!f) return(CONST_LUA_ERROR);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  new_status = (AlertType)lua_tonumber(vm, 1);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 2, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  flow_score = (u_int16_t)lua_tonumber(vm, 2);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 3, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  cli_score = (u_int16_t)lua_tonumber(vm, 3);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 4, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  srv_score = (u_int16_t)lua_tonumber(vm, 4);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 5, LUA_TSTRING) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  script_key = (char*)lua_tostring(vm, 5);
-
-  if(ntop_lua_check(vm, __FUNCTION__, 6, LUA_TNUMBER) == CONST_LUA_OK
-     && (ScriptCategory)lua_tointeger(vm, 6) < MAX_NUM_SCRIPT_CATEGORIES)
-    script_category = (ScriptCategory)lua_tointeger(vm, 6);
-
-  // lua_pushboolean(vm, f->setAlert(new_status, flow_score, cli_score, srv_score, script_key, script_category));
-  // TODO: remove. Statuses are only set from C++ callbacks
-  lua_pushboolean(vm, false);
-
-  return(CONST_LUA_OK);
-}
-
-/* ****************************************** */
-
 static int ntop_flow_is_status_set(lua_State* vm) {
   AlertType status;
   Flow *f = ntop_flow_get_context_flow(vm);
@@ -1189,7 +1152,6 @@ void lua_push_rawdata_table_entry(lua_State *L, const char *key, u_int32_t len, 
 static luaL_Reg _ntop_flow_reg[] = {
 /* Public User Scripts API, documented at doc/src/api/lua_c/flow_user_scripts/flow.lua */
   { "getStatus",                ntop_flow_get_status                 },
-  { "setAlert",                ntop_flow_set_status                 },
   { "isStatusSet",              ntop_flow_is_status_set              },
   { "getPredominantAlert",         ntop_flow_get_alert         },
   { "isAlerted",                ntop_flow_is_alerted                 },

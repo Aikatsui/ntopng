@@ -32,6 +32,6 @@ void TCPZeroWindow::protocolDetected(Flow *f) {
     if(as_client) c_score = 30, s_score = 5;
     if(as_server) c_score = 5, s_score = 30;
 
-    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 }

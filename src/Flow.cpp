@@ -2671,10 +2671,10 @@ u_char* Flow::getCommunityId(u_char *community_id, u_int community_id_len) {
 
 /* Create a JSON in the alerts format
  * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
-void Flow::flow2alertJson(ndpi_serializer *s, time_t now) {
+void Flow::flow2alertJson(ndpi_serializer *s, time_t now, FlowAlertType alert_type) {
   char buf[64];
   u_char community_id[200];
-  char *alert_json = getInterface()->getAlertJSON(getPredominantAlert(), this);
+  char *alert_json = getInterface()->getAlertJSON(alert_type, this);
 
   /* AlertsManager::storeFlowAlert requires a string */
   ndpi_serialize_string_string(s, "alert_json", alert_json ? alert_json : "");
@@ -2970,6 +2970,47 @@ void Flow::callFlowUpdate(time_t t) {
 
 /* *************************************** */
 
+bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity) {
+  bool first_alert = isFlowAlerted();
+  bool rv = false;
+  u_int32_t buflen;
+  AlertFifoItem notification;
+  ndpi_serializer flow_json;
+  const char *flow_str;
+
+  ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
+
+  /* Prepare the JSON, including a JSON specific of this FlowAlertType */
+  flow2alertJson(&flow_json, time(NULL), fat);
+
+  if(!first_alert)
+    ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
+
+  flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
+
+  /* TODO: read all the recipients responsible for flows, and enqueue only to them */
+  /* Currenty, we forcefully enqueue only to the builtin sqlite */
+    
+  notification.alert = (char*)flow_str;
+  notification.alert_severity = severity;
+  notification.script_category = getInterface()->getAlertCategory(fat);
+
+  rv = ntop->recipients_enqueue(notification.alert_severity >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
+				&notification,
+				true /* Flow recipients only */);
+
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Enqueue!");
+
+  if(!rv)
+    getInterface()->incNumDroppedAlerts(1);
+
+  ndpi_term_serializer(&flow_json);
+
+  return rv;
+}
+
+/* *************************************** */
+
 void Flow::enqueuePredominantAlert() {
   /* See if it is time to trigger an alert */
   FlowAlertType cur_predominant_alert = getPredominantAlert();
@@ -2978,45 +3019,8 @@ void Flow::enqueuePredominantAlert() {
      || predominant_alert_enqueued == cur_predominant_alert /* Predominant alert already enqueued */)
     return; /* Nothing to do */
 
-  bool first_alert = true; /* TODO: implement check !f->isFlowAlerted(); */
-  bool rv = false;
-  u_int32_t buflen;
-  AlertFifoItem notification;
-
-  /* The alert was successfully triggered */
-  ndpi_serializer flow_json;
-  const char *flow_str;
-
-  ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
-
-  flow2alertJson(&flow_json, time(NULL));
-
-  if(!first_alert)
-    ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
-
-  if(false /* alert_always_notify */)
-    ndpi_serialize_string_boolean(&flow_json, "alert_always_notify", true);
-
-  flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
-
-  /* TODO: read all the recipients responsible for flows, and enqueue only to them */
-  /* Currenty, we forcefully enqueue only to the builtin sqlite */
-    
-  notification.alert = (char*)flow_str;
-  notification.alert_severity = getAlertedSeverity();
-  notification.script_category = getInterface()->getAlertCategory(cur_predominant_alert);
-  /* TODO: add script information */
-
-  rv = ntop->recipients_enqueue(notification.alert_severity >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
-				&notification,
-				true /* Flow recipients only */);
-
-  if(!rv)
-    getInterface()->incNumDroppedAlerts(1);
-  else
+  if(enqueueAlert(cur_predominant_alert, getAlertedSeverity()))
     predominant_alert_enqueued = cur_predominant_alert; /* Remember this predominant status that has been successfully enqueued */
-
-  ndpi_term_serializer(&flow_json);
 }
 
 /* *************************************** */
@@ -5245,10 +5249,11 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
 /*
   This method is called by Lua to set score and various other values of the flow
  */
-bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+bool Flow::triggerAlertSyncAsync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, bool is_syncronous) {
   FlowAlertType alert_type = fcb->getAlertType();
   ScriptCategory script_category = fcb->getCategory();
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
+  bool is_predominant = false; /* Check if the alert that is being triggered is becoming the new predominant alert */
 
   if(alert_type == alert_normal)
     return false;
@@ -5276,9 +5281,35 @@ bool Flow::setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, 
      || getAlertedScore() < flow_inc /* The score of the current alerted alert_type is less than the score of this alert_type */
      || getAlertedSeverity() < severity) {
     setPredominantAlert(alert_type, severity, flow_inc);
+    is_predominant = true;
+  }
+
+  /* If synchronous, this alert must be sent straight to the recipients now. Let's put it into the recipient queues. */
+  if(is_syncronous) { 
+    if(enqueueAlert(alert_type, severity) /* Successful enqueue */
+       && is_predominant /* Predominant alert */) {
+      /*
+	If the enqueue has been successful, and this alert is predominant, we
+	update the predominant alert enqueued. This will prevent the asyncrhonous Flow::enqueuePredominantAlert
+	to re-enqueue this alert.
+       */
+      predominant_alert_enqueued = alert_type;
+    }
   }
 
   return true;
+}
+
+/* *************************************** */
+
+bool Flow::triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, false /* Not syncrhonous */);
+}
+
+/* *************************************** */
+
+bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, true /* Syncrhonous */);
 }
 
 /* *************************************** */

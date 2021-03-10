@@ -55,10 +55,10 @@ class Flow : public GenericHashEntry {
      of a flow, which is written into `predominant_alert`.
   */
   Bitmap alert_map;
-  volatile FlowAlertType predominant_alert;          /* This is the predominant alert */
-  volatile u_int16_t  predominant_alert_score;       /* The score associated to the predominant alert */
-  volatile FlowAlertType predominant_alert_enqueued; /* This is the most recent predominant alert enqueued to recipients */
-  volatile AlertLevel predominant_alert_level;
+  FlowAlertType predominant_alert;          /* This is the predominant alert */
+  u_int16_t  predominant_alert_score;       /* The score associated to the predominant alert */
+  FlowAlertType predominant_alert_enqueued; /* This is the most recent predominant alert enqueued to recipients */
+  AlertLevel predominant_alert_level;
   char *custom_flow_info;
   struct {
     struct ndpi_analyze_struct *c2s, *s2c;
@@ -265,6 +265,19 @@ class Flow : public GenericHashEntry {
   void luaIEC104(lua_State* vm);
   void callFlowUpdate(time_t t);
   bool setPredominantAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t predominant_alert_score);
+  /*
+    Enqueues an alert to all available flow recipients. Alert is enqueued as-is, no check on predominant alert is performed.
+    Also the alert JSON is generated.
+  */
+  bool enqueueAlert(FlowAlertType fat, AlertLevel severity);
+  /*
+    Method to trigger alerts, synchronous or asynchronous, depending on the last argument.
+    - Asynchronous: The alerts bitmap is updated and the predominant alert is possibly updated.
+                    Recipients enqueue is not performed.
+    - Synchronous:  The alerts bitmap is updated and the predominant alert is possibly updated.
+                    Immediate alert JSON generation and enqueue to the recipients are performed as well.
+   */
+  bool triggerAlertSyncAsync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, bool is_synchronous);
   
  public:
   Flow(NetworkInterface *_iface,
@@ -275,9 +288,21 @@ class Flow : public GenericHashEntry {
        time_t _first_seen, time_t _last_seen);
   ~Flow();
 
-  inline Bitmap getAlertBitmap()     const     { return(alert_map);           }
-  bool setAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
-  /* Enqueues the predominant alert of the flow to all available flow recipients */
+  inline Bitmap getAlertBitmap()     const     { return(alert_map); }
+
+  /*
+    Called by FlowCallback subclasses to trigger a flow alert. This is an asynchronous call, faster, but can
+    cause the alert JSON to be generated after the call.
+   */
+  bool triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
+  /* 
+     Called by FlowCallback subclasses to trigger a flow alert. This is a syncrhonous call, more expensive, but
+     causes the alert to be immediately enqueued to all recipients.
+   */
+  bool triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
+  /*
+    Enqueues the predominant alert of the flow to all available flow recipients.
+   */
   void enqueuePredominantAlert();
 
   inline FlowAlertType getPredominantAlert() const { return predominant_alert;       };
@@ -330,7 +355,7 @@ class Flow : public GenericHashEntry {
   };
   inline const char* getServerCipherClass()  const { return(isTLS() ? cipher_weakness2str(protos.tls.ja3.server_unsafe_cipher) : NULL); }
   char* serialize(bool use_labels = false);
-  void flow2alertJson(ndpi_serializer *serializer, time_t now);
+  void flow2alertJson(ndpi_serializer *serializer, time_t now, FlowAlertType alert_type);
   json_object* flow2json();
   json_object* flow2es(json_object *flow_object);
 
