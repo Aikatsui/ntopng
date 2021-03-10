@@ -23,10 +23,7 @@
 #define _FLOW_CALLBACKS_INCLUDES_H_
 
 #include "flow_callbacks/BlacklistedFlow.h"
-#include "flow_callbacks/DNSDataExfiltration.h"
-#include "flow_callbacks/DataExfiltration.h"
 #include "flow_callbacks/DeviceProtocolNotAllowed.h"
-#include "flow_callbacks/ElephantFlow.h"
 #include "flow_callbacks/ExternalAlertCheck.h"
 #include "flow_callbacks/FlowRisk.h"
 #include "flow_callbacks/FlowRiskBinaryApplicationTransfer.h"
@@ -59,6 +56,8 @@
 #include "flow_callbacks/WebMining.h"
 
 #ifdef NTOPNG_PRO
+#include "flow_callbacks/DNSDataExfiltration.h"
+#include "flow_callbacks/ElephantFlow.h"
 #include "flow_callbacks/ExternalAlertCheckPro.h"
 #include "flow_callbacks/IEC60870_5_104.h"
 #include "flow_callbacks/InvalidDNSQuery.h"
