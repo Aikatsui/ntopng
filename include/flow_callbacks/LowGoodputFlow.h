@@ -28,6 +28,7 @@
 class LowGoodputFlow : public FlowCallback {
  private:
   void checkLowGoodput(Flow *f);
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
   LowGoodputFlow() : FlowCallback(ntopng_edition_community,
@@ -37,8 +38,6 @@ class LowGoodputFlow : public FlowCallback {
 
   void periodicUpdate(Flow *f);
   void flowEnd(Flow *f);
-
-  ndpi_serializer *getAlertJSON(Flow *f);
 
   std::string getName()          const { return(std::string("low_goodput")); }
   ScriptCategory getCategory()   const { return script_category_network;     }

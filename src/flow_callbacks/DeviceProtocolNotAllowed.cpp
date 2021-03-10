@@ -54,8 +54,7 @@ void DeviceProtocolNotAllowed::protocolDetected(Flow *f) {
 
 /* ***************************************************** */
 
-ndpi_serializer *DeviceProtocolNotAllowed::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer = getBaseAlertJSON(f);
+ndpi_serializer *DeviceProtocolNotAllowed::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   Host *cli = f->get_cli_host(), *srv = f->get_srv_host();
   DeviceType cli_dev_type = device_unknown, srv_dev_type = device_unknown; 
 

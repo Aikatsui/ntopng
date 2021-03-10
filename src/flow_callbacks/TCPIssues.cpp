@@ -76,8 +76,7 @@ void TCPIssues::flowEnd(Flow *f) {
 
 /* ******************************************** */
 
-ndpi_serializer* TCPIssues::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer = getBaseAlertJSON(f);
+ndpi_serializer* TCPIssues::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   bool is_client, is_server, is_severe;
   FlowTrafficStats *stats = f->getTrafficStats();
   const ndpi_analyze_struct *cli2srv_bytes_stats, *srv2cli_bytes_stats;

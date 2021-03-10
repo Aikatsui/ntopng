@@ -35,7 +35,8 @@ class FlowRiskBinaryApplicationTransfer : public FlowRisk {
 
   /* Overriding the default severity */
   virtual AlertLevel getCustomSeverity() { return alert_level_error; }
-
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  
  public:
   FlowRiskBinaryApplicationTransfer() : FlowRisk() {};
   ~FlowRiskBinaryApplicationTransfer() {};
@@ -43,8 +44,6 @@ class FlowRiskBinaryApplicationTransfer : public FlowRisk {
   std::string getName()        const { return(std::string("suspicious_file_transfer")); }
   ScriptCategory getCategory() const { return script_category_security;                 }
   FlowAlertType getAlertType() const { return alert_suspicious_file_transfer;           }
-
-  ndpi_serializer* getAlertJSON(Flow *f);
 };
 
 #endif

@@ -88,7 +88,7 @@ char* FlowCallbacksExecutor::getAlertJSON(FlowAlertType fat, Flow *f) const {
   if(!fc)
     return NULL; /* Callback not found */
 
-  alert_json_serializer = fc->getAlertJSON(f);
+  alert_json_serializer = fc->getSerializedAlert(f);
 
   if(alert_json_serializer) {
     json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);

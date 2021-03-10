@@ -71,9 +71,7 @@ void LowGoodputFlow::flowEnd(Flow *f) {
 
 /* ***************************************************** */
 
-ndpi_serializer *LowGoodputFlow::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer = getBaseAlertJSON(f);
-
+ndpi_serializer *LowGoodputFlow::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   if(serializer == NULL)
     return NULL;
 

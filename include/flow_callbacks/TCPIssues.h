@@ -27,7 +27,8 @@
 class TCPIssues : public FlowCallback {
  private:
   void checkFlow(Flow *f, bool *is_client, bool *is_server, bool *is_severe, bool trigger_alert); 
-  
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
  TCPIssues() : FlowCallback(ntopng_edition_community,
 			    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
@@ -40,8 +41,6 @@ class TCPIssues : public FlowCallback {
   std::string getName()        const { return(std::string("tcp_issues_generic")); }
   ScriptCategory getCategory() const { return script_category_network;            }
   FlowAlertType getAlertType() const { return alert_tcp_connection_issues;        }
-
-  ndpi_serializer* getAlertJSON(Flow *f);
 };
 
 #endif /* _TCP_ISSUES_H_ */

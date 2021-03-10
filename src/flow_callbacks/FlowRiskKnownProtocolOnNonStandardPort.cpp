@@ -24,9 +24,7 @@
 
 /* ***************************************************** */
 
-ndpi_serializer *FlowRiskKnownProtocolOnNonStandardPort::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer = getBaseAlertJSON(f);
-
+ndpi_serializer *FlowRiskKnownProtocolOnNonStandardPort::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   if(serializer == NULL)
     return NULL;
 

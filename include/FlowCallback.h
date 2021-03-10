@@ -30,8 +30,11 @@ class FlowCallback {
   u_int8_t has_protocol_detected:1, has_periodic_update:1, has_flow_end:1, packet_interface_only:1, nedge_exclude:1, nedge_only:1, enabled:1/* , _unused:1 */;
  
   bool isCallbackCompatibleWithInterface(NetworkInterface *iface);
+  /* 
+     Adds to the passed `serializer` (generated with `getAlertSerializer`) information specific to this callback and this flow
+   */
+  virtual ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f)  { return serializer; }
 
- protected:
  protected:
   AlertLevel severity_id;
 
@@ -60,15 +63,12 @@ class FlowCallback {
   virtual ScriptCategory getCategory() const = 0;
   virtual FlowAlertType getAlertType() const = 0;
 
-  virtual ndpi_serializer* getAlertJSON(Flow *f) { return getBaseAlertJSON(f); }
-
   /* 
-     MUST always be called for all alerts to get minimal JSON information.
-     Caller can then extend the returned ndpi_serializer with additional information.
-     NOTE: this should not be overridden.
+     Generates the JSON alert serializer with base information and per-callback information gathered with `getAlertJSON`.
+     NOTE: memory must be freed by the caller.
   */
-  ndpi_serializer* getBaseAlertJSON(Flow *f);
-  virtual char* getAlertJSONStr(Flow *f)         { return(NULL);               }
+  ndpi_serializer* getSerializedAlert(Flow *f);
+  virtual char* getAlertJSONStr(Flow *f) { return(NULL); }
 };
 
 #endif /* _FLOW_CALLBACK_H_ */

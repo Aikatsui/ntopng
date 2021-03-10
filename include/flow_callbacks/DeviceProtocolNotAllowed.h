@@ -27,7 +27,8 @@
 
 class DeviceProtocolNotAllowed : public FlowCallback {
  private:
-  
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);  
+
  public:
   DeviceProtocolNotAllowed() : FlowCallback(ntopng_edition_community,
 					    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
@@ -39,7 +40,6 @@ class DeviceProtocolNotAllowed : public FlowCallback {
   std::string getName()        const { return(std::string("device_protocol_not_allowed")); }
   ScriptCategory getCategory() const { return script_category_security; }
   FlowAlertType getAlertType() const { return alert_device_protocol_not_allowed; }
-  ndpi_serializer *getAlertJSON(Flow *f);
 };
 
 #endif /* _DEVICE_PROTOCOL_NOT_ALLOWED_H_ */

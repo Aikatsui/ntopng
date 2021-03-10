@@ -248,7 +248,7 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 		FlowCallback *cb = f->getInterface()->getFlowCallbackExecutor()->getFlowCallback(alert_iec_invalid_transition);
 
 		if(cb != NULL) {
-		  ndpi_serializer *serializer = cb->getBaseAlertJSON(f);
+		  ndpi_serializer *serializer = cb->getSerializedAlert(f);
 		
 #ifdef IEC60870_TRACE
 		  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Found new transition %u -> %u", last_type_i, type_id);

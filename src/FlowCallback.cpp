@@ -138,7 +138,7 @@ bool FlowCallback::loadConfiguration(json_object *config) {
 
 /* ***************************************************** */
 
-ndpi_serializer* FlowCallback::getBaseAlertJSON(Flow *f) {
+ndpi_serializer* FlowCallback::getSerializedAlert(Flow *f) {
   ndpi_serializer *serializer;
 
   serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
@@ -151,8 +151,11 @@ ndpi_serializer* FlowCallback::getBaseAlertJSON(Flow *f) {
     return NULL;
   }
 
-  /* Add here minimum information */
+  /* Add here global callback information */
   // ndpi_serialize_string_uint64(serializer, "longlived.threshold", longlived_threshold);
+
+  /* This call adds callback-specific information to the serializer */
+  getAlertJSON(serializer, f);
 
   return serializer;
 }

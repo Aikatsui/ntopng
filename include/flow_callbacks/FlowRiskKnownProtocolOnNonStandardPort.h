@@ -35,6 +35,7 @@ class FlowRiskKnownProtocolOnNonStandardPort : public FlowRisk {
 
   /* Overriding the default severity */
   virtual AlertLevel getCustomSeverity() { return alert_level_info; }
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
   FlowRiskKnownProtocolOnNonStandardPort() : FlowRisk() {};
@@ -43,8 +44,6 @@ class FlowRiskKnownProtocolOnNonStandardPort : public FlowRisk {
   std::string getName()        const { return(std::string("known_proto_on_non_std_port")); }
   ScriptCategory getCategory() const { return script_category_security;                    }
   FlowAlertType getAlertType() const { return alert_known_proto_on_non_std_port;           }
-
-  ndpi_serializer* getAlertJSON(Flow *f);
 };
 
 #endif
