@@ -291,36 +291,21 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 	  }
 
 	  if(alerted) {
-#if 0
-	    json_object *my_object;
+	    FlowCallback *cb = f->getInterface()->getFlowCallbackExecutor()->getFlowCallback(alert_iec_unexpected_type_id);
+	    
+	    if(cb != NULL) {
+	      ndpi_serializer *serializer = cb->getSerializedAlert(f);
+	      	      
+	      if(serializer != NULL) {
+		 ndpi_serialize_string_uint32(serializer, "type_id", type_id);
+		 ndpi_serialize_string_uint32(serializer, "asdu", asdu);
+		 ndpi_serialize_string_uint32(serializer, "cause_tx", cause_tx);
+		 ndpi_serialize_string_boolean(serializer, "negative", negative ? 1 : 0);
 
-	    if((my_object = json_object_new_object()) != NULL) {
-	      const char *json;
-
-	      json_object_object_add(my_object, "timestamp", json_object_new_int(packet_time->tv_sec));
-	      json_object_object_add(my_object, "client", f->get_cli_host()->get_ip()->getJSONObject());
-	      json_object_object_add(my_object, "server", f->get_srv_host()->get_ip()->getJSONObject());
-
-	      if(f->get_vlan_id())
-		json_object_object_add(my_object, "vlanId", json_object_new_int(f->get_vlan_id()));
-
-	      json_object_object_add(my_object, "type_id", json_object_new_int(type_id));
-	      json_object_object_add(my_object, "asdu", json_object_new_int(asdu));
-	      json_object_object_add(my_object, "cause_tx", json_object_new_int(cause_tx));
-	      json_object_object_add(my_object, "negative", json_object_new_boolean(negative));
-
-	      json = json_object_to_json_string(my_object);
-
-#ifdef DEBUG_IEC60870
-	      ntop->getTrace()->traceEvent(TRACE_WARNING, "[%s] Alert %s", __FUNCTION__, json);
-#endif
-
-	      ntop->getRedis()->rpush(CONST_IEC104_ALERT_QUEUE, json, 1024 /* Max queue size */);
-
-	      json_object_put(my_object); /* Free memory */
-	    }
-#endif
-	  }
+		f->triggerAlertSync(cb, cb->getSeverity(), 50 /* flow score */, 50 /* cli score */, 10 /* server score */, serializer);
+	      }
+	    } /* cb */
+	  } /* alerted  */
 
 	  /* Discard typeIds 127..255 */
 	} else /* payload_len < len */

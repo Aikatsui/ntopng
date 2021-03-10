@@ -398,22 +398,22 @@ function alert_consts.loadDefinition(def_script, mod_fname, script_path)
 
    -- Check the required metadata fields
    for _, k in pairs(required_fields) do
-	   if(def_script.meta[k] == nil) then
-	      traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Missing required field '%s' in %s from %s", k, mod_fname, script_path))
-	      return(false)
-	   end
+      if(def_script.meta[k] == nil) then
+	 traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Missing required field '%s' in %s from %s", k, mod_fname, script_path))
+	 return(false)
+      end
    end
 
    -- Sanity check: make sure this is a valid alert key
    local parsed_alert_key, status = alert_keys.parse_alert_key(def_script.meta.alert_key)
    if not parsed_alert_key then
-	   traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Invalid alert key specified %s in %s from %s", status, mod_fname, script_path))
-	   return(false)
+      traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Invalid alert key specified %s in %s from %s", status, mod_fname, script_path))
+      return(false)
    end
-
+   
    if(alerts_by_id[parsed_alert_key] ~= nil) then
-	   traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Alert key %d redefined, skipping in %s from %s", parsed_alert_key, mod_fname, script_path))
-	   return(false)
+      traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Alert key %d redefined, skipping in %s from %s", parsed_alert_key, mod_fname, script_path))
+      return(false)
    end
 
    def_script.meta.alert_key = parsed_alert_key

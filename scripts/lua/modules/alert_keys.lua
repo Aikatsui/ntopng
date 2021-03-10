@@ -76,7 +76,8 @@ local alert_keys = {
       alert_ndpi_unsafe_protocol            = {NO_PEN, 52},
       alert_ndpi_dns_suspicious_traffic     = {NO_PEN, 53},
       alert_ndpi_tls_missing_sni            = {NO_PEN, 54},
-
+      alert_iec_unexpected_type_id          = {NO_PEN, 55},
+      
       -- NOTE: for flow alerts not not go beyond the size of Bitmap alert_map inside Flow.h (currently 128)
 
       --
@@ -128,7 +129,7 @@ local alert_keys = {
       alert_user_script_calls_drops        = {NO_PEN, BASE_ID + 44},
       alert_host_log                       = {NO_PEN, BASE_ID + 45},
       alert_attack_mitigation_via_snmp     = {NO_PEN, BASE_ID + 46},
-      alert_iec104_error                   = {NO_PEN, BASE_ID + 47},
+      alert_iec104_error                   = {NO_PEN, BASE_ID + 47}, -- No longer used
       alert_lateral_movement               = {NO_PEN, BASE_ID + 48},
       alert_list_download_succeeded        = {NO_PEN, BASE_ID + 49},
       alert_no_if_activity                 = {NO_PEN, BASE_ID + 50}, -- scripts/plugins/alerts/internals/no_if_activity
