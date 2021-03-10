@@ -1570,7 +1570,7 @@ function user_scripts.getScriptConfig(configset, script, subdir)
    local script_type = user_scripts.getScriptType(subdir)
    local hooks = ternary(script_type.has_per_hook_config, script.hooks, {[ALL_HOOKS_CONFIG_KEY]=1})
 
-   for hook in pairs(script.hooks) do
+   for hook in pairs(script.hooks or {}) do
       rv[hook] = default_config
    end
 
