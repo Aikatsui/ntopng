@@ -4823,6 +4823,42 @@ void Flow::lua_get_min_info(lua_State *vm) {
 
 /* ***************************************************** */
 
+/* 
+ * Get minimal flow information.
+ * NOTE: this is intended to be called only from flow user scripts
+ */
+void Flow::getInfo(ndpi_serializer *serializer) {
+  char buf[64];
+  char *info = getFlowInfo(buf, sizeof(buf));
+
+  ndpi_serialize_string_string(serializer, "cli.ip", get_cli_ip_addr()->print(buf, sizeof(buf)));
+  ndpi_serialize_string_string(serializer, "srv.ip", get_srv_ip_addr()->print(buf, sizeof(buf)));
+
+  if(get_cli_host() && get_cli_host()->isProtocolServer())
+    ndpi_serialize_string_boolean(serializer, "cli.protocol_server", true);
+  else if(get_srv_host() && get_srv_host()->isProtocolServer())
+    ndpi_serialize_string_boolean(serializer, "srv.protocol_server", true);
+
+  ndpi_serialize_string_int32(serializer, "cli.port", get_cli_port());
+  ndpi_serialize_string_int32(serializer, "srv.port", get_srv_port());
+  ndpi_serialize_string_boolean(serializer, "cli.localhost", cli_host ? cli_host->isLocalHost() : false);
+  ndpi_serialize_string_boolean(serializer, "srv.localhost", srv_host ? srv_host->isLocalHost() : false);
+  ndpi_serialize_string_int32(serializer, "duration", get_duration());
+  ndpi_serialize_string_string(serializer, "proto.l4", get_protocol_name());
+  ndpi_serialize_string_string(serializer, "proto.ndpi", get_detected_protocol_name(buf, sizeof(buf)));
+  ndpi_serialize_string_string(serializer, "proto.ndpi_app", ndpi_get_proto_name(iface->get_ndpi_struct(), ndpiDetectedProtocol.app_protocol));
+  ndpi_serialize_string_string(serializer, "proto.ndpi_cat", get_protocol_category_name());
+  ndpi_serialize_string_uint64(serializer, "proto.ndpi_cat_id", get_protocol_category());
+  ndpi_serialize_string_string(serializer, "proto.ndpi_breed", get_protocol_breed_name());
+  ndpi_serialize_string_uint64(serializer, "cli2srv.bytes", get_bytes_cli2srv());
+  ndpi_serialize_string_uint64(serializer, "srv2cli.bytes", get_bytes_srv2cli());
+  ndpi_serialize_string_uint64(serializer, "cli2srv.packets", get_packets_cli2srv());
+  ndpi_serialize_string_uint64(serializer, "srv2cli.packets", get_packets_srv2cli());
+  if(info) ndpi_serialize_string_string(serializer, "info", info);
+}
+
+/* ***************************************************** */
+
 u_int32_t Flow::getCliTcpIssues() {
   return(stats.get_cli2srv_tcp_retr() + stats.get_cli2srv_tcp_ooo() + stats.get_cli2srv_tcp_lost());
 }

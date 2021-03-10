@@ -42,6 +42,8 @@ class FlowRiskSSHObsolete : public FlowRisk {
   std::string getName()        const { return(std::string("ndpi_ssh_obsolete")); }
   ScriptCategory getCategory() const { return script_category_security;          }
   FlowAlertType getAlertType() const { return alert_ndpi_ssh_obsolete;           }
+
+  ndpi_serializer* getAlertJSON(Flow *f);
 };
 
 #endif

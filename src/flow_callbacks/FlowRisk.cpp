@@ -30,32 +30,9 @@ void FlowRisk::protocolDetected(Flow *f) {
     u_int16_t s_score = getServerScore();
     u_int16_t f_score = getFlowScore();
 
-    f->setAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->setAlert(this, getCustomSeverity(), f_score, c_score, s_score);
   }
 }
-
-/* ***************************************************** */
-
-/*
-ndpi_serializer *FlowRisk::getAlertJSON(Flow *f) {
-  ndpi_serializer *serializer;
-  ndpi_risk_enum risk_id = NDPI_NO_RISK;
-
-  serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
-  
-  if (serializer == NULL)
-    return NULL;
-
-  if (ndpi_init_serializer(serializer, ndpi_serialization_format_json) == -1) {
-    free(serializer);
-    return NULL;
-  }
-
-  //TODO add items if any
-  
-  return serializer;
-}
-*/
 
 /* ***************************************************** */
 
