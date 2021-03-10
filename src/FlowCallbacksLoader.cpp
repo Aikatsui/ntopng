@@ -153,32 +153,41 @@ void FlowCallbacksLoader::loadConfiguration() {
       json_object *json_enabled;
       bool enabled;
 
-      if(json_object_object_get_ex(json_hook_all, "enabled", &json_enabled))
-	enabled = json_object_get_boolean(json_enabled);
-      else
-	enabled = false;
+      if(cb_all.find(callback_key) != cb_all.end()) {
+	FlowCallback *cb = cb_all[callback_key];
 
-      if(enabled) {
-	if(json_object_object_get_ex(json_hook_all, "script_conf", &json_script_conf)) {
-	  if(cb_all.find(callback_key) != cb_all.end()) {
-	    FlowCallback *cb = cb_all[callback_key];
+	if(json_object_object_get_ex(json_hook_all, "enabled", &json_enabled))
+	  enabled = json_object_get_boolean(json_enabled);
+	else
+	  enabled = false;
+
+	if(enabled) {
+	  /* Script enabled */
+	  if(json_object_object_get_ex(json_hook_all, "script_conf", &json_script_conf)) {
+	    if(cb_all.find(callback_key) != cb_all.end()) {
+	      FlowCallback *cb = cb_all[callback_key];
 
 
-	    if(cb->loadConfiguration(json_script_conf)) {
-	      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Successfully loadeded configuration for callback %s", callback_key);
-	    } else {
-	      ntop->getTrace()->traceEvent(TRACE_WARNING, "Error while loading callback %s configuration", callback_key);
+	      if(cb->loadConfiguration(json_script_conf)) {
+		ntop->getTrace()->traceEvent(TRACE_NORMAL, "Successfully loadeded configuration for callback %s", callback_key);
+	      } else {
+		ntop->getTrace()->traceEvent(TRACE_WARNING, "Error while loading callback %s configuration", callback_key);
+	      }
+
+	      cb->enable();
+	      cb->scriptEnable(); 
 	    }
-
-	    cb->enable();
-	  } else {
-	    if(strcmp(callback_key, "new_flow_api_demo") == 0)
-	      ; /* No noise for demos */
-	    else
-	      ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
 	  }
+	} else {
+	  /* Script disabled */
+	  cb->scriptDisable(); 
 	}
-      } /* enabled */
+      } else {
+	if(strcmp(callback_key, "new_flow_api_demo") == 0)
+	  ; /* No noise for demos */
+	else
+	  ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
+      }
     }
 
     /* Move to the next element */
