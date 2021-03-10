@@ -26,14 +26,16 @@
 
 class ExternalAlertCheck : public FlowCallback {
  private:
+  void checkExternalAlert(Flow *f);
   
  public:
   ExternalAlertCheck() : FlowCallback(ntopng_edition_community,
 				      false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				      true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+				      true /* has_protocol_detected */, false /* has_periodic_update */, true /* has_flow_end */) {};
   ~ExternalAlertCheck() {};
 
   void protocolDetected(Flow *f);
+  void flowEnd(Flow *f);
   
   std::string getName()        const { return(std::string("external_alert_check")); }
   ScriptCategory getCategory() const { return script_category_security;             }

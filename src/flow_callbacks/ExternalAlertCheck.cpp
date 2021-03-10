@@ -22,22 +22,33 @@
 #include "ntop_includes.h"
 #include "flow_callbacks_includes.h"
 
-void ExternalAlertCheck::protocolDetected(Flow *f) {
+void ExternalAlertCheck::checkExternalAlert(Flow *f) {
   if (f->hasExternalAlert()) { 
     u_int16_t c_score = 100;
     u_int16_t s_score = 100;
     u_int16_t f_score = 100;
 
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
     f->triggerAlert(this, f->getExternalSeverity(), f_score, c_score, s_score);
   }
 }
 
 /* ***************************************************** */
 
+void ExternalAlertCheck::protocolDetected(Flow *f) {
+  checkExternalAlert(f);
+}
+
+/* ***************************************************** */
+
+void ExternalAlertCheck::flowEnd(Flow *f) {
+  checkExternalAlert(f);
+}
+
+/* ***************************************************** */
+
 char* ExternalAlertCheck::getAlertJSONStr(Flow *f) {
   char *json;
- 
+
   json = f->getExternalAlert();
 
   if (json == NULL)

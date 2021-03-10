@@ -5323,7 +5323,7 @@ void Flow::setExternalAlert(json_object *a) {
       iface->setSeenExternalAlerts();
  
     if(json_object_object_get_ex(a, "source", &val))
-      external_alert.source = (char *) json_object_get_string(val);
+      external_alert.source = strdup(json_object_get_string(val));
  
     if(json_object_object_get_ex(a, "severity_id", &val))
       external_alert.severity_id = (AlertLevel) json_object_get_int(val);
@@ -5331,7 +5331,7 @@ void Flow::setExternalAlert(json_object *a) {
       external_alert.severity_id = alert_level_warning;
  
     external_alert.json = strdup(json_object_to_json_string(a));
- 
+
     /* Manually trigger a periodic update to process the alert */
     trigger_immediate_periodic_update = true;
   }
