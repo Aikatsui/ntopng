@@ -356,7 +356,12 @@ class Flow : public GenericHashEntry {
   };
   inline const char* getServerCipherClass()  const { return(isTLS() ? cipher_weakness2str(protos.tls.ja3.server_unsafe_cipher) : NULL); }
   char* serialize(bool use_labels = false);
-  void flow2alertJson(ndpi_serializer *serializer, time_t now, FlowAlertType alert_type);
+  /*
+    Prepares an alert JSON and puts int in the resulting `serializer`. An optional `additional_serializer`
+    can be passed to have it put under key `alert_json` of `serializer`. When no `additional_serializer` is passed, key `alert_json`
+    is populated asynchronously using `alert_type`.
+   */
+  void flow2alertJson(ndpi_serializer *serializer, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer);
   json_object* flow2json();
   json_object* flow2es(json_object *flow_object);
 

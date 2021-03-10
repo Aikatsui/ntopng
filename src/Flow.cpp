@@ -2671,14 +2671,24 @@ u_char* Flow::getCommunityId(u_char *community_id, u_int community_id_len) {
 
 /* Create a JSON in the alerts format
  * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
-void Flow::flow2alertJson(ndpi_serializer *s, time_t now, FlowAlertType alert_type) {
+void Flow::flow2alertJson(ndpi_serializer *s, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer) {
   char buf[64];
   u_char community_id[200];
-  char *alert_json = getInterface()->getAlertJSON(alert_type, this);
+  char *alert_json = NULL;
 
-  /* AlertsManager::storeFlowAlert requires a string */
+  if(!additional_serializer)
+    /* No JSON as argument, generate it asynchronously from the alert_type */
+    alert_json = getInterface()->getAlertJSON(alert_type, this);
+  else {
+    /* JSON submitted as argument, use it as-is. */
+    u_int32_t json_string_len;
+    alert_json = ndpi_serializer_get_buffer(additional_serializer, &json_string_len);
+  }
+
   ndpi_serialize_string_string(s, "alert_json", alert_json ? alert_json : "");
-  if(alert_json) free(alert_json);
+
+  if(!additional_serializer && alert_json) /* JSON generated asynchronously, must free it */
+    free(alert_json);
 
   ndpi_serialize_string_int32(s, "ifid", iface->get_id());
   ndpi_serialize_string_string(s, "action", "store");
@@ -2981,7 +2991,7 @@ bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer 
   ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
 
   /* Prepare the JSON, including a JSON specific of this FlowAlertType */
-  flow2alertJson(&flow_json, time(NULL), fat);
+  flow2alertJson(&flow_json, time(NULL), fat, alert_json);
 
   if(!first_alert)
     ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
@@ -5315,6 +5325,10 @@ bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t fl
       predominant_alert_enqueued = alert_type;
     }
   }
+
+  /* Dispose memory */
+  if(alert_json)
+    ndpi_term_serializer(alert_json);
 
   return res;
 }
