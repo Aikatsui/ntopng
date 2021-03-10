@@ -41,7 +41,7 @@ class ExternalAlertCheck : public FlowCallback {
   ScriptCategory getCategory() const { return script_category_security;             }
   FlowAlertType getAlertType() const { return alert_external;                       }
 
-  ndpi_serializer* getAlertJSON(Flow *f) { return NULL; }
+  ndpi_serializer* getSerializedAlert(Flow *f) { return NULL; }
   char* getAlertJSONStr(Flow *f);
 };
 
