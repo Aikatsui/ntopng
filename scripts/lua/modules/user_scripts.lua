@@ -789,7 +789,7 @@ local function init_user_script(user_script, mod_fname, full_path, plugin, scrip
    end
 
    -- Expand hooks
-   if(user_script.hooks["all"] ~= nil) then
+   if(user_script.hooks and user_script.hooks["all"] ~= nil) then
       local callback = user_script.hooks["all"]
       user_script.hooks["all"] = nil
 
@@ -834,7 +834,7 @@ local function loadAndCheckScript(mod_fname, full_path, plugin, script_type, sub
       return(nil)
    end
 
-   if(table.empty(user_script.hooks)) then
+   if(subdir ~= "flow" and table.empty(user_script.hooks)) then
       traceError(TRACE_WARNING, TRACE_CONSOLE, string.format("No 'hooks' defined in user script '%s', skipping", mod_fname))
       return(nil)
    end
@@ -951,7 +951,7 @@ function user_scripts.load(ifid, script_type, subdir, options)
 	    -- Checks passed, now load the script information
 
             -- Populate hooks fast lookup table
-            for hook, hook_fn in pairs(user_script.hooks) do
+            for hook, hook_fn in pairs(user_script.hooks or {}) do
 	       -- load previously computed benchmarks (if any)
 	       -- benchmarks are loaded even if their computation is disabled with a do_benchmark ~= true
                if(rv.hooks[hook] == nil) then
