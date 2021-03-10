@@ -267,9 +267,10 @@ class Flow : public GenericHashEntry {
   bool setPredominantAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t predominant_alert_score);
   /*
     Enqueues an alert to all available flow recipients. Alert is enqueued as-is, no check on predominant alert is performed.
-    Also the alert JSON is generated.
+    `alert_json` allows a JSON to be specified for the alert. When `alert_json` is NULL, the JSON is asynchronously
+    generated from `this` flow and the passed `fat`.
   */
-  bool enqueueAlert(FlowAlertType fat, AlertLevel severity);
+  bool enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer *alert_json);
   /*
     Method to trigger alerts, synchronous or asynchronous, depending on the last argument.
     - Asynchronous: The alerts bitmap is updated and the predominant alert is possibly updated.
@@ -299,7 +300,7 @@ class Flow : public GenericHashEntry {
      Called by FlowCallback subclasses to trigger a flow alert. This is a syncrhonous call, more expensive, but
      causes the alert to be immediately enqueued to all recipients.
    */
-  bool triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
+  bool triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json);
   /*
     Enqueues the predominant alert of the flow to all available flow recipients.
    */

@@ -2970,7 +2970,7 @@ void Flow::callFlowUpdate(time_t t) {
 
 /* *************************************** */
 
-bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity) {
+bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer *alert_json) {
   bool first_alert = isFlowAlerted();
   bool rv = false;
   u_int32_t buflen;
@@ -3017,7 +3017,7 @@ void Flow::enqueuePredominantAlert() {
      || predominant_alert_enqueued == cur_predominant_alert /* Predominant alert already enqueued */)
     return; /* Nothing to do */
 
-  if(enqueueAlert(cur_predominant_alert, getAlertedSeverity()))
+  if(enqueueAlert(cur_predominant_alert, getAlertedSeverity(), NULL /* json is asynchronously generated from cur_predominant_alert */))
     predominant_alert_enqueued = cur_predominant_alert; /* Remember this predominant status that has been successfully enqueued */
 }
 
@@ -5297,7 +5297,7 @@ bool Flow::triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_i
 
 /* *************************************** */
 
-bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json) {
   FlowAlertType alert_type = fcb->getAlertType();
   bool res;
 
@@ -5305,7 +5305,7 @@ bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t fl
 
   /* Synchronous, this alert must be sent straight to the recipients now. Let's put it into the recipient queues. */
   if(res) { 
-    if(enqueueAlert(alert_type, severity) /* Successful enqueue */
+    if(enqueueAlert(alert_type, severity, alert_json) /* Successful enqueue */
        && alert_type == getPredominantAlert() /* Predominant alert */) {
       /*
 	If the enqueue has been successful, and this alert is predominant, we
