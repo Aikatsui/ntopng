@@ -25,7 +25,7 @@
 
 FlowCallbacksExecutor::FlowCallbacksExecutor(FlowCallbacksLoader *fcl, NetworkInterface *_iface) {
   iface = _iface;
-
+  memset(alert_type_to_callback, 0, sizeof(alert_type_to_callback));
   loadFlowCallbacks(fcl);
 };
 
@@ -43,10 +43,11 @@ void FlowCallbacksExecutor::loadFlowCallbacksAlerts(std::list<FlowCallback*> *cb
   for(std::list<FlowCallback*>::const_iterator it = cb_list->begin(); it != cb_list->end(); ++it) {
     FlowAlertType alert_type = (*it)->getAlertType();
 
-    if(alert_type_to_callback.find(alert_type) != alert_type_to_callback.end()) {
+    if(alert_type_to_callback[alert_type] != NULL) {
       /* Entry already existing, check if this is the same callback */
       if(alert_type_to_callback[alert_type] != *it) /* Another callback providing the same alert */
-	ntop->getTrace()->traceEvent(TRACE_ERROR, "Duplicate callback for the same status [%s][was: %s]", (*it)->getName().c_str(), alert_type_to_callback[alert_type]->getName().c_str());
+	ntop->getTrace()->traceEvent(TRACE_ERROR, "Duplicate callback for the same status [%s][was: %s]",
+				     (*it)->getName().c_str(), alert_type_to_callback[alert_type]->getName().c_str());
     } else {
       /* New entry */
       alert_type_to_callback[alert_type] = *it;
@@ -69,36 +70,34 @@ void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
 /* **************************************************** */
 
 ScriptCategory FlowCallbacksExecutor::getAlertCategory(FlowAlertType fat) const {
-  std::map<FlowAlertType, FlowCallback*>::const_iterator it = alert_type_to_callback.find(fat);
+  if(alert_type_to_callback[fat] != NULL)
+    return alert_type_to_callback[fat]->getCategory();
 
-  if(it != alert_type_to_callback.end())
-    return it->second->getCategory();
-
-  return script_category_other;
+  return(script_category_other);
 }
 
 /* **************************************************** */
 
 /* NOTE: memory MUST be freed by the caller */
-char *FlowCallbacksExecutor::getAlertJSON(FlowAlertType fat, Flow *f) const {
+char* FlowCallbacksExecutor::getAlertJSON(FlowAlertType fat, Flow *f) const {
   ndpi_serializer *alert_json_serializer = NULL;
   char *json_string = NULL;
   u_int32_t json_string_len;
-  std::map<FlowAlertType, FlowCallback*>::const_iterator it = alert_type_to_callback.find(fat);
+  FlowCallback *fc = alert_type_to_callback[fat];
 
-  if(it == alert_type_to_callback.end())
+  if(!fc)
     return NULL; /* Callback not found */
 
-  alert_json_serializer = it->second->getAlertJSON(f);
+  alert_json_serializer = fc->getAlertJSON(f);
 
   if(alert_json_serializer) {
     json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
     json_string = json_string ? strdup(json_string) : NULL; /* Allocate memory */
     ndpi_term_serializer(alert_json_serializer);
   } else {
-    json_string = it->second->getAlertJSONStr(f); /* Already allocated */
+    json_string = fc->getAlertJSONStr(f); /* Already allocated */
   }
 
   /* Always allocated in memory (must be freed) */
-  return json_string;
+  return(json_string);
 }

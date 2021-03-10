@@ -424,7 +424,7 @@ typedef enum {
   alert_ndpi_malicious_sha1
   */
 
-  MAX_FLOW_ALERT_TYPE = 128 /* Constrained by `Bitmap alert_map` inside Flow.h */
+  MAX_FLOW_ALERT_TYPE = 127 /* Constrained by `Bitmap alert_map` inside Flow.h */
 } FlowAlertType;
 
 typedef enum {

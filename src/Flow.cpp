@@ -5288,7 +5288,7 @@ bool Flow::triggerAlertSyncAsync(FlowCallback *fcb, AlertLevel severity, u_int16
        && is_predominant /* Predominant alert */) {
       /*
 	If the enqueue has been successful, and this alert is predominant, we
-	update the predominant alert enqueued. This will prevent the asyncrhonous Flow::enqueuePredominantAlert
+	update the predominant alert enqueued. This will prevent the asynchronous Flow::enqueuePredominantAlert
 	to re-enqueue this alert.
        */
       predominant_alert_enqueued = alert_type;
@@ -5301,13 +5301,13 @@ bool Flow::triggerAlertSyncAsync(FlowCallback *fcb, AlertLevel severity, u_int16
 /* *************************************** */
 
 bool Flow::triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, false /* Not syncrhonous */);
+  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, false /* Not synchronous */);
 }
 
 /* *************************************** */
 
 bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, true /* Syncrhonous */);
+  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, true /* Synchronous */);
 }
 
 /* *************************************** */
