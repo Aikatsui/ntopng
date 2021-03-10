@@ -56,6 +56,7 @@
 #include "flow_callbacks/WebMining.h"
 
 #ifdef NTOPNG_PRO
+#include "flow_callbacks/DataExfiltration.h"
 #include "flow_callbacks/DNSDataExfiltration.h"
 #include "flow_callbacks/ElephantFlow.h"
 #include "flow_callbacks/ExternalAlertCheckPro.h"
