@@ -35,8 +35,8 @@ class WebMining : public FlowCallback {
 
   void protocolDetected(Flow *f);
   
-  std::string getName()          const { return(std::string("web_mining"));  }
-  ScriptCategory getCategory()   const { return script_category_security;    }
+  std::string getName()        const { return(std::string("web_mining")); }
+  ScriptCategory getCategory() const { return script_category_security;   }
   FlowAlertType getAlertType() const { return alert_web_mining_detected;  }
 };
 
