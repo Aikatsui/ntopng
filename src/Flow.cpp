@@ -5247,7 +5247,7 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
 /*
   This method is called by Lua to set score and various other values of the flow
  */
-bool Flow::triggerAlertSyncAsync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, bool is_syncronous) {
+bool Flow::setAlertsBitmap(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   FlowAlertType alert_type = fcb->getAlertType();
   ScriptCategory script_category = fcb->getCategory();
   ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
@@ -5282,10 +5282,31 @@ bool Flow::triggerAlertSyncAsync(FlowCallback *fcb, AlertLevel severity, u_int16
     is_predominant = true;
   }
 
-  /* If synchronous, this alert must be sent straight to the recipients now. Let's put it into the recipient queues. */
-  if(is_syncronous) { 
+  return true;
+}
+
+/* *************************************** */
+
+bool Flow::triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  bool res;
+
+  res = setAlertsBitmap(fcb, severity, flow_inc, cli_inc, srv_inc);
+
+  return res;
+}
+
+/* *************************************** */
+
+bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  FlowAlertType alert_type = fcb->getAlertType();
+  bool res;
+
+  res = setAlertsBitmap(fcb, severity, flow_inc, cli_inc, srv_inc);
+
+  /* Synchronous, this alert must be sent straight to the recipients now. Let's put it into the recipient queues. */
+  if(res) { 
     if(enqueueAlert(alert_type, severity) /* Successful enqueue */
-       && is_predominant /* Predominant alert */) {
+       && alert_type == getPredominantAlert() /* Predominant alert */) {
       /*
 	If the enqueue has been successful, and this alert is predominant, we
 	update the predominant alert enqueued. This will prevent the asynchronous Flow::enqueuePredominantAlert
@@ -5295,19 +5316,7 @@ bool Flow::triggerAlertSyncAsync(FlowCallback *fcb, AlertLevel severity, u_int16
     }
   }
 
-  return true;
-}
-
-/* *************************************** */
-
-bool Flow::triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, false /* Not synchronous */);
-}
-
-/* *************************************** */
-
-bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  return triggerAlertSyncAsync(fcb, severity, flow_inc, cli_inc, srv_inc, true /* Synchronous */);
+  return res;
 }
 
 /* *************************************** */
