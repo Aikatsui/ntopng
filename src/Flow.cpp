@@ -5082,6 +5082,21 @@ void Flow::lua_get_http_info(lua_State *vm) const {
 
 /* ***************************************************** */
 
+void Flow::getHTTPInfo(ndpi_serializer *serializer) const {
+  if(isHTTP()) {
+    if(protos.http.last_url) {
+      ndpi_serialize_string_string(serializer, "protos.http.last_method", ndpi_http_method2str(protos.http.last_method));
+      ndpi_serialize_string_uint64(serializer, "protos.http.last_return_code", protos.http.last_return_code);
+      ndpi_serialize_string_string(serializer, "protos.http.last_url", protos.http.last_url);
+    }
+
+    if(host_server_name)
+      ndpi_serialize_string_string(serializer, "protos.http.server_name", host_server_name);
+  }
+}
+
+/* ***************************************************** */
+
 void Flow::lua_get_dns_info(lua_State *vm) const {
   if(isDNS()) {
     if(protos.dns.last_query) {

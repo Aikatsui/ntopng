@@ -531,7 +531,6 @@ class Flow : public GenericHashEntry {
 		       u_int16_t protocol);
   void lua(lua_State* vm, AddressTree * ptree, DetailsLevel details_level, bool asListElement);
   void lua_get_min_info(lua_State* vm);
-  void getInfo(ndpi_serializer *serializer);
   void lua_duration_info(lua_State* vm);
   void lua_snmp_info(lua_State* vm);
   void lua_device_protocol_allowed_info(lua_State *vm);
@@ -558,6 +557,10 @@ class Flow : public GenericHashEntry {
   void lua_get_geoloc(lua_State *vm, bool client, bool coords, bool country_city) const;
   void lua_get_risk_info(lua_State* vm, bool as_table);
   
+  void getInfo(ndpi_serializer *serializer);
+  void getHTTPInfo(ndpi_serializer *serializer) const;
+  void getTLSInfo(ndpi_serializer *serializer) const;
+
   bool equal(const IpAddress *_cli_ip, const IpAddress *_srv_ip,
 	     u_int16_t _cli_port, u_int16_t _srv_port,
 	     u_int16_t _vlanId, u_int8_t _protocol,
@@ -755,7 +758,6 @@ class Flow : public GenericHashEntry {
   inline u_int32_t getTLSNotAfter()  { return(isTLS() ? protos.tls.notAfter    : 0); };
   inline char* getTLSCertificateIssuerDN()  { return(isTLSProto() ? protos.tls.issuerDN  : NULL); }
   inline char* getTLSCertificateSubjectDN() { return(isTLSProto() ? protos.tls.subjectDN : NULL); }
-  void getTLSInfo(ndpi_serializer *serializer) const;
 
   inline void setTOS(u_int8_t tos, bool is_cli_tos) { if(is_cli_tos) cli2srv_tos = tos; srv2cli_tos = tos; }
   inline u_int8_t getTOS(bool is_cli_tos) const { return (is_cli_tos ? cli2srv_tos : srv2cli_tos); }

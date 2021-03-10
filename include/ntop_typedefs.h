@@ -389,7 +389,7 @@ typedef enum {
   alert_udp_unidirectional               = 26,
   alert_web_mining_detected              = 27,
   alert_tls_certificate_selfsigned       = 28,
-  alert_suspicious_file_transfer         = 29,
+  alert_suspicious_file_transfer         = 29, /* TODO rename to alert_ndpi_binary_application_transfer */
   alert_known_proto_on_non_std_port      = 30, /* TODO rename to alert_ndpi_known_protocol_on_non_standard_port */
   alert_flow_risk                        = 31,
   alert_unexpected_dhcp_server           = 32,
@@ -417,7 +417,6 @@ typedef enum {
   alert_ndpi_tls_missing_sni             = 54,
 
   /* TODO check and add support for the below flow risks:
-  alert_ndpi_binary_application_transfer (with c_score = s_score = f_score = 200)
   alert_ndpi_http_suspicious_content
   alert_ndpi_risky_asn
   alert_ndpi_risky_domain

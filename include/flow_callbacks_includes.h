@@ -29,6 +29,7 @@
 #include "flow_callbacks/ElephantFlow.h"
 #include "flow_callbacks/ExternalAlertCheck.h"
 #include "flow_callbacks/FlowRisk.h"
+#include "flow_callbacks/FlowRiskBinaryApplicationTransfer.h"
 #include "flow_callbacks/FlowRiskDNSSuspiciousTraffic.h"
 #include "flow_callbacks/FlowRiskHTTPNumericIPHost.h"
 #include "flow_callbacks/FlowRiskHTTPSuspiciousHeader.h"

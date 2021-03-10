@@ -50,6 +50,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
 #ifndef NTOPNG_PRO
   if((fcb = new ExternalAlertCheck()))                          cb_all[fcb->getName()] = fcb;
 #endif
+  if((fcb = new FlowRiskBinaryApplicationTransfer()))           cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskDNSSuspiciousTraffic()))                cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskHTTPNumericIPHost()))                   cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskHTTPSuspiciousHeader()))                cb_all[fcb->getName()] = fcb;
