@@ -2999,8 +2999,6 @@ bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity) {
 				&notification,
 				true /* Flow recipients only */);
 
-  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Enqueue!");
-
   if(!rv)
     getInterface()->incNumDroppedAlerts(1);
 
