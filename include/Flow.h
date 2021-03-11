@@ -44,7 +44,7 @@ class Flow : public GenericHashEntry {
   u_int32_t vrfId;
   u_int32_t srcAS, dstAS, prevAdjacentAS, nextAdjacentAS;
   u_int8_t protocol, src2dst_tcp_flags, dst2src_tcp_flags;
-  u_int8_t src2dst_tcp_zero_window:1, dst2src_tcp_zero_window:1, zero_window_alert_triggered:1, _pad:5;
+  u_int8_t src2dst_tcp_zero_window:1, dst2src_tcp_zero_window:1, _pad:6;
   u_int16_t cli_host_score[MAX_NUM_SCORE_CATEGORIES], srv_host_score[MAX_NUM_SCORE_CATEGORIES], flow_score;
   struct ndpi_flow_struct *ndpiFlow;
   ndpi_risk ndpi_flow_risk_bitmap;
@@ -364,8 +364,6 @@ class Flow : public GenericHashEntry {
   void flow2alertJson(ndpi_serializer *serializer, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer);
   json_object* flow2json();
   json_object* flow2es(json_object *flow_object);
-
-  void triggerZeroWindowAlert(bool *as_client, bool *as_server);
   
   inline u_int8_t getTcpFlags()        const { return(src2dst_tcp_flags | dst2src_tcp_flags);  };
   inline u_int8_t getTcpFlagsCli2Srv() const { return(src2dst_tcp_flags);                      };
@@ -694,6 +692,7 @@ class Flow : public GenericHashEntry {
   inline bool isTCPReset()       const { return (!isTCPClosed()
 						 && ((src2dst_tcp_flags & TH_RST) || (dst2src_tcp_flags & TH_RST))); };
   inline bool isTCPRefused()     const { return (!isThreeWayHandshakeOK() && (dst2src_tcp_flags & TH_RST) == TH_RST); };
+  inline bool isTCPZeroWindow()  const { return (src2dst_tcp_zero_window || dst2src_tcp_zero_window); };
   inline bool isFlowAlerted() const      { return(predominant_alert != alert_normal); };
   inline void setVRFid(u_int32_t v) { vrfId = v; }
   inline void setSrcAS(u_int32_t v) { srcAS = v; }

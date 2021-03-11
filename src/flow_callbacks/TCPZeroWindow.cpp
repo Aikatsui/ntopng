@@ -23,14 +23,8 @@
 #include "flow_callbacks_includes.h"
 
 void TCPZeroWindow::checkTCPWindow(Flow *f) {
-  bool as_client, as_server;
-  u_int16_t c_score, s_score, f_score = 30;
-
-  f->triggerZeroWindowAlert(&as_client, &as_server);
-
-  if(as_client || as_server) {
-    if(as_client) c_score = 30, s_score = 5;
-    if(as_server) c_score = 5, s_score = 30;
+  if(f->isTCPZeroWindow()) {
+    u_int16_t c_score = 30, s_score = 30, f_score = 30;
 
     f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
   }

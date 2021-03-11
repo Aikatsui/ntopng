@@ -31,11 +31,6 @@ alert_zero_tcp_window.meta = {
 function alert_zero_tcp_window:init(is_client, is_server)
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      is_client = is_client,
-      is_server = is_server,
-   }
 end
 
 -- #######################################################
@@ -46,14 +41,6 @@ end
 -- @param alert_type_params Table `alert_type_params` as built in the `:init` method
 -- @return A human-readable string
 function alert_zero_tcp_window.format(ifid, alert, alert_type_params)
-   if alert_type_params then
-      if alert_type_params.is_client then
-	 return i18n("zero_tcp_window.status_zero_tcp_window_description_c2s")
-      elseif alert_type_params.is_server then
-	 return i18n("zero_tcp_window.status_zero_tcp_window_description_s2c")
-      end
-   end
-
    return i18n("zero_tcp_window.status_zero_tcp_window_description")
 end
 
