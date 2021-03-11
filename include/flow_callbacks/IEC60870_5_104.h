@@ -28,7 +28,7 @@ class IEC60870_5_104 : public FlowCallback {
  private:
   
  public:
-  IEC60870_5_104() : FlowCallback(ntopng_edition_enterprise_l,
+  IEC60870_5_104() : FlowCallback(ntopng_edition_community,
 				  false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
 				  false /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~IEC60870_5_104() {};
@@ -36,8 +36,8 @@ class IEC60870_5_104 : public FlowCallback {
   void scriptDisable();
   bool loadConfiguration(json_object *config);
   
-  std::string getName()          const { return(std::string("iec60870_5_104")); }
-  ScriptCategory getCategory()   const { return script_category_security;       }
+  std::string getName()        const { return(std::string("iec60870_5_104")); }
+  ScriptCategory getCategory() const { return script_category_security;       }
   FlowAlertType getAlertType() const { return alert_iec_invalid_transition;  }
 };
 
