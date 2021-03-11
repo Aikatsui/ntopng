@@ -184,7 +184,8 @@ void FlowCallbacksLoader::loadConfiguration() {
 	  cb->scriptDisable(); 
 	}
       } else {
-	if(strcmp(callback_key, "new_flow_api_demo") == 0)
+	if(strcmp(callback_key, "new_flow_api_demo") == 0
+	   || strcmp(callback_key, "flow_logger") == 0)
 	  ; /* No noise for demos */
 	else
 	  ntop->getTrace()->traceEvent(TRACE_WARNING, "Unable to find flow callback  %s", callback_key);
