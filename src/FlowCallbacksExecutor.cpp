@@ -50,6 +50,8 @@ void FlowCallbacksExecutor::loadFlowCallbacksAlerts(std::list<FlowCallback*> *cb
 				     (*it)->getName().c_str(), alert_type_to_callback[alert_type]->getName().c_str());
     } else {
       /* New entry */
+      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Registering %s [alert_type: %u]",
+				   (*it)->getName().c_str(), (unsigned int)alert_type);
       alert_type_to_callback[alert_type] = *it;
     }
   }
