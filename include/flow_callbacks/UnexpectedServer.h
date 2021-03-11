@@ -19,26 +19,40 @@
  *
  */
 
-#ifndef _IEC60870_5_104_FLOW_CALLBACK_H_
-#define _IEC60870_5_104_FLOW_CALLBACK_H_
+#ifndef _UNEXPECTED_HOST_H_
+#define _UNEXPECTED_HOST_H_
 
 #include "ntop_includes.h"
 
-class IEC60870_5_104 : public FlowCallback {
+class UnexpectedServer : public FlowCallback {
  private:
-  
- public:
-  IEC60870_5_104() : FlowCallback(ntopng_edition_community,
-				  false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				  false /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
-  ~IEC60870_5_104() {};
+  ndpi_ptree_t *whitelist;
 
-  void scriptDisable();
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
+protected:
+  bool isAllowedHost(const IpAddress *p);
+
+  virtual bool isAllowedProto(Flow *f)          { return(false); }
+  virtual const IpAddress* getServerIP(Flow *f) { return(f->get_srv_ip_addr()); }
+
+public:
+  UnexpectedServer() : FlowCallback(ntopng_edition_community,
+				  false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+				  true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {
+    if((whitelist = ndpi_ptree_create()) == NULL)
+      throw "Out of memory";
+  };
+
+  ~UnexpectedServer() {
+    if(whitelist)
+      ndpi_ptree_destroy(whitelist);
+  };
+
+  void protocolDetected(Flow *f);
   bool loadConfiguration(json_object *config);
-  
-  std::string getName()        const { return(std::string("iec60870_5_104")); }
-  ScriptCategory getCategory() const { return script_category_security;       }
-  FlowAlertType getAlertType() const { return alert_iec_invalid_transition;  }
+
+  ScriptCategory getCategory() const { return(script_category_security); }
 };
 
-#endif /* _IEC60870_5_104_FLOW_CALLBACK_H_ */
+#endif /* _UNEXPECTED_HOST_H_ */

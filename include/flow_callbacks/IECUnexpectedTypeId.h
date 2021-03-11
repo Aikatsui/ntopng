@@ -19,34 +19,24 @@
  *
  */
 
-#ifndef _UNEXPECTED_HOST_H_
-#define _UNEXPECTED_HOST_H_
+#ifndef _IEC_UNEXPECTED_TYPE_ID_H_
+#define _IEC_UNEXPECTED_TYPE_ID_H_
 
 #include "ntop_includes.h"
 
-class UnexpectedHost : public FlowCallback {
- private:
-  ndpi_ptree_t *ptree;
-  
-protected:
-  bool isUnexpectedHost(Host *h);
-
+class IECUnexpectedTypeId : public FlowCallback {
  public:
-  UnexpectedHost() : FlowCallback(ntopng_edition_community,
+  IECUnexpectedTypeId() : FlowCallback(ntopng_edition_community,
 				  false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				  true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {
-    if((ptree = ndpi_ptree_create()) == NULL)
-      throw "Out of memory";
-  };
-  
-  ~UnexpectedHost() {
-    if(ptree)
-      ndpi_ptree_destroy(ptree);
-  };
-  
-  bool loadConfiguration(json_object *config);
+				  false /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+  ~IECUnexpectedTypeId() {};
 
-  ScriptCategory getCategory() const { return(script_category_security); }
+  void scriptDisable();
+  bool loadConfiguration(json_object *config);
+  
+  std::string getName()        const { return(std::string("iec_unexpected_type_id")); }
+  ScriptCategory getCategory() const { return script_category_security;       }
+  FlowAlertType getAlertType() const { return alert_iec_unexpected_type_id;   }
 };
 
-#endif /* _UNEXPECTED_HOST_H_ */
+#endif /* _IEC_UNEXPECTED_TYPE_ID_H_ */

@@ -24,14 +24,16 @@
 
 #include "ntop_includes.h"
 
-class UnexpectedDHCPServer : public UnexpectedHost {
+class UnexpectedDHCPServer : public UnexpectedServer {
  private:
 
+protected:
+  bool isAllowedProto(Flow *f)          { return(f->isDHCP()); }
+  const IpAddress* getServerIP(Flow *f) { return((f->get_cli_port() == 67) ? f->get_cli_ip_addr() : f->get_srv_ip_addr()); }
+  
  public:
-  UnexpectedDHCPServer() : UnexpectedHost() {};
+  UnexpectedDHCPServer() : UnexpectedServer() {};
   ~UnexpectedDHCPServer() {};
-
-  void protocolDetected(Flow *f);
   
   std::string getName()          const { return(std::string("unexpected_dhcp")); }
   FlowAlertType getAlertType()   const { return(alert_unexpected_dhcp_server);   }

@@ -19,17 +19,22 @@
  *
  */
 
+#ifndef _IEC_INVALID_TRANSITION_H_
+#define _IEC_INVALID_TRANSITION_H_
+
 #include "ntop_includes.h"
-#include "flow_callbacks_includes.h"
 
-/* ***************************************************** */
+class IECInvalidTransition : public FlowCallback {
+ public:
+  IECInvalidTransition() : FlowCallback(ntopng_edition_community,
+				  false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+				  false /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+  ~IECInvalidTransition() {};
 
-void UnexpectedDHCPServer::protocolDetected(Flow *f) {  
-  if(!f->isDHCP()) return;
   
-  if(isUnexpectedHost(f->get_srv_host())) {
-    u_int16_t c_score = 100, s_score = 100, f_score = 0;
-    
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);   
-  }
-}
+  std::string getName()        const { return(std::string("iec_invalid_transition")); }
+  ScriptCategory getCategory() const { return script_category_security;       }
+  FlowAlertType getAlertType() const { return alert_iec_invalid_transition;   }
+};
+
+#endif /* _IEC_INVALID_TRANSITION_H_ */

@@ -24,7 +24,7 @@
 
 /* *********************************************************** */
 
-bool IEC60870_5_104::loadConfiguration(json_object *config) {
+bool IECUnexpectedTypeId::loadConfiguration(json_object *config) {
   json_object *items;
 
   FlowCallback::loadConfiguration(config); /* Parse parameters in common */
@@ -72,6 +72,6 @@ bool IEC60870_5_104::loadConfiguration(json_object *config) {
 
 /* *********************************************************** */
 
-void IEC60870_5_104::scriptDisable() {
+void IECUnexpectedTypeId::scriptDisable() {
   ntop->getPrefs()->setIEC104AllowedTypeIDs((char*)"-1"); /* Enable all so no alerts are generated */
 }

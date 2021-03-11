@@ -24,30 +24,33 @@
 
 /* ***************************************************** */
 
-bool UnexpectedHost::isUnexpectedHost(Host *h) {
-  IpAddress *p = h->get_ip();
-  u_int64_t match_ip;
-  int rc;
-  ndpi_ip_addr_t a;
-
-  memset(&a, 0, sizeof(a));
-  
-  if(p->isIPv4())
-    a.ipv4 = p->get_ipv4();
-  else
-    memcpy(&a.ipv6, p->get_ipv6(), sizeof(struct ndpi_in6_addr));
-  
-  rc = ndpi_ptree_match_addr(ptree, &a, &match_ip);
-  
-  if((rc != 0) || (!match_ip))
-    return(false);
-  else
+bool UnexpectedServer::isAllowedHost(const IpAddress *p) {
+  if((p == NULL) || p->isBroadcastAddress())
     return(true);
+  else {
+    u_int64_t match_ip;
+    int rc;
+    ndpi_ip_addr_t a;
+
+    memset(&a, 0, sizeof(a));
+  
+    if(p->isIPv4())
+      a.ipv4 = p->get_ipv4();
+    else
+      memcpy(&a.ipv6, p->get_ipv6(), sizeof(struct ndpi_in6_addr));
+  
+    rc = ndpi_ptree_match_addr(whitelist, &a, &match_ip);
+  
+    if((rc != 0) || (!match_ip))
+      return(false);
+    else
+      return(true);
+  }
 }
 
 /* ***************************************************** */
 
-bool UnexpectedHost::loadConfiguration(json_object *config) {
+bool UnexpectedServer::loadConfiguration(json_object *config) {
   FlowCallback::loadConfiguration(config); /* Parse parameters in common */
   json_object *countries_json, *ip_json;
 
@@ -58,7 +61,7 @@ bool UnexpectedHost::loadConfiguration(json_object *config) {
   */
 
   if(json_object_object_get_ex(config, "items", &countries_json)) {
-    for (int i = 0; i < json_object_array_length(countries_json); i++) {
+    for(int i = 0; i < json_object_array_length(countries_json); i++) {
       IpAddress ip;
       u_int64_t naddr = 1;
       
@@ -75,11 +78,11 @@ bool UnexpectedHost::loadConfiguration(json_object *config) {
 	if(ip.isIPv4()) {
 	  a.ipv4 = ip.get_ipv4();
 	
-	  rc = ndpi_ptree_insert(ptree, &a, 32, naddr);
+	  rc = ndpi_ptree_insert(whitelist, &a, 32, naddr);
 	} else {
 	  memcpy(&a.ipv6, ip.get_ipv6(), sizeof(struct ndpi_in6_addr));
 	
-	  rc = ndpi_ptree_insert(ptree, &a, 128, naddr);
+	  rc = ndpi_ptree_insert(whitelist, &a, 128, naddr);
 	}
       }
     }
@@ -87,3 +90,30 @@ bool UnexpectedHost::loadConfiguration(json_object *config) {
 
   return(true);
 }
+
+/* ***************************************************** */
+
+ndpi_serializer* UnexpectedServer::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  const IpAddress *server = getServerIP(f);
+
+  if((serializer != NULL) && (server != NULL)) {
+    char buf[64];
+    
+    ndpi_serialize_string_string(serializer, "server_ip", server->print(buf, sizeof(buf)));
+  }
+  
+  return(serializer);
+}
+
+/* ***************************************************** */
+
+void UnexpectedServer::protocolDetected(Flow *f) {  
+  if(!isAllowedProto(f)) return;
+  
+  if(!isAllowedHost(getServerIP(f))) {
+    u_int16_t c_score = 100, s_score = 100, f_score = 0;
+    
+    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);   
+  }
+}
+

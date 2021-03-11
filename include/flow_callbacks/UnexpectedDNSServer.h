@@ -24,14 +24,14 @@
 
 #include "ntop_includes.h"
 
-class UnexpectedDNSServer : public UnexpectedHost {
- private:
-
+class UnexpectedDNSServer : public UnexpectedServer {
+protected:
+  bool isAllowedProto(Flow *f)          { return(f->isDNS()); }
+  const IpAddress* getServerIP(Flow *f) { return((f->get_cli_port() == 53) ? f->get_cli_ip_addr() : f->get_srv_ip_addr()); }
+  
  public:
-  UnexpectedDNSServer() : UnexpectedHost() {};
+  UnexpectedDNSServer() : UnexpectedServer() {};
   ~UnexpectedDNSServer() {};
-
-  void protocolDetected(Flow *f);
   
   std::string getName()          const { return(std::string("unexpected_dns")); }
   FlowAlertType getAlertType()   const { return(alert_unexpected_dns_server);   }

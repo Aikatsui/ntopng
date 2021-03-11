@@ -77,7 +77,8 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new FlowRiskURLPossibleXSS()))                      cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleRCEInjection()))             cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleSQLInjection()))             cb_all[fcb->getName()] = fcb;
-  if((fcb = new IEC60870_5_104()))                              cb_all[fcb->getName()] = fcb;
+  if((fcb = new IECUnexpectedTypeId()))                         cb_all[fcb->getName()] = fcb;
+  if((fcb = new IECInvalidTransition()))                        cb_all[fcb->getName()] = fcb;
   if((fcb = new LowGoodputFlow()))                              cb_all[fcb->getName()] = fcb;
   if((fcb = new NotPurged()))                                   cb_all[fcb->getName()] = fcb;  
   if((fcb = new PotentiallyDangerousFlow()))                    cb_all[fcb->getName()] = fcb;

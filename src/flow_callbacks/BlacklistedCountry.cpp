@@ -60,6 +60,7 @@ void BlacklistedCountry::protocolDetected(Flow *f) {
 ndpi_serializer *BlacklistedCountry::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   Host *cli_host, *srv_host;
   char cli_buf[3], srv_buf[3];
+
   if(serializer == NULL)
     return NULL;
 

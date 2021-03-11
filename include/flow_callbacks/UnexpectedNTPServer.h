@@ -24,14 +24,13 @@
 
 #include "ntop_includes.h"
 
-class UnexpectedNTPServer : public UnexpectedHost {
- private:
-
+class UnexpectedNTPServer : public UnexpectedServer {
+protected:
+  bool isAllowedProto(Flow *f) { return(f->isNTP()); }
+  
  public:
-  UnexpectedNTPServer() : UnexpectedHost() {};
+  UnexpectedNTPServer() : UnexpectedServer() {};
   ~UnexpectedNTPServer() {};
-
-  void protocolDetected(Flow *f);
   
   std::string getName()          const { return(std::string("unexpected_ntp")); }
   FlowAlertType getAlertType()   const { return(alert_unexpected_ntp_server);   }

@@ -24,14 +24,13 @@
 
 #include "ntop_includes.h"
 
-class UnexpectedSMTPServer : public UnexpectedHost {
- private:
-
+class UnexpectedSMTPServer : public UnexpectedServer {
+protected:
+  bool isAllowedProto(Flow *f) { return(f->isSMTP()); }
+  
  public:
-  UnexpectedSMTPServer() : UnexpectedHost() {};
+  UnexpectedSMTPServer() : UnexpectedServer() {};
   ~UnexpectedSMTPServer() {};
-
-  void protocolDetected(Flow *f);
   
   std::string getName()          const { return(std::string("unexpected_smtp")); }
   FlowAlertType getAlertType()   const { return(alert_unexpected_smtp_server);   }
