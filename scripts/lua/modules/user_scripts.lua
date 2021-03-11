@@ -1140,10 +1140,6 @@ local cached_config_set = nil
 function user_scripts.getConfigset()
    if not cached_config_set then
       cached_config_set = json.decode(ntop.getCache(CONFIGSET_KEY))
-
-      if not cached_config_set then
-	 traceError(TRACE_ERROR, TRACE_CONSOLE, string.format("Unable to load a valid configset"))
-      end
    end
 
    return cached_config_set
@@ -1444,23 +1440,16 @@ end
 
 -- @brief Initializes a default configuration for user scripts
 -- @param overwrite If true, a possibly existing configuration is overwritten with default values
-function user_scripts.initDefaultConfig(overwrite)
-   if not overwrite and json.decode(ntop.getCache(CONFIGSET_KEY)) then
-      -- Nothing to do, already initialized
-      return
-   end
-
+function user_scripts.initDefaultConfig()
    local ifid = getSystemInterfaceId()
-   -- Default per user-script configuration
-   local default_conf = {}
-   -- Default per user-script filters
-   local default_filters = {}
 
-   if default_conf then
-      -- Drop possible nested values due to a previous bug
-      default_conf.config = nil
-   end
-   
+   -- Current (possibly not-existing, not yet created configset)
+   local configset = user_scripts.getConfigset() or {}
+   -- Default per user-script configuration
+   local default_conf = configset.config or {}
+   -- Default per user-script filters
+   local default_filters = configset.filters or {}
+
    for type_id, script_type in pairs(user_scripts.script_types) do
       for _, subdir in pairs(script_type.subdirs) do
 	 local scripts = user_scripts.load(ifid, script_type, subdir, {return_all = true})
@@ -1488,25 +1477,31 @@ function user_scripts.initDefaultConfig(overwrite)
 
 	    if usermod.filter and usermod.filter.default_filters then
 	       default_filters[subdir] = default_filters[subdir] or {}
-	       default_filters[subdir][key] = usermod.filter.default_filters
+
+	       if not default_filters[subdir][key] then
+		  -- Do not override filter of an existing configuration
+		  default_filters[subdir][key] = usermod.filter.default_filters
+	       end
 	    end
 	 end
       end
    end
    
+   -- This is the new configset with all defaults
    local configset = {
       config = default_conf,
       filters = default_filters,
    }
 
-   saveConfigset(configset)
+   saveConfigset(configset)  
 end
 
 -- ##############################################
 
 function user_scripts.resetConfigset()
    cached_config_set = nil
-   user_scripts.initDefaultConfig(true --[[ Overwrite a possibly existing configuration --]])
+   ntop.delCache(CONFIGSET_KEY)
+   user_scripts.initDefaultConfig()
 
    return(true)
 end

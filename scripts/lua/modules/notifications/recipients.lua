@@ -9,6 +9,7 @@ local json = require "dkjson"
 local alert_severities = require "alert_severities"
 local alert_consts = require "alert_consts"
 local alert_severities = require "alert_severities"
+local user_scripts = require "user_scripts"
 local endpoints = require("endpoints")
 
 -- ##############################################
@@ -43,8 +44,14 @@ end
 function recipients.initialize()
    -- Initialize builtin recipients, that is, recipients always existing an not editable from the UI
    -- For each builtin configuration type, a configuration and a recipient is created
+   local all_categories = {}
+   for _, category in pairs(user_scripts.script_categories) do
+      all_categories[#all_categories + 1] = category.id
+   end
+   
    for endpoint_key, endpoint in pairs(endpoints.get_types()) do
       if endpoint.builtin then
+
          -- Add the configuration
          local res = endpoints.add_config(
             endpoint_key --[[ the type of the endpoint--]],
@@ -55,10 +62,11 @@ function recipients.initialize()
 	 -- Endpoint successfully created (or existing)
 	 if res and res.endpoint_id then
 	    -- And the recipient
+
 	    local recipient_res = recipients.add_recipient(
 	       res.endpoint_id --[[ the id of the endpoint --]],
 	       "builtin_recipient_"..endpoint_key --[[ the name of the endpoint recipient --]],
-	       nil, -- User script categories
+	       all_categories,
 	       default_builtin_minimum_severity,
 	       false, -- Do Not add it to every pool automatically
 	       {} --[[ no recipient params --]]
@@ -71,8 +79,6 @@ function recipients.initialize()
    -- existing recipients properly loaded and ready for notification enqueues/dequeues
    for _, recipient in pairs(recipients.get_all_recipients()) do
       ntop.recipient_register(recipient.recipient_id, recipient.minimum_severity, _bitmap_from_user_script_categories(recipient.user_script_categories))
-
-
    end
 
    -- Now specify which recipients are "flow" recipients and tell this information to C++
@@ -265,6 +271,8 @@ function recipients.add_recipient(endpoint_id, endpoint_recipient_name, user_scr
 
    if locked then
       local ec = endpoints.get_endpoint_config(endpoint_id)
+
+
 
       if ec["status"] == "OK" and endpoint_recipient_name then
 	 -- Is the endpoint already existing?
@@ -495,7 +503,6 @@ end
 -- ##############################################
 
 function recipients.get_recipient(recipient_id, include_stats)
-   local user_scripts = require "user_scripts"
    local recipient_details
    local recipient_details_key = _get_recipient_details_key(recipient_id)
 
