@@ -99,9 +99,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new TLSUnsafeCiphers()))                            cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSCertificateSelfSigned()))                    cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSMaliciousSignature()))                       cb_all[fcb->getName()] = fcb;
-#ifdef HAVE_NEDGE
   if((fcb = new NedgeBlockedFlow()))                            cb_all[fcb->getName()] = fcb;
-#endif
 #endif
 
   // printCallbacks();

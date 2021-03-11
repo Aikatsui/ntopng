@@ -79,9 +79,7 @@
 #include "flow_callbacks/TLSMaliciousSignature.h"
 #include "flow_callbacks/TLSOldProtocolVersion.h"
 #include "flow_callbacks/TLSUnsafeCiphers.h"
-#ifdef HAVE_NEDGE
 #include "flow_callbacks/NedgeBlockedFlow.h"
-#endif
 #endif
 
 #endif /* _FLOW_CALLBACKS_INCLUDES_H_ */
