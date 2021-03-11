@@ -54,23 +54,17 @@ bool FlowCallback::isCallbackCompatibleWithInterface(NetworkInterface *iface) {
     break;
      
   case ntopng_edition_pro:
-    if(ntop->getPrefs()->is_pro_edition() || ntop->getPrefs()->is_enterprise_m_edition() || ntop->getPrefs()->is_enterprise_l_edition())
-      ;
-    else
+    if(!ntop->getPrefs()->is_pro_edition() /* includes Pro, Enterprise M/L */)
       return(false);
     break;
      
   case ntopng_edition_enterprise_m:
-    if(ntop->getPrefs()->is_enterprise_m_edition() || ntop->getPrefs()->is_enterprise_l_edition())
-      ;
-    else
+    if(!ntop->getPrefs()->is_enterprise_m_edition() /* includes Enterprise M/L */)
       return(false);
     break;
      
   case ntopng_edition_enterprise_l:
-    if(ntop->getPrefs()->is_enterprise_l_edition())
-      ;
-    else
+    if(!ntop->getPrefs()->is_enterprise_l_edition() /* includes L */)
       return(false);
     break;     
   }
