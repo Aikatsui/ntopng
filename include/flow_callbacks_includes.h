@@ -23,6 +23,7 @@
 #define _FLOW_CALLBACKS_INCLUDES_H_
 
 #include "flow_callbacks/BlacklistedFlow.h"
+#include "flow_callbacks/BlacklistedCountry.h"
 #include "flow_callbacks/DeviceProtocolNotAllowed.h"
 #include "flow_callbacks/ExternalAlertCheck.h"
 #include "flow_callbacks/FlowRisk.h"

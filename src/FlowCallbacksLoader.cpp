@@ -43,6 +43,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   FlowCallback *fcb;
 
   if((fcb = new BlacklistedFlow()))                             cb_all[fcb->getName()] = fcb;
+  if((fcb = new BlacklistedCountry()))                          cb_all[fcb->getName()] = fcb;
   if((fcb = new DeviceProtocolNotAllowed()))                    cb_all[fcb->getName()] = fcb;
 #ifndef NTOPNG_PRO
   if((fcb = new ExternalAlertCheck()))                          cb_all[fcb->getName()] = fcb;
