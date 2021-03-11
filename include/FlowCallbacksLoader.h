@@ -26,6 +26,7 @@
 
 class FlowCallbacksLoader { /* A single instance inside Ntop */
  private:
+  NtopngEdition callbacks_edition;
   /* These are callback instances, that is classes instantiated at runtime each one with a given configuration */
   std::map<std::string, FlowCallback*> cb_all; /* All the callbacks instantiated */
 
@@ -36,6 +37,8 @@ class FlowCallbacksLoader { /* A single instance inside Ntop */
  public:
   FlowCallbacksLoader();
   virtual ~FlowCallbacksLoader();
+
+  NtopngEdition getCallbacksEdition() { return callbacks_edition; }
 
   void reloadFlowCallbacks();
   void printCallbacks();

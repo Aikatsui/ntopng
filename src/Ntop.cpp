@@ -2568,6 +2568,12 @@ void Ntop::initInterface(NetworkInterface *_if) {
 /* ******************************************* */
 
 void Ntop::checkReloadFlowCallbacks() {
+  if (!ntop->getPrefs()->is_pro_edition() /* Community mode */ && 
+      flow_callbacks_loader && flow_callbacks_loader->getCallbacksEdition() != ntopng_edition_community) {
+    /* Force a reload when switching to community (demo mode) */  
+    reloadFlowCallbacks();
+  }
+
   if(flowCallbacksReloadInProgress /* Reload requested from the UI upon configuration changes */) {
     FlowCallbacksLoader *old, *tmp_flow_callbacks_loader = new (std::nothrow) FlowCallbacksLoader();
 

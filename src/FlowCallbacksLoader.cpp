@@ -25,6 +25,16 @@
 /* **************************************************** */
 
 FlowCallbacksLoader::FlowCallbacksLoader(){
+  /* Set the ntopng version matching the loaded callbacks */
+  if (ntop->getPrefs()->is_enterprise_l_edition())
+    callbacks_edition = ntopng_edition_enterprise_l;
+  else if (ntop->getPrefs()->is_enterprise_m_edition())	  
+    callbacks_edition = ntopng_edition_enterprise_m;
+  else if (ntop->getPrefs()->is_pro_edition())
+    callbacks_edition = ntopng_edition_pro;
+  else
+    callbacks_edition = ntopng_edition_community;
+
   registerFlowCallbacks();
   loadConfiguration();
 }
