@@ -55,6 +55,11 @@
 #include "flow_callbacks/TCPIssues.h"
 #include "flow_callbacks/TCPZeroWindow.h"
 #include "flow_callbacks/UDPUnidirectional.h"
+#include "flow_callbacks/UnexpectedHost.h"
+#include "flow_callbacks/UnexpectedDNSServer.h"
+#include "flow_callbacks/UnexpectedDHCPServer.h"
+#include "flow_callbacks/UnexpectedNTPServer.h"
+#include "flow_callbacks/UnexpectedSMTPServer.h"
 #include "flow_callbacks/WebMining.h"
 
 #ifdef NTOPNG_PRO

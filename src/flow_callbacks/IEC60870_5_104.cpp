@@ -73,5 +73,5 @@ bool IEC60870_5_104::loadConfiguration(json_object *config) {
 /* *********************************************************** */
 
 void IEC60870_5_104::scriptDisable() {
-  ntop->getPrefs()->setIEC104AllowedTypeIDs("-1"); /* Enable all so no alerts are generated */
+  ntop->getPrefs()->setIEC104AllowedTypeIDs((char*)"-1"); /* Enable all so no alerts are generated */
 }

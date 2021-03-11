@@ -76,6 +76,10 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new TCPZeroWindow()))                               cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPIssues()))                                   cb_all[fcb->getName()] = fcb;
   if((fcb = new UDPUnidirectional()))                           cb_all[fcb->getName()] = fcb;
+  if((fcb = new UnexpectedDNSServer()))                         cb_all[fcb->getName()] = fcb;
+  if((fcb = new UnexpectedDHCPServer()))                        cb_all[fcb->getName()] = fcb;
+  if((fcb = new UnexpectedNTPServer()))                         cb_all[fcb->getName()] = fcb;
+  if((fcb = new UnexpectedSMTPServer()))                        cb_all[fcb->getName()] = fcb;
   if((fcb = new WebMining()))                                   cb_all[fcb->getName()] = fcb;
 
 #ifdef NTOPNG_PRO
