@@ -2696,8 +2696,6 @@ void NetworkInterface::startFlowDumping() {
 /* **************************************************** */
 
 void NetworkInterface::startPacketPolling() {
-  reloadFlowCallbacks(ntop->getFlowCallbacksLoader());
-  
   if(pollLoopCreated) {
     if((cpu_affinity != -1) && (ntop->getNumCPUs() > 1)) {
       if(Utils::setThreadAffinity(pollLoop, cpu_affinity))
@@ -6375,13 +6373,13 @@ AlertsQueue *NetworkInterface::getAlertsQueue() const {
 /* **************************************** */
 
 ScriptCategory NetworkInterface::getAlertCategory(FlowAlertType fat) const {
-  return flow_callbacks_executor->getAlertCategory(fat);
+  return flow_callbacks_executor ? flow_callbacks_executor->getAlertCategory(fat) : script_category_other;
 }
 
 /* **************************************** */
 
 char * NetworkInterface::getAlertJSON(FlowAlertType fat, Flow *f) const {
-  return flow_callbacks_executor->getAlertJSON(fat, f);
+  return flow_callbacks_executor ? flow_callbacks_executor->getAlertJSON(fat, f) : NULL;
 }
 
 /* **************************************** */
@@ -8693,22 +8691,28 @@ void NetworkInterface::incrOS(char *hostname) {
 /* *************************************** */
 
 void NetworkInterface::execProtocolDetectedCallbacks(Flow *f) {
-  flow_callbacks_executor->execProtocolDetectedCallback(f);
-  callbacksEnqueue(f);
+  if(flow_callbacks_executor) {
+    flow_callbacks_executor->execProtocolDetectedCallback(f);
+    callbacksEnqueue(f);
+  }
 };
 
 /* *************************************** */
 
 void NetworkInterface::execPeriodicUpdateCallbacks(Flow *f) {
-  flow_callbacks_executor->execPeriodicUpdateCallback(f);
-  callbacksEnqueue(f);
+  if(flow_callbacks_executor) {
+    flow_callbacks_executor->execPeriodicUpdateCallback(f);
+    callbacksEnqueue(f);
+  }
 };
 
 /* *************************************** */
 
 void NetworkInterface::execFlowEndCallbacks(Flow *f) {
-  flow_callbacks_executor->execFlowEndCallback(f);
-  callbacksEnqueue(f);
+  if(flow_callbacks_executor) {
+    flow_callbacks_executor->execFlowEndCallback(f);
+    callbacksEnqueue(f);
+  }
 };
 
 /* *************************************** */

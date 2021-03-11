@@ -124,7 +124,7 @@ class Ntop {
   bool checkUserPassword(const char * const user, const char * const password, char *group, bool *localuser) const;
   bool startPurgeLoop();
 
-  void loadFlowCallbacks();
+  void checkReloadFlowCallbacks();
   
  public:
   /**
