@@ -26,7 +26,8 @@
 
 class RemoteToLocalInsecureProto : public FlowCallback {
  private:
-  
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);  
+
  public:
   RemoteToLocalInsecureProto() : FlowCallback(ntopng_edition_community,
 					      false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,

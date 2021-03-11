@@ -40,18 +40,10 @@ end
 -- #######################################################
 
 function alert_remote_to_local_insecure_proto.format(ifid, alert, alert_type_params)
-   if breed_or_category == false then
-        return i18n("alert_messages.remote_to_local_insecure_proto_category", {
-            proto = alert_type_params.category_name,
-            proto_id = alert_type_params.proto,
-        })
-   else
-        return i18n("alert_messages.remote_to_local_insecure_proto_breed", {
-            proto = alert_type_params.proto,
-        })
-   end
-
-   
+   return i18n("alert_messages.remote_to_local_insecure_proto", {
+		  ndpi_breed = formatBreed(alert_type_params.ndpi_breed_name),
+		  ndpi_category = alert_type_params.ndpi_category_name,
+   })
 end
 
 -- #######################################################

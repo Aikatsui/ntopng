@@ -22,11 +22,10 @@
 #include "ntop_includes.h"
 #include "flow_callbacks_includes.h"
 
-void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
-  Host *cli_host = f->get_cli_host();
-  Host *srv_host = f->get_srv_host();
+/* ***************************************************** */
 
-  if(cli_host && srv_host && (!cli_host->isLocalHost()) && srv_host->isLocalHost()) {
+void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
+  if(f->isRemoteToLocal()) {
     /* Remote to local */
     bool unsafe;
     u_int16_t c_score, s_score = 5, f_score = 100;
@@ -54,8 +53,8 @@ void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
 
     if(!unsafe) {
       switch(f->get_protocol_category()) {
-      case 100:
-      case 102:
+      case CUSTOM_CATEGORY_MALWARE:
+      case CUSTOM_CATEGORY_BANNED_SITE:
 	c_score = SCORE_MAX_SCRIPT_VALUE;
 	unsafe = true;
 	break;
@@ -68,6 +67,20 @@ void RemoteToLocalInsecureProto::protocolDetected(Flow *f) {
     if(unsafe)
       f->triggerAlert(this, severity_id, f_score, c_score, s_score);
   }
+}
+
+/* ***************************************************** */
+
+ndpi_serializer* RemoteToLocalInsecureProto::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  if(!serializer)
+    return NULL;
+
+  ndpi_serialize_string_int32(serializer, "ndpi_breed", f->get_protocol_breed());
+  ndpi_serialize_string_string(serializer, "ndpi_breed_name", f->get_protocol_breed_name());
+  ndpi_serialize_string_int32(serializer, "ndpi_category", f->get_protocol_category());
+  ndpi_serialize_string_string(serializer, "ndpi_category_name", f->get_protocol_category_name());
+
+  return serializer;
 }
 
 /* ***************************************************** */
