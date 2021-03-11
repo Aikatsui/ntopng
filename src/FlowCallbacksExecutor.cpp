@@ -94,8 +94,6 @@ char* FlowCallbacksExecutor::getAlertJSON(FlowAlertType fat, Flow *f) const {
     json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
     json_string = json_string ? strdup(json_string) : NULL; /* Allocate memory */
     ndpi_term_serializer(alert_json_serializer);
-  } else {
-    json_string = fc->getAlertJSONStr(f); /* Already allocated */
   }
 
   /* Always allocated in memory (must be freed) */

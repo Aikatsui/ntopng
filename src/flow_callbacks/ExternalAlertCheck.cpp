@@ -46,13 +46,47 @@ void ExternalAlertCheck::flowEnd(Flow *f) {
 
 /* ***************************************************** */
 
-char* ExternalAlertCheck::getAlertJSONStr(Flow *f) {
-  const char *json;
+ndpi_serializer *ExternalAlertCheck::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  json_object *json = f->getExternalAlert();
+  json_object *alert, *sign, *cat;
+  const char *source, *category, *signature; 
+  int severity_id;
 
-  json = f->getExternalAlert();
+  if (serializer == NULL || json == NULL)
+    return serializer;
 
-  if (json == NULL)
-    return NULL;
+  /*
+   * JSON Content:
+   * source
+   * severity_id
+   * alert {
+   *  category
+   *  signature
+   * }
+   */
 
-  return strdup(json);
-}
+  source = f->getExternalSource();
+  if (source)
+    ndpi_serialize_string_string(serializer, "source", source);
+
+  severity_id = f->getExternalSeverity();
+  ndpi_serialize_string_uint32(serializer, "severity_id", severity_id);
+
+  ndpi_serialize_start_of_block(serializer, "alert");
+
+  if (json_object_object_get_ex(json, "alert", &alert)) {
+    if (json_object_object_get_ex(alert, "signature", &sign)) {
+      signature = json_object_get_string(sign);
+      ndpi_serialize_string_string(serializer, "signature", signature);
+    }           
+
+    if (json_object_object_get_ex(alert, "category", &cat)) {
+      category = json_object_get_string(cat);
+      ndpi_serialize_string_string(serializer, "category", category);
+    }
+  }
+
+  ndpi_serialize_end_of_block(serializer);
+
+  return serializer;
+} 

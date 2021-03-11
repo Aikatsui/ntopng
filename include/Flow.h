@@ -664,8 +664,7 @@ class Flow : public GenericHashEntry {
 
   void setExternalAlert(json_object *a);
   inline bool hasExternalAlert() const { return external_alert.json != NULL; };
-  inline json_object *getExternalAlertJSON() { return external_alert.json; };
-  inline const char *getExternalAlert() { return external_alert.json ? json_object_to_json_string(external_alert.json) : NULL; };
+  inline json_object *getExternalAlert() { return external_alert.json; };
   inline char *getExternalSource() { return external_alert.source; };
   inline AlertLevel getExternalSeverity() { return external_alert.severity_id; };
   void luaRetrieveExternalAlert(lua_State *vm);

@@ -5363,7 +5363,7 @@ void Flow::setExternalAlert(json_object *a) {
 /* *************************************** */
 
 void Flow::luaRetrieveExternalAlert(lua_State *vm) {
-  const char *json = getExternalAlert();
+  const char *json = external_alert.json ? json_object_to_json_string(external_alert.json) : NULL;
  
   if (json)
      lua_pushstring(vm, json);

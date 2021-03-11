@@ -68,7 +68,6 @@ class FlowCallback {
      NOTE: memory must be freed by the caller.
   */
   ndpi_serializer* getSerializedAlert(Flow *f);
-  virtual char* getAlertJSONStr(Flow *f) { return(NULL); }
 };
 
 #endif /* _FLOW_CALLBACK_H_ */

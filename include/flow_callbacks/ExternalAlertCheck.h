@@ -26,7 +26,7 @@
 
 class ExternalAlertCheck : public FlowCallback {
  private:
-  void checkExternalAlert(Flow *f);
+  virtual void checkExternalAlert(Flow *f);
   
  public:
   ExternalAlertCheck() : FlowCallback(ntopng_edition_community,
@@ -41,8 +41,7 @@ class ExternalAlertCheck : public FlowCallback {
   ScriptCategory getCategory() const { return script_category_security;             }
   FlowAlertType getAlertType() const { return alert_external;                       }
 
-  ndpi_serializer* getSerializedAlert(Flow *f) { return NULL; }
-  char* getAlertJSONStr(Flow *f);
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 };
 
 #endif /* _EXTERNAL_ALERT_CHECK_H_ */
