@@ -64,7 +64,6 @@
 #include "flow_callbacks/ExternalAlertCheckPro.h"
 #include "flow_callbacks/InvalidDNSQuery.h"
 #include "flow_callbacks/LongLivedFlow.h"
-#include "flow_callbacks/NedgeBlockedFlow.h"
 #include "flow_callbacks/PotentiallyDangerous.h"
 #include "flow_callbacks/SuspiciousTCPProbing.h"
 #include "flow_callbacks/SuspiciousTCPSYNProbing.h"
@@ -75,6 +74,9 @@
 #include "flow_callbacks/TLSMaliciousSignature.h"
 #include "flow_callbacks/TLSOldProtocolVersion.h"
 #include "flow_callbacks/TLSUnsafeCiphers.h"
+#ifdef HAVE_NEDGE
+#include "flow_callbacks/NedgeBlockedFlow.h"
+#endif
 #endif
 
 #endif /* _FLOW_CALLBACKS_INCLUDES_H_ */
