@@ -55,7 +55,6 @@ NetworkInterface::NetworkInterface(const char *name,
   customIftype = custom_interface_type;
   influxdb_ts_exporter = rrd_ts_exporter = NULL;
   flow_callbacks_executor = prev_flow_callbacks_executor = NULL;
-  user_scripts_reload = false;
   flows_dump_json = true; /* JSON dump enabled by default, possibly disabled in NetworkInterface::startFlowDumping */
   flows_dump_json_use_labels = false; /* Dump of JSON labels disabled by default, possibly enabled in NetworkInterface::startFlowDumping */
   memset(ifMac, 0, sizeof(ifMac));

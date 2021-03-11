@@ -3090,15 +3090,6 @@ void Ntop::reloadPeriodicScripts() {
     Request a reload of all the VMs currently executing periodic activities
    */
   if(pa) pa->reloadVMs();
-
-  /*
-    Notify interfaces that a reload of user scripts should be performed.
-    Interfaces need to know this for example to reload the VM responsible for
-    the execution of flow hook user scripts.
-   */
-  for(u_int i = 0; i < get_num_interfaces(); i++) {
-    if(getInterface(i)) getInterface(i)->request_user_scripts_reload();
-  }
 };
 
 /* *************************************** */

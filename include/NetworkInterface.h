@@ -196,7 +196,6 @@ class NetworkInterface : public AlertableEntity {
   pthread_t pollLoop,
     flowDumpLoop /* Thread for the database dump of flows */,
     callbacksLoop /* Thread for the execution of flow user script hooks */;
-  volatile bool user_scripts_reload;      /* Boolean indicating whether a reload of user scripts has been requested */
   Condvar       flow_callbacks_condvar;   /* Condition variable used to wait when no flows have been enqueued for hooks exec. */
   bool pollLoopCreated, flowDumpLoopCreated, flowCallbacksLoopCreated;
   bool has_too_many_hosts, has_too_many_flows, mtuWarningShown;
@@ -916,7 +915,6 @@ class NetworkInterface : public AlertableEntity {
     Issue a request for user scripts reload. This is called by ntopng when user scripts should be reloaded,
     e.g., after a configuration change.
    */
-  inline void request_user_scripts_reload()  { if(!user_scripts_reload) user_scripts_reload = true;    };
   virtual void updateDirectionStats()        { ; }
   void reloadDhcpRanges();
 
