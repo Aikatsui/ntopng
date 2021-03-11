@@ -26,7 +26,8 @@
 
 class TCPZeroWindow : public FlowCallback {
  private:
-  
+  void checkTCPWindow(Flow *f);
+
  public:
  TCPZeroWindow() : FlowCallback(ntopng_edition_community,
 				true /* Packet-interfaces only */, true /* Exclude for nEdge */, false /* NOT only for nEdge */,
@@ -34,11 +35,13 @@ class TCPZeroWindow : public FlowCallback {
   ~TCPZeroWindow() {};
 
   bool loadConfiguration(json_object *config) { return(true); }
-  void protocolDetected(Flow *f);
+
+  void periodicUpdate(Flow *f);
+  void flowEnd(Flow *f);
   
-  std::string getName()          const { return(std::string("zero_tcp_window")); }
-  ScriptCategory getCategory()   const { return script_category_network;         }
-  FlowAlertType getAlertType() const { return alert_zero_tcp_window;          }
+  std::string getName()        const { return(std::string("zero_tcp_window")); }
+  ScriptCategory getCategory() const { return script_category_network;         }
+  FlowAlertType getAlertType() const { return alert_zero_tcp_window;           }
 };
 
 #endif /* _TCP_ZERO_WINDOW_FLOW_CALLBACK_H_ */

@@ -22,7 +22,7 @@
 #include "ntop_includes.h"
 #include "flow_callbacks_includes.h"
 
-void TCPZeroWindow::protocolDetected(Flow *f) {
+void TCPZeroWindow::checkTCPWindow(Flow *f) {
   bool as_client, as_server;
   u_int16_t c_score, s_score, f_score = 30;
 
@@ -35,3 +35,17 @@ void TCPZeroWindow::protocolDetected(Flow *f) {
     f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
   }
 }
+
+/* ***************************************************** */
+
+void TCPZeroWindow::periodicUpdate(Flow *f) {
+  checkTCPWindow(f);
+}
+
+/* ***************************************************** */
+
+void TCPZeroWindow::flowEnd(Flow *f) {
+  checkTCPWindow(f);
+}
+
+/* ***************************************************** */
