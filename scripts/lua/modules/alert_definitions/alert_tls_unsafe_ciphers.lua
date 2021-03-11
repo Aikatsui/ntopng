@@ -29,10 +29,6 @@ alert_tls_unsafe_ciphers.meta = {
 function alert_tls_unsafe_ciphers:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      -- No params
-   }
 end
 
 -- #######################################################

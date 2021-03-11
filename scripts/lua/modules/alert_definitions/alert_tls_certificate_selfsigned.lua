@@ -27,15 +27,9 @@ alert_tls_certificate_selfsigned.meta = {
 -- @brief Prepare an alert table used to generate the alert
 -- @param tls_info A lua table with TLS info gererated calling `flow.getTLSInfo()`
 -- @return A table with the alert built
-function alert_tls_certificate_selfsigned:init(tls_info)
+function alert_tls_certificate_selfsigned:init()
    -- Call the parent constructor
    self.super:init()
-
-   tls_info = tls_info or {}
-
-   self.alert_type_params = {
-      ["tls_crt.issuerDN"]  = tls_info["protos.tls.issuerDN"] or "",
-   }
 end
 
 -- #######################################################

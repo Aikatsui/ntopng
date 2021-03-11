@@ -29,10 +29,6 @@ alert_malicious_signature.meta = {
 function alert_malicious_signature:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      -- No params
-   }
 end
 
 -- #######################################################

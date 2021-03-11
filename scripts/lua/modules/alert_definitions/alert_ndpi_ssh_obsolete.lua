@@ -30,8 +30,6 @@ alert_ndpi_ssh_obsolete.meta = {
 function alert_ndpi_ssh_obsolete:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

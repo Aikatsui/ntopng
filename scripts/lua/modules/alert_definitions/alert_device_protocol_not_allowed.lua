@@ -35,16 +35,9 @@ alert_device_protocol_not_allowed.meta = {
 -- @param devproto_forbidden_peer A string with the forbidden peer, one of 'cli' or 'srv'
 -- @param devproto_forbidden_id The nDPI ID of the forbidden application protocol
 -- @return A table with the alert built
-function alert_device_protocol_not_allowed:init(cli_devtype, srv_devtype, devproto_forbidden_peer, devproto_forbidden_id)
+function alert_device_protocol_not_allowed:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      ["cli.devtype"] = cli_devtype,
-      ["srv.devtype"] = srv_devtype,
-      devproto_forbidden_peer = devproto_forbidden_peer,
-      devproto_forbidden_id = devproto_forbidden_id
-   }
 end
 
 -- #######################################################

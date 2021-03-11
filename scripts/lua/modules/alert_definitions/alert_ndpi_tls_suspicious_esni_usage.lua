@@ -30,8 +30,6 @@ alert_ndpi_tls_suspicious_esni_usage.meta = {
 function alert_ndpi_tls_suspicious_esni_usage:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

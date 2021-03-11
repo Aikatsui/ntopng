@@ -30,11 +30,9 @@ alert_suspicious_file_transfer.meta = {
 -- @param one_flow_param The first alert param
 -- @param another_flow_param The second alert param
 -- @return A table with the alert built
-function alert_suspicious_file_transfer:init(http_info)
+function alert_suspicious_file_transfer:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = http_info
 end
 
 -- #######################################################

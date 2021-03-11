@@ -30,8 +30,6 @@ alert_ndpi_http_suspicious_user_agent.meta = {
 function alert_ndpi_http_suspicious_user_agent:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

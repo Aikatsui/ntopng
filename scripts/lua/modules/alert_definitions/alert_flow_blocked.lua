@@ -29,10 +29,6 @@ alert_flow_blocked.meta = {
 function alert_flow_blocked:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      -- No params
-   }
 end
 
 -- #######################################################

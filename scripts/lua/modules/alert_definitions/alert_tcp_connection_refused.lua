@@ -29,10 +29,6 @@ alert_tcp_connection_refused.meta = {
 function alert_tcp_connection_refused:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      -- No params
-   }
 end
 
 -- #######################################################

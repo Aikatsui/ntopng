@@ -30,13 +30,9 @@ alert_iec_invalid_transition.meta = {
 -- @brief Prepare an alert table used to generate the alert
 -- @param last_error A string with the lastest influxdb error
 -- @return A table with the alert built
-function alert_iec_invalid_transition:init(last_error)
+function alert_iec_invalid_transition:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      error_msg = last_error
-   }
 end
 
 -- #######################################################

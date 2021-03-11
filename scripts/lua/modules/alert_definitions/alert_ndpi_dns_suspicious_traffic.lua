@@ -30,8 +30,6 @@ alert_ndpi_dns_suspicious_traffic.meta = {
 function alert_ndpi_dns_suspicious_traffic:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

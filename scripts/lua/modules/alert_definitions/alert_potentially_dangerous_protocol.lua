@@ -29,10 +29,6 @@ alert_potentially_dangerous_protocol.meta = {
 function alert_potentially_dangerous_protocol:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      -- No params
-   }
 end
 
 -- #######################################################

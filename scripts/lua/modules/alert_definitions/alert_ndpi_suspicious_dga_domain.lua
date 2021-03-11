@@ -30,8 +30,6 @@ alert_ndpi_suspicious_dga_domain.meta = {
 function alert_ndpi_suspicious_dga_domain:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

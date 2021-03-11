@@ -27,13 +27,9 @@ alert_tls_old_protocol_version.meta = {
 -- @brief Prepare an alert table used to generate the alert
 -- @param tls_version A number indicating the TLS version detected, or nil when version is not available
 -- @return A table with the alert built
-function alert_tls_old_protocol_version:init(tls_version)
+function alert_tls_old_protocol_version:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      tls_version = tls_version,
-   }
 end
 
 -- #######################################################

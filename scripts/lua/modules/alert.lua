@@ -95,23 +95,6 @@ end
 
 -- ##############################################
 
--- TODO: remove when alerts triggered from C++
-function Alert:trigger_status(cli_score, srv_score, flow_score)
-   local alerts_api = require "alerts_api"
-
-   if not self.meta.status_key then
-      traceError(TRACE_ERROR, TRACE_CONSOLE, "alert.alert_error.configuration.no_status_key")
-   end
-
-   if not self._check_alert_data() then
-      return
-   end
-
-   alerts_api.trigger_status(self:_build_alert_type_info(), self.alert_severity, cli_score, srv_score, flow_score)
-end
-
--- ##############################################
-
 function Alert:trigger(entity_info, when, cur_alerts)
    local alerts_api = require "alerts_api"
 

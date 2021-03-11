@@ -33,9 +33,6 @@ alert_remote_to_remote.meta = {
 function alert_remote_to_remote:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-   }
 end
 
 -- #######################################################

@@ -36,18 +36,9 @@ alert_connection_issues.meta = {
 -- @param client_issues A boolean indicating if the client has connection issues
 -- @param server_issues A boolean indicating if the server has connection issues
 -- @return A table with the alert built
-function alert_connection_issues:init(tcp_stats, cli2srv_pkts, srv2cli_pkts, is_severe, client_issues, server_issues)
+function alert_connection_issues:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      tcp_stats = tcp_stats,
-	 cli2srv_pkts = cli2srv_pkts,
-	 srv2cli_pkts = srv2cli_pkts,
-	 is_severe = is_severe,
-	 client_issues = client_issues,
-	 server_issues = server_issues,
-   }
 end
 
 -- #######################################################

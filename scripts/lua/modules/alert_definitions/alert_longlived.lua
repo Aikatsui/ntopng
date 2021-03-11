@@ -27,13 +27,9 @@ alert_longlived.meta = {
 -- @brief Prepare an alert table used to generate the alert
 -- @param longlived_threshold Threshold, in seconds, for a flow to be considered longlived
 -- @return A table with the alert built
-function alert_longlived:init(longlived_threshold)
+function alert_longlived:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      ["longlived.threshold"] = longlived_threshold
-   }
 end
 
 -- #######################################################

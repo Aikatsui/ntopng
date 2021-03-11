@@ -26,11 +26,9 @@ external_alert.meta = {
 -- @brief Prepare an alert table used to generate the alert
 -- @param info A generic table decoded from a JSON originated at the external alert source
 -- @return A table with the alert built
-function external_alert:init(info)
+function external_alert:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = info
 end
 
 -- #######################################################

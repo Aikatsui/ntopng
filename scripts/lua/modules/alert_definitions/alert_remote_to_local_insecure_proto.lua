@@ -32,15 +32,9 @@ alert_remote_to_local_insecure_proto.meta = {
 -- @param one_flow_param The first alert param
 -- @param another_flow_param The second alert param
 -- @return A table with the alert built
-function alert_remote_to_local_insecure_proto:init(proto, category_name, breed_or_category)
+function alert_remote_to_local_insecure_proto:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      proto = proto,
-      category_name = category_name,  
-      breed_or_category = breed_or_category,
-   }
 end
 
 -- #######################################################

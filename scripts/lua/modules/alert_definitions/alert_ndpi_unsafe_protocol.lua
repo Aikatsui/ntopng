@@ -30,8 +30,6 @@ alert_ndpi_unsafe_protocol.meta = {
 function alert_ndpi_unsafe_protocol:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

@@ -31,13 +31,9 @@ alert_flow_blacklisted.meta = {
 -- @brief Prepare an alert table used to generate the alert
 -- @param info A flow info table fetched with `flow.getBlacklistedInfo()`
 -- @return A table with the alert built
-function alert_flow_blacklisted:init(info)
+function alert_flow_blacklisted:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      alert_type_params = info,
-   }
 end
 
 -- #######################################################

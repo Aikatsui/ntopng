@@ -31,8 +31,6 @@ alert_udp_unidirectional.meta = {
 function alert_udp_unidirectional:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

@@ -31,14 +31,9 @@ alert_elephant_flow.meta = {
 -- @param l2r_threshold Local-to-Remote threshold, in bytes, for a flow to be considered an elephant
 -- @param r2l_threshold Remote-to-Local threshold, in bytes, for a flow to be considered an elephant
 -- @return A table with the alert built
-function alert_elephant_flow:init(l2r_threshold, r2l_threshold)
+function alert_elephant_flow:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      ["elephant.l2r_threshold"] = l2r_threshold,
-      ["elephant.r2l_threshold"] = r2l_threshold,
-   }
 end
 
 -- #######################################################

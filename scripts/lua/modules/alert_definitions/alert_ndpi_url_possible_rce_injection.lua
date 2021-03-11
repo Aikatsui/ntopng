@@ -30,8 +30,6 @@ alert_ndpi_url_possible_rce_injection.meta = {
 function alert_ndpi_url_possible_rce_injection:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

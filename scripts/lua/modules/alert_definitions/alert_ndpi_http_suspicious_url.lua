@@ -30,8 +30,6 @@ alert_ndpi_http_suspicious_url.meta = {
 function alert_ndpi_http_suspicious_url:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

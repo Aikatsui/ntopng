@@ -30,8 +30,6 @@ alert_ndpi_tls_missing_sni.meta = {
 function alert_ndpi_tls_missing_sni:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

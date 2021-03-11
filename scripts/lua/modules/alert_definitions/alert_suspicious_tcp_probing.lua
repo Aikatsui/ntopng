@@ -29,10 +29,6 @@ alert_suspicious_tcp_probing.meta = {
 function alert_suspicious_tcp_probing:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      -- No params
-   }
 end
 
 -- #######################################################

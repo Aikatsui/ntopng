@@ -31,8 +31,6 @@ alert_web_mining.meta = {
 function alert_web_mining:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

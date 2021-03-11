@@ -30,10 +30,6 @@ alert_data_exfiltration.meta = {
 function alert_data_exfiltration:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-      -- No params
-   }
 end
 
 -- #######################################################

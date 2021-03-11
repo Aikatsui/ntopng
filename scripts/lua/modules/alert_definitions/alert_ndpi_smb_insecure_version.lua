@@ -30,8 +30,6 @@ alert_ndpi_smb_insecure_version.meta = {
 function alert_ndpi_smb_insecure_version:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {}
 end
 
 -- #######################################################

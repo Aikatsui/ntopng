@@ -35,16 +35,9 @@ alert_blacklisted_country.meta = {
 -- @param cli_blacklisted Boolean indicating whether the client belongs to a blacklisted country
 -- @param srv_blacklisted Boolean indicating whether the server belongs to a blacklisted country
 -- @return A table with the alert built
-function alert_blacklisted_country:init(cli_country, srv_country, cli_blacklisted, srv_blacklisted)
+function alert_blacklisted_country:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-	 cli_country = cli_country,
-	 srv_country = srv_country,
-	 cli_blacklisted = cli_blacklisted,
-	 srv_blacklisted = srv_blacklisted,
-   }
 end
 
 -- #######################################################

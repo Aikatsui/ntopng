@@ -26,14 +26,9 @@ alert_unexpected_smtp_server.meta = {
 
 -- ##############################################
 
-function alert_unexpected_smtp_server:init(client_ip, server_ip)
+function alert_unexpected_smtp_server:init()
    -- Call the parent constructor
    self.super:init()
-
-   self.alert_type_params = {
-    client_ip = client_ip,
-    server_ip = server_ip
-   }
 end
 
 -- #######################################################
