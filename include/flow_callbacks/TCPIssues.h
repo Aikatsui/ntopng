@@ -27,7 +27,6 @@
 class TCPIssues : public FlowCallback {
  private:
   void checkFlow(Flow *f);
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
  TCPIssues() : FlowCallback(ntopng_edition_community,

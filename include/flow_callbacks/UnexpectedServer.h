@@ -28,8 +28,6 @@ class UnexpectedServer : public FlowCallback {
  private:
   ndpi_ptree_t *whitelist;
 
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
-
 protected:
   bool isAllowedHost(const IpAddress *p);
 

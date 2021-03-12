@@ -93,20 +93,6 @@ bool UnexpectedServer::loadConfiguration(json_object *config) {
 
 /* ***************************************************** */
 
-ndpi_serializer* UnexpectedServer::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
-  const IpAddress *server = getServerIP(f);
-
-  if((serializer != NULL) && (server != NULL)) {
-    char buf[64];
-    
-    ndpi_serialize_string_string(serializer, "server_ip", server->print(buf, sizeof(buf)));
-  }
-  
-  return(serializer);
-}
-
-/* ***************************************************** */
-
 void UnexpectedServer::protocolDetected(Flow *f) {  
   if(!isAllowedProto(f)) return;
   

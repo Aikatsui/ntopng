@@ -26,7 +26,10 @@
 
 class UnexpectedDNSServerAlert : public UnexpectedServerAlert {
  private:
-  
+
+ protected:
+  const IpAddress* getServerIP(Flow *f) { return(f->get_dns_srv_ip_addr()); }
+
  public:
   UnexpectedDNSServerAlert() : UnexpectedServerAlert("unexpected_dns", alert_unexpected_dns_server) {};
   ~UnexpectedDNSServerAlert() {};

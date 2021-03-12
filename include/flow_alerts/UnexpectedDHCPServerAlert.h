@@ -27,6 +27,9 @@
 class UnexpectedDHCPServerAlert : public UnexpectedServerAlert {
  private:
 
+ protected: 
+  const IpAddress* getServerIP(Flow *f) { return(f->get_dhcp_srv_ip_addr()); }
+
  public:
   UnexpectedDHCPServerAlert() : UnexpectedServerAlert("unexpected_dhcp", alert_unexpected_dhcp_server) {};
   ~UnexpectedDHCPServerAlert() {};

@@ -19,22 +19,17 @@
  *
  */
 
-#ifndef _UNEXPECTED_DNS_SERVER_H_
-#define _UNEXPECTED_DNS_SERVER_H_
+#include "flow_alerts_include.h"
 
-#include "ntop_includes.h"
+ndpi_serializer* UnexpectedServerAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  const IpAddress *server = getServerIP(f);
 
-class UnexpectedDNSServer : public UnexpectedServer {
-protected:
-  bool isAllowedProto(Flow *f)          { return(f->isDNS()); }
-  const IpAddress* getServerIP(Flow *f) { return(f->get_dns_srv_ip_addr()); }
-  
- public:
-  UnexpectedDNSServer() : UnexpectedServer() {};
-  ~UnexpectedDNSServer() {};
-  
-  std::string getName()          const { return(std::string("unexpected_dns")); }
-  FlowAlertType getAlertType()   const { return(alert_unexpected_dns_server);   }
-};
+  if (serializer != NULL && server != NULL) {
+    char buf[64];
+    
+    ndpi_serialize_string_string(serializer, "server_ip", server->print(buf, sizeof(buf)));
+  }
 
-#endif /* _UNEXPECTED_DNS_SERVER_H_ */
+  return serializer;
+}
+

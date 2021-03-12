@@ -68,33 +68,3 @@ void TCPIssues::flowEnd(Flow *f) {
 }
 
 /* ******************************************** */
-
-ndpi_serializer* TCPIssues::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
-  bool is_client, is_server, is_severe;
-  FlowTrafficStats *stats = f->getTrafficStats();
-  const ndpi_analyze_struct *cli2srv_bytes_stats, *srv2cli_bytes_stats;
-  
-  if(!serializer)
-    return(NULL);
-
-  f->fcb_get_tcp_issues(&is_client, &is_server, &is_severe);
-  
-  ndpi_serialize_start_of_block(serializer,   "tcp_stats");
-  cli2srv_bytes_stats = stats->get_analize_struct(true), srv2cli_bytes_stats = stats->get_analize_struct(false);
-  
-  ndpi_serialize_string_int64(serializer, "cli2srv.retransmissions", stats->get_cli2srv_tcp_retr());
-  ndpi_serialize_string_int64(serializer, "cli2srv.out_of_order",    stats->get_cli2srv_tcp_ooo());
-  ndpi_serialize_string_int64(serializer, "cli2srv.lost",            stats->get_cli2srv_tcp_lost());
-  ndpi_serialize_string_int64(serializer, "srv2cli.retransmissions", stats->get_srv2cli_tcp_retr());
-  ndpi_serialize_string_int64(serializer, "srv2cli.out_of_order",    stats->get_srv2cli_tcp_ooo());
-  ndpi_serialize_string_int64(serializer, "srv2cli.lost",            stats->get_srv2cli_tcp_lost());
-  ndpi_serialize_end_of_block(serializer);
-  
-  ndpi_serialize_string_int32(serializer,   "cli2srv_pkts",  f->get_packets_cli2srv());
-  ndpi_serialize_string_int32(serializer,   "srv2cli_pkts",  f->get_packets_srv2cli());
-  ndpi_serialize_string_boolean(serializer, "is_severe",     is_severe);
-  ndpi_serialize_string_boolean(serializer, "client_issues", is_client);
-  ndpi_serialize_string_boolean(serializer, "server_issues", is_server);
-
-  return(serializer);
-}

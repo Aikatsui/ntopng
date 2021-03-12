@@ -28,7 +28,6 @@
 class LowGoodputFlow : public FlowCallback {
  private:
   void checkLowGoodput(Flow *f);
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
   LowGoodputFlow() : FlowCallback(ntopng_edition_community,

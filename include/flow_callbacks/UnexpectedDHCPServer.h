@@ -29,7 +29,7 @@ class UnexpectedDHCPServer : public UnexpectedServer {
 
 protected:
   bool isAllowedProto(Flow *f)          { return(f->isDHCP()); }
-  const IpAddress* getServerIP(Flow *f) { return((f->get_cli_port() == 67) ? f->get_cli_ip_addr() : f->get_srv_ip_addr()); }
+  const IpAddress* getServerIP(Flow *f) { return(f->get_dhcp_srv_ip_addr()); }
   
  public:
   UnexpectedDHCPServer() : UnexpectedServer() {};
