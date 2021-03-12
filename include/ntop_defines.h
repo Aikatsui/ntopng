@@ -896,7 +896,8 @@
 #define HOURLY_SCRIPT_PATH                   "hourly.lua"
 #define DAILY_SCRIPT_PATH                    "daily.lua"
 
-#define FLOW_CALLBACKS_CONFIG        "ntopng.prefs.user_scripts.configset_v3" /* Sync with user_scripts.lua CONFIGSET_KEY */
+#define FLOW_CALLBACKS_CONFIG        "ntopng.prefs.user_scripts.configset_v3"  /* Sync with user_scripts.lua CONFIGSET_KEY  */
+#define ALERTS_CONFIG                "ntopng.prefs.alerts_config.configset_v3" /* Sync with alerts_config.lua CONFIGSET_KEY */
 #define SYSLOG_SCRIPT_PATH           "callbacks/system/syslog.lua"
 #define SYSLOG_SCRIPT_CALLBACK_EVENT "handleEvent"
 

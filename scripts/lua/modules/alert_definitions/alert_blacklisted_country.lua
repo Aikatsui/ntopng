@@ -4,8 +4,10 @@
 
 -- ##############################################
 
-local alert_keys = require "alert_keys"
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
+
+local alert_keys = require "alert_keys"
+local alert_severities = require "alert_severities"
 
 -- Import the classes library.
 local classes = require "classes"
@@ -24,6 +26,14 @@ alert_blacklisted_country.meta = {
    icon = "fas fa-exclamation",
    has_victim = true,
    has_attacker = true,
+
+   -- Default values
+   default = {
+      -- Default severity, must be one of `alert_severities` and can overridden from the UI
+      severity = alert_severities.error,
+      -- Fitlters to be applied on the alert, e.g., cli_port=23
+      filters = {},
+   }
 }
 
 -- ##############################################
