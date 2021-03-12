@@ -19,15 +19,18 @@
  *
  */
 
-#ifndef _BLACKLISTED_FLOW_ALERT_H_
-#define _BLACKLISTED_FLOW_ALERT_H_
+#ifndef _BLACKLISTED_COUNTRY_ALERT_H_
+#define _BLACKLISTED_COUNTRY_ALERT_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedFlowAlert : public FlowAlert {
+class BlacklistedCountryAlert : public FlowAlert {
+ private:
+  virtual ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
-  BlacklistedFlowAlert() : FlowAlert("alert_blacklisted", alert_blacklisted, alert_category_security) { };
-  ~BlacklistedFlowAlert() { };
+ BlacklistedCountryAlert() : FlowAlert("alert_blacklisted_country", alert_blacklisted_country, alert_category_security) { };
+  ~BlacklistedCountryAlert() { };
 };
 
-#endif /* _BLACKLISTED_FLOW_ALERT_H_ */
+#endif /* _BLACKLISTED_COUNTRY_ALERT_H_ */

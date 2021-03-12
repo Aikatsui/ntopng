@@ -23,6 +23,7 @@
 #define _FLOW_ALERTS_INCLUDES_H_
 
 #include "flow_alerts/BlacklistedFlowAlert.h"
+#include "flow_alerts/BlacklistedCountryAlert.h"
 
 
 #endif /* _FLOW_ALERTS_INCLUDES_H_ */
