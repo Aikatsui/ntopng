@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef _BLACKLISTED_COUNTRY_ALERT_H_
-#define _BLACKLISTED_COUNTRY_ALERT_H_
+#ifndef _LOW_GOODPUT_FLOW_ALERT_H_
+#define _LOW_GOODPUT_FLOW_ALERT_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedCountryAlert : public FlowAlert {
+class LowGoodputFlowAlert : public FlowAlert {
  private:
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
- BlacklistedCountryAlert() : FlowAlert("alert_blacklisted_country", alert_blacklisted_country, alert_category_security) { };
-  ~BlacklistedCountryAlert() { };
+  LowGoodputFlowAlert() : FlowAlert("low_goodput", alert_low_goodput, alert_category_network) {};
+  ~LowGoodputFlowAlert() {};
 };
 
-#endif /* _BLACKLISTED_COUNTRY_ALERT_H_ */
+#endif /* _LOW_GOODPUT_FLOW_ALERT_H_ */

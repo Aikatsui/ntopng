@@ -19,18 +19,17 @@
  *
  */
 
-#ifndef _BLACKLISTED_COUNTRY_ALERT_H_
-#define _BLACKLISTED_COUNTRY_ALERT_H_
+#ifndef _UNEXPECTED_DHCP_SERVER_ALERT_H_
+#define _UNEXPECTED_DHCP_SERVER_ALERT_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedCountryAlert : public FlowAlert {
+class UnexpectedDHCPServerAlert : public UnexpectedServerAlert {
  private:
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
- BlacklistedCountryAlert() : FlowAlert("alert_blacklisted_country", alert_blacklisted_country, alert_category_security) { };
-  ~BlacklistedCountryAlert() { };
+  UnexpectedDHCPServerAlert() : UnexpectedServerAlert("unexpected_dhcp", alert_unexpected_dhcp_server) {};
+  ~UnexpectedDHCPServerAlert() {};
 };
 
-#endif /* _BLACKLISTED_COUNTRY_ALERT_H_ */
+#endif /* _UNEXPECTED_DHCP_SERVER_ALERT_H_ */

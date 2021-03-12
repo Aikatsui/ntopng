@@ -24,6 +24,20 @@
 
 #include "flow_alerts/BlacklistedFlowAlert.h"
 #include "flow_alerts/BlacklistedCountryAlert.h"
-
+#include "flow_alerts/LowGoodputFlowAlert.h"
+#include "flow_alerts/NotPurgedAlert.h"
+#include "flow_alerts/PotentiallyDangerousFlowAlert.h"
+#include "flow_alerts/RemoteToLocalInsecureProtoAlert.h"
+#include "flow_alerts/RemoteToRemoteAlert.h"
+#include "flow_alerts/TCPIssuesAlert.h"
+#include "flow_alerts/TCPZeroWindowAlert.h"
+#include "flow_alerts/UDPUnidirectionalAlert.h"
+#include "flow_alerts/UnexpectedServerAlert.h"
+#include "flow_alerts/UnexpectedDHCPServerAlert.h"
+#include "flow_alerts/UnexpectedDNSServerAlert.h"
+#include "flow_alerts/UnexpectedNTPServerAlert.h"
+#include "flow_alerts/UnexpectedSMTPServerAlert.h"
+#include "flow_alerts/UnexpectedServerAlert.h"
+#include "flow_alerts/WebMiningAlert.h"
 
 #endif /* _FLOW_ALERTS_INCLUDES_H_ */

@@ -19,18 +19,17 @@
  *
  */
 
-#ifndef _BLACKLISTED_COUNTRY_ALERT_H_
-#define _BLACKLISTED_COUNTRY_ALERT_H_
+#ifndef _UNEXPECTED_SMTP_SERVER_ALERT_H_
+#define _UNEXPECTED_SMTP_SERVER_ALERT_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedCountryAlert : public FlowAlert {
- private:
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+class UnexpectedSMTPServerAlert : public UnexpectedServerAlert {
+ private: 
 
  public:
- BlacklistedCountryAlert() : FlowAlert("alert_blacklisted_country", alert_blacklisted_country, alert_category_security) { };
-  ~BlacklistedCountryAlert() { };
+  UnexpectedSMTPServerAlert() : UnexpectedServerAlert("unexpected_smtp", alert_unexpected_smtp_server) {};
+  ~UnexpectedSMTPServerAlert() {};
 };
 
-#endif /* _BLACKLISTED_COUNTRY_ALERT_H_ */
+#endif /* _UNEXPECTED_SMTP_SERVER_ALERT_H_ */

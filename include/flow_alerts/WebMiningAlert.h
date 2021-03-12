@@ -19,18 +19,17 @@
  *
  */
 
-#ifndef _BLACKLISTED_COUNTRY_ALERT_H_
-#define _BLACKLISTED_COUNTRY_ALERT_H_
+#ifndef _WEBMINING_ALERT_H_
+#define _WEBMINING_ALERT_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedCountryAlert : public FlowAlert {
+class WebMiningAlert : public FlowAlert {
  private:
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
-
+  
  public:
- BlacklistedCountryAlert() : FlowAlert("alert_blacklisted_country", alert_blacklisted_country, alert_category_security) { };
-  ~BlacklistedCountryAlert() { };
+  WebMiningAlert() : FlowAlert("web_mining", alert_web_mining_detected, alert_category_security) {};
+  ~WebMiningAlert() {};
 };
 
-#endif /* _BLACKLISTED_COUNTRY_ALERT_H_ */
+#endif /* _WEBMINING_ALERT_H_ */

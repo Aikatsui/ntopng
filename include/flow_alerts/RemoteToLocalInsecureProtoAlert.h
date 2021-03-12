@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef _BLACKLISTED_COUNTRY_ALERT_H_
-#define _BLACKLISTED_COUNTRY_ALERT_H_
+#ifndef _REMOTE_TO_LOCAL_INSECURE_PROTO_ALERT_H_
+#define _REMOTE_TO_LOCAL_INSECURE_PROTO_ALERT_H_
 
 #include "ntop_includes.h"
 
-class BlacklistedCountryAlert : public FlowAlert {
+class RemoteToLocalInsecureProtoAlert : public FlowAlert {
  private:
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);  
 
  public:
- BlacklistedCountryAlert() : FlowAlert("alert_blacklisted_country", alert_blacklisted_country, alert_category_security) { };
-  ~BlacklistedCountryAlert() { };
+  RemoteToLocalInsecureProtoAlert() : FlowAlert("remote_to_local_insecure_proto", alert_remote_to_local_insecure_proto, alert_category_security) {};
+  ~RemoteToLocalInsecureProtoAlert() {};
 };
 
-#endif /* _BLACKLISTED_COUNTRY_ALERT_H_ */
+#endif /* _REMOTE_TO_LOCAL_INSECURE_PROTO_ALERT_H_ */
