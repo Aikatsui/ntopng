@@ -66,8 +66,42 @@ void FlowAlertsLoader::defineAlert(FlowAlert *fa) {
 void FlowAlertsLoader::registerFlowAlerts() {
   /* TODO: implement dynamic loading */
 
+  defineAlert(new FlowRiskURLPossibleRCEInjectionAlert());
+  defineAlert(new FlowRiskDNSSuspiciousTrafficAlert());
+  defineAlert(new FlowRiskURLPossibleXSSAlert());
   defineAlert(new BlacklistedFlowAlert());
-  
+  defineAlert(new FlowRiskHTTPSuspiciousHeaderAlert());
+  defineAlert(new FlowRiskTLSMissingSNIAlert());
+  defineAlert(new TCPZeroWindowAlert());
+  defineAlert(new FlowRiskHTTPSuspiciousUserAgentAlert());
+  defineAlert(new FlowRiskTLSSuspiciousESNIUsageAlert());
+  defineAlert(new UnexpectedDHCPServerAlert());
+  defineAlert(new UnexpectedSMTPServerAlert());
+  defineAlert(new FlowRiskURLPossibleSQLInjectionAlert());
+  defineAlert(new FlowRiskHTTPSuspiciousURLAlert());
+  defineAlert(new RemoteToLocalInsecureProtoAlert());
+  defineAlert(new LowGoodputFlowAlert());
+  defineAlert(new FlowRiskSuspiciousDGADomainAlert());
+  defineAlert(new FlowRiskUnsafeProtocolAlert());
+  defineAlert(new FlowRiskKnownProtocolOnNonStandardPortAlert());
+  defineAlert(new UnexpectedDNSServerAlert());
+  defineAlert(new FlowRiskSSHObsoleteAlert());
+  defineAlert(new TCPIssuesAlert());
+  defineAlert(new FlowRiskSMBInsecureVersionAlert());
+  defineAlert(new FlowRiskMalformedPacketAlert());
+  defineAlert(new DeviceProtocolNotAllowedAlert());
+  defineAlert(new NotPurgedAlert());
+  defineAlert(new WebMiningAlert());
+  defineAlert(new UnexpectedNTPServerAlert());
+  defineAlert(new UDPUnidirectionalAlert());
+  defineAlert(new PotentiallyDangerousFlowAlert());
+  defineAlert(new BlacklistedCountryAlert());
+  defineAlert(new RemoteToRemoteAlert());
+  defineAlert(new FlowRiskHTTPNumericIPHostAlert());
+  defineAlert(new FlowRiskTLSNotCarryingHTTPSAlert());
+  defineAlert(new FlowRiskBinaryApplicationTransferAlert());
+  defineAlert(new ExternalAlertCheckAlert());
+
   for(u_int i=0; i<MAX_DEFINED_FLOW_ALERT_TYPE; i++) {
     if(flow_alerts[i] == NULL)
       ntop->getTrace()->traceEvent(TRACE_WARNING, "Missing definition for flow alert type: %u", i);
