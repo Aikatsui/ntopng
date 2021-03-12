@@ -39,5 +39,6 @@
 #include "flow_alerts/UnexpectedSMTPServerAlert.h"
 #include "flow_alerts/UnexpectedServerAlert.h"
 #include "flow_alerts/WebMiningAlert.h"
+#include "flow_alerts/DeviceProtocolNotAllowedAlert.h"
 
 #endif /* _FLOW_ALERTS_INCLUDES_H_ */
