@@ -46,6 +46,7 @@ class FlowCallbacksLoader { /* A single instance inside Ntop */
   inline std::list<FlowCallback*>* getProtocolDetectedCallbacks(NetworkInterface *iface) { return(getCallbacks(iface, flow_callback_protocol_detected)); }
   inline std::list<FlowCallback*>* getPeriodicUpdateCallbacks(NetworkInterface *iface)   { return(getCallbacks(iface, flow_callback_periodic_update));   }
   inline std::list<FlowCallback*>* getFlowEndCallbacks(NetworkInterface *iface)          { return(getCallbacks(iface, flow_callback_flow_end));          }
+  inline std::list<FlowCallback*>* getNoneFlowCallbacks(NetworkInterface *iface)         { return(getCallbacks(iface, flow_callback_flow_none));         }
 };
 
 #endif /* _FLOW_CALLBACKS_LOADER_H_ */

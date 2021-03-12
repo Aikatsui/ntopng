@@ -100,6 +100,9 @@ class Ntop {
   /* Flow Callbacks Loader */
   FlowCallbacksLoader *flow_callbacks_loader;
 
+  /* Flow Alerts Loader */
+  FlowAlertsLoader *flow_alerts_loader;
+  
 #ifndef WIN32
   ContinuousPing *cping;
   Ping *ping;

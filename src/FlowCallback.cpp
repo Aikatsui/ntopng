@@ -93,6 +93,11 @@ void FlowCallback::addCallback(std::list<FlowCallback*> *l, NetworkInterface *if
   case flow_callback_flow_end:
     if(has_flow_end) l->push_back(this);
     break;
+
+  case flow_callback_flow_none:
+    if(!(has_protocol_detected || has_periodic_update || has_flow_end))
+      l->push_back(this);
+    break;
   }
 }
 

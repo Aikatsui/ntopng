@@ -83,6 +83,8 @@ Ntop::Ntop(char *appName) {
   privileges_dropped = false;
   can_send_icmp = Utils::isPingSupported();
 
+  flow_alerts_loader = new FlowAlertsLoader();
+  
   for (int i = 0; i < CONST_MAX_NUM_NETWORKS; i++)
     local_network_names[i] = local_network_aliases[i] = NULL;
 
@@ -310,6 +312,9 @@ Ntop::~Ntop() {
   if(prefs)   { delete prefs; prefs = NULL;     }
   if(globals) { delete globals; globals = NULL; }
 
+  if(flow_callbacks_loader)  delete flow_callbacks_loader;
+  if(flow_alerts_loader)     delete flow_alerts_loader;
+  
 #ifdef __linux__
   if(inotify_fd > 0)  close(inotify_fd);
 #endif

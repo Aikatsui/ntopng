@@ -244,8 +244,7 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 	    it = type_i_transitions.find(transition);
 
 	    if(it == type_i_transitions.end()) {
-	      if(1) //	      if(f->get_duration() > ntop->getPrefs()->getIEC60870LearingPeriod())
-		{
+	      if(f->get_duration() > ntop->getPrefs()->getIEC60870LearingPeriod()) {
 		FlowCallback *cb = f->getInterface()->getFlowCallbackExecutor()->getFlowCallback(alert_iec_invalid_transition);
 
 		if(cb != NULL) {

@@ -63,10 +63,12 @@ void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
   protocol_detected = fcl->getProtocolDetectedCallbacks(iface);
   periodic_update   = fcl->getPeriodicUpdateCallbacks(iface);
   flow_end          = fcl->getFlowEndCallbacks(iface);
-
+  flow_none         = fcl->getNoneFlowCallbacks(iface);
+  
   loadFlowCallbacksAlerts(protocol_detected),
     loadFlowCallbacksAlerts(periodic_update),
-    loadFlowCallbacksAlerts(flow_end);
+    loadFlowCallbacksAlerts(flow_end),
+    loadFlowCallbacksAlerts(flow_none);
 }
 
 /* **************************************************** */

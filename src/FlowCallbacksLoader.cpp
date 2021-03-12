@@ -113,6 +113,14 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new NedgeBlockedFlow()))                            cb_all[fcb->getName()] = fcb;
 #endif
 
+  /* Run consistency checks */
+#if 0
+    if(!(_has_protocol_detected || _has_periodic_update || _has_flow_end)) {
+    ntop->getTrace()->traceEvent(TRACE_ERROR, "Flow callback %s does not define any callback: ignored", getName());
+    throw "Invalid plugin definition";
+  }
+#endif
+
   // printCallbacks();
 }
 

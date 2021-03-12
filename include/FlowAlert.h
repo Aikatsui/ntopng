@@ -19,24 +19,32 @@
  *
  */
 
-#ifndef _IEC_UNEXPECTED_TYPE_ID_H_
-#define _IEC_UNEXPECTED_TYPE_ID_H_
+#ifndef _FLOW_ALERT_H_
+#define _FLOW_ALERT_H_
 
 #include "ntop_includes.h"
 
-class IECUnexpectedTypeId : public FlowCallback {
- public:
-  IECUnexpectedTypeId() : FlowCallback(ntopng_edition_community,
-				       false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				       false /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
-  ~IECUnexpectedTypeId() {};
-
-  void scriptDisable();
-  bool loadConfiguration(json_object *config);
+class FlowAlert {
+ private:
+  AlertLevel severity_id;
+  std::string name;
+  FlowAlertType alert_type;
+  AlertCategory category;
   
-  std::string getName()        const { return(std::string("iec_unexpected_type_id")); }
-  ScriptCategory getCategory() const { return script_category_security;       }
-  FlowAlertType getAlertType() const { return alert_iec_unexpected_type_id;   }
+ public:
+  FlowAlert(const char* _name, FlowAlertType _alert_type, AlertCategory _category) {
+    name.assign(_name);
+    alert_type = _alert_type;
+    category = _category;
+  }
+  virtual ~FlowAlert() { };
+  
+  inline AlertLevel        getSeverity()  { return(severity_id); }  
+  inline std::string       getName()      { return(name);        }
+  inline AlertCategory     getCategory()  { return(category);    }
+  inline FlowAlertType     getAlertType() { return(alert_type);  }
+  
+  virtual ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f)  { return serializer; }
 };
 
-#endif /* _IEC_UNEXPECTED_TYPE_ID_H_ */
+#endif /* _FLOW_ALERT_H_ */

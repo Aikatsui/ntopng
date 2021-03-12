@@ -102,6 +102,15 @@ typedef enum {
   MAX_NUM_SCRIPT_CATEGORIES = 5
 } ScriptCategory; /* Keep in sync with user_scripts.script_categories in scripts/lua/modules/user_scripts.lua  */
 
+typedef enum {
+  alert_category_other = 0,
+  alert_category_security = 1,
+  alert_category_internals = 2,
+  alert_category_network = 3,
+  alert_category_system = 4,
+  MAX_NUM_ALERT_CATEGORIES = 5
+} AlertCategory; /* TODO: keep in sync with ScriptCategory until we remove ScriptCategory */
+
 /*
   This is a subset of ScriptCategory as flow scripts fall only in this subset
  */
@@ -354,7 +363,8 @@ struct string_list {
 typedef enum {
   flow_callback_protocol_detected = 0,
   flow_callback_periodic_update,
-  flow_callback_flow_end
+  flow_callback_flow_end,
+  flow_callback_flow_none /* Flow callback not bound to protoDetected, periodicUpdate, flowEnd */
 } FlowCallbacks;
 
 /* NOTE: Throw modules/alert_keys.lua as it has been merged with modules/alert_keys.lua */
@@ -416,6 +426,8 @@ typedef enum {
   alert_ndpi_dns_suspicious_traffic      = 53,
   alert_ndpi_tls_missing_sni             = 54,
   alert_iec_unexpected_type_id           = 55,
+
+  MAX_DEFINED_FLOW_ALERT_TYPE, /* Leave it as last member */
   
   /* TODO check and add support for the below flow risks:
   alert_ndpi_http_suspicious_content
@@ -427,6 +439,8 @@ typedef enum {
 
   MAX_FLOW_ALERT_TYPE = 127 /* Constrained by `Bitmap alert_map` inside Flow.h */
 } FlowAlertType;
+
+
 
 typedef enum {
   flow_lua_call_exec_status_ok = 0,                             /* Call executed successfully                                */

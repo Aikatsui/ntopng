@@ -13,15 +13,9 @@ local script = {
    -- Script category
    category = user_scripts.script_categories.security,
 
-   -- Priority
-   prio = -20, -- Lower priority (executed after) than default 0 priority
-
-   -- use this plugin only with this protocol
-   l7_proto_id = 245, -- 245 == IEC60870
-
    is_alert = true,
 
-   -- Specify the default value whe clicking on the "Reset Default" button
+   -- Specify the default value when clicking on the "Reset Default" button
    default_value = {
       severity = alert_severities.warning,
       items = {
@@ -32,7 +26,6 @@ local script = {
    gui = {
       i18n_title        = "iec_unexpected_type_id.iec104_title",
       i18n_description  = "iec_unexpected_type_id.iec104_description",
-
       input_builder     = "items_list", -- TODO: fix the input list
       input_title       = i18n("iec_unexpected_type_id.title"),
       input_description = i18n("iec_unexpected_type_id.description"),

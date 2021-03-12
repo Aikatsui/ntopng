@@ -30,7 +30,7 @@ class FlowCallbacksExecutor { /* One instance per ntopng Interface */
  private:
   NetworkInterface *iface;
   FlowCallback* alert_type_to_callback[MAX_FLOW_ALERT_TYPE];
-  std::list<FlowCallback*> *protocol_detected, *periodic_update, *flow_end;
+  std::list<FlowCallback*> *protocol_detected, *periodic_update, *flow_end, *flow_none;
 
   void loadFlowCallbacksAlerts(std::list<FlowCallback*> *cb_list);
   void loadFlowCallbacks(FlowCallbacksLoader *fcl);

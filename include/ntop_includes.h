@@ -407,6 +407,8 @@ using namespace std;
 #include "AddressResolution.h"
 #include "HTTPserver.h"
 #include "Paginator.h"
+#include "FlowAlert.h"
+#include "FlowAlertsLoader.h"
 #include "FlowCallback.h"
 #include "FlowCallbacksLoader.h"
 #include "FlowCallbacksExecutor.h"
