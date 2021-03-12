@@ -363,8 +363,8 @@ class Flow : public GenericHashEntry {
     can be passed to have it put under key `alert_json` of `serializer`. When no `additional_serializer` is passed, key `alert_json`
     is populated asynchronously using `alert_type`.
    */
-  void flow2alertJson(ndpi_serializer *serializer, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer);
-  json_object* flow2json();
+  void flow2alertJSON(ndpi_serializer *serializer, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer);
+  json_object* flow2JSON();
   json_object* flow2es(json_object *flow_object);
   
   inline u_int8_t getTcpFlags()        const { return(src2dst_tcp_flags | dst2src_tcp_flags);  };

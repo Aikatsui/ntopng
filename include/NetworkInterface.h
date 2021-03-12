@@ -338,10 +338,10 @@ class NetworkInterface : public AlertableEntity {
   };
 
   /*
-    Dequeues flows from `q` up to `budget` and executes `flow_lua_callback` on each of them.
+    Dequeues an alerted flows from `q` up to `budget` and executes `flow_lua_callback` on each of them.
     The number of flows dequeued is returned.
    */
-  u_int64_t dequeueFlows(SPSCQueue<Flow *> *q, u_int budget);
+  u_int64_t dequeueAlertedFlows(SPSCQueue<Flow *> *q, u_int budget);
 
  public:
   /**

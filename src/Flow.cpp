@@ -2375,7 +2375,7 @@ char* Flow::serialize(bool use_labels) {
 
   ntop->getPrefs()->set_json_symbolic_labels_format(use_labels);
 
-  my_object = flow2json();
+  my_object = flow2JSON();
 
   if(my_object != NULL) {
     /* JSON string */
@@ -2392,7 +2392,7 @@ char* Flow::serialize(bool use_labels) {
 
 /* *************************************** */
 
-json_object* Flow::flow2json() {
+json_object* Flow::flow2JSON() {
   json_object *my_object;
   char buf[64], jsonbuf[64], *c;
   time_t t;
@@ -2671,7 +2671,7 @@ u_char* Flow::getCommunityId(u_char *community_id, u_int community_id_len) {
 
 /* Create a JSON in the alerts format
  * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
-void Flow::flow2alertJson(ndpi_serializer *s, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer) {
+void Flow::flow2alertJSON(ndpi_serializer *s, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer) {
   char buf[64];
   u_char community_id[200];
   char *alert_json = NULL;
@@ -2682,6 +2682,7 @@ void Flow::flow2alertJson(ndpi_serializer *s, time_t now, FlowAlertType alert_ty
   else {
     /* JSON submitted as argument, use it as-is. */
     u_int32_t json_string_len;
+    
     alert_json = ndpi_serializer_get_buffer(additional_serializer, &json_string_len);
   }
 
@@ -2991,7 +2992,7 @@ bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer 
   ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
 
   /* Prepare the JSON, including a JSON specific of this FlowAlertType */
-  flow2alertJson(&flow_json, time(NULL), fat, alert_json);
+  flow2alertJSON(&flow_json, time(NULL), fat, alert_json);
 
   if(!first_alert)
     ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);

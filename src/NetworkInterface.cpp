@@ -2385,7 +2385,7 @@ void NetworkInterface::pollQueuedeCompanionEvents() {
 
 /* **************************************************** */
 
-u_int64_t NetworkInterface::dequeueFlows(SPSCQueue<Flow *> *q, u_int budget) {
+u_int64_t NetworkInterface::dequeueAlertedFlows(SPSCQueue<Flow *> *q, u_int budget) {
   u_int64_t num_done = 0;
 
   while(q->isNotEmpty()) {
@@ -2414,7 +2414,7 @@ u_int64_t NetworkInterface::dequeueFlows(SPSCQueue<Flow *> *q, u_int budget) {
 /* **************************************************** */
 
 u_int64_t NetworkInterface::dequeueFlowsForCallbacks(u_int budget) {
-  u_int64_t num_done = dequeueFlows(callbacksQueue, budget);
+  u_int64_t num_done = dequeueAlertedFlows(callbacksQueue, budget);
 
 #ifndef WIN32
   if(num_done == 0) {

@@ -440,8 +440,6 @@ typedef enum {
   MAX_FLOW_ALERT_TYPE = 127 /* Constrained by `Bitmap alert_map` inside Flow.h */
 } FlowAlertType;
 
-
-
 typedef enum {
   flow_lua_call_exec_status_ok = 0,                             /* Call executed successfully                                */
   flow_lua_call_exec_status_not_executed_script_failure,        /* Call NOT executed as the script failed to load (syntax?)   */
