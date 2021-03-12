@@ -59,6 +59,18 @@ class Flow : public GenericHashEntry {
   u_int16_t  predominant_alert_score;       /* The score associated to the predominant alert */
   FlowAlertType predominant_alert_enqueued; /* This is the most recent predominant alert enqueued to recipients */
   AlertLevel predominant_alert_level;
+
+  /*
+    Data set by FlowCallback subclasses to preserve a status on the flow. Status is accessed later by
+    FlowAlert subclasses to generate alert JSONs.
+   */
+  struct {
+    u_int8_t bl_country_cli: 1, bl_country_srv: 1,                /* Blacklisted country */
+      tcp_issues_cli: 1, tcp_issues_srv: 1, tcp_issues_severe: 1, /* TCP issues          */
+      _pad: 3; /* Padding, can be used in the future */
+    u_int64_t longlived_th, elephant_th_l2r, elephant_th_r2l;
+  } fcb_status;
+
   char *custom_flow_info;
   struct {
     struct ndpi_analyze_struct *c2s, *s2c;
@@ -290,6 +302,22 @@ class Flow : public GenericHashEntry {
   ~Flow();
 
   inline Bitmap getAlertBitmap()     const     { return(alert_map); }
+
+  /* Flow callbacks have these methods to set/get certain statuses on the flow. */
+  /* Setters */
+  inline void fcb_set_blacklisted(bool to_cli) { if(to_cli) fcb_status.bl_country_cli = 1; else fcb_status.bl_country_srv = 1; };
+  inline void fcb_set_tcp_issues(bool to_cli)  { if(to_cli) fcb_status.tcp_issues_cli = 1; else fcb_status.tcp_issues_srv = 1; };
+  inline void fcb_set_tcp_issues_severe()      { fcb_status.tcp_issues_severe = 1; };
+  inline void fcb_set_longlived_th(u_int64_t th_secs) { fcb_status.longlived_th = th_secs; };
+  inline void fcb_set_elephant_th(u_int64_t th_bytes, bool l2r) { if(l2r) fcb_status.elephant_th_l2r = th_bytes; else fcb_status.elephant_th_r2l = th_bytes; };
+
+  /* Getters */
+  inline void fcb_get_blacklisted(bool *cli, bool *srv) { *cli = fcb_status.bl_country_cli, *srv = fcb_status.bl_country_srv; };
+  inline void fcb_get_tcp_issues(bool *cli, bool *srv, bool *severe)  {
+    *cli = fcb_status.tcp_issues_cli, *srv = fcb_status.tcp_issues_srv, *severe = fcb_status.tcp_issues_severe ;
+  };
+  inline void fcb_get_longlived_th(u_int64_t *th_secs) { *th_secs = fcb_status.longlived_th; };
+  inline void fcb_get_elephant_th(u_int64_t *l2r, u_int64_t *r2l) { *l2r = fcb_status.elephant_th_l2r, *r2l = fcb_status.elephant_th_r2l; };
 
   /*
     Called by FlowCallback subclasses to trigger a flow alert. This is an asynchronous call, faster, but can

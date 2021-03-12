@@ -26,7 +26,7 @@
 
 class TCPIssues : public FlowCallback {
  private:
-  void checkFlow(Flow *f, bool *is_client, bool *is_server, bool *is_severe, bool trigger_alert); 
+  void checkFlow(Flow *f);
   ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
