@@ -19,30 +19,18 @@
  *
  */
 
+#ifndef _EXTERNAL_ALERT_CHECK_ALERT_H_
+#define _EXTERNAL_ALERT_CHECK_ALERT_H_
+
 #include "ntop_includes.h"
-#include "flow_callbacks_includes.h"
 
-void ExternalAlertCheck::checkExternalAlert(Flow *f) {
-  if (f->hasExternalAlert()) { 
-    u_int16_t c_score = 100;
-    u_int16_t s_score = 100;
-    u_int16_t f_score = 100;
+class ExternalAlertCheckAlert : public FlowAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  
+ public:
+  ExternalAlertCheckAlert() : FlowAlert("external_alert_check", alert_external, alert_category_security) {};
+  ~ExternalAlertCheckAlert() {};
+};
 
-    f->triggerAlert(this, f->getExternalSeverity(), f_score, c_score, s_score);
-  }
-}
-
-/* ***************************************************** */
-
-void ExternalAlertCheck::protocolDetected(Flow *f) {
-  checkExternalAlert(f);
-}
-
-/* ***************************************************** */
-
-void ExternalAlertCheck::flowEnd(Flow *f) {
-  checkExternalAlert(f);
-}
-
-/* ***************************************************** */
-
+#endif /* _EXTERNAL_ALERT_CHECK_ALERT_H_ */

@@ -40,8 +40,6 @@ class ExternalAlertCheck : public FlowCallback {
   std::string getName()        const { return(std::string("external_alert_check")); }
   ScriptCategory getCategory() const { return script_category_security;             }
   FlowAlertType getAlertType() const { return alert_external;                       }
-
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 };
 
 #endif /* _EXTERNAL_ALERT_CHECK_H_ */
