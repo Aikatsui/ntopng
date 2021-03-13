@@ -60,4 +60,23 @@
 #include "flow_alerts/FlowRiskURLPossibleXSSAlert.h"
 #include "flow_alerts/FlowRiskUnsafeProtocolAlert.h"
 
+/* Pro Alerts - do NOT use #ifdef as alerts must always be available */
+#include "flow_alerts/TLSUnsafeCiphersAlert.h"
+#include "flow_alerts/TLSCertificateExpiredAlert.h"
+#include "flow_alerts/TLSCertificateMismatchAlert.h"
+#include "flow_alerts/TLSOldProtocolVersionAlert.h"
+#include "flow_alerts/TLSMaliciousSignatureAlert.h"
+#include "flow_alerts/TLSCertificateSelfSignedAlert.h"
+#include "flow_alerts/SuspiciousTCPSYNProbingAlert.h"
+#include "flow_alerts/PotentiallyDangerousAlert.h"
+#include "flow_alerts/DataExfiltrationAlert.h"
+#include "flow_alerts/ElephantFlowAlert.h"
+#include "flow_alerts/LongLivedFlowAlert.h"
+#include "flow_alerts/DNSDataExfiltrationAlert.h"
+#include "flow_alerts/SuspiciousTCPProbingAlert.h"
+#include "flow_alerts/TCPConnectionRefusedAlert.h"
+#include "flow_alerts/NedgeBlockedFlowAlert.h"
+#include "flow_alerts/InvalidDNSQueryAlert.h"
+#include "flow_alerts/ExternalAlertCheckProAlert.h"
+
 #endif /* _FLOW_ALERTS_INCLUDES_H_ */
