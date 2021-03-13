@@ -26,7 +26,7 @@
 
 class ExternalAlertCheckProAlert : public FlowAlert {
  public:
-  ExternalAlertCheckProAlert() : FlowAlert("alert_blacklisted", alert_blacklisted, alert_category_security) { };
+  ExternalAlertCheckProAlert() : FlowAlert("external_alert_check", alert_external, alert_category_system) {};
   ~ExternalAlertCheckProAlert() { };
 };
 
