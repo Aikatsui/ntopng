@@ -94,13 +94,30 @@ void FlowAlertsLoader::registerFlowAlerts() {
   defineAlert(new WebMiningAlert());
   defineAlert(new UnexpectedNTPServerAlert());
   defineAlert(new UDPUnidirectionalAlert());
-  defineAlert(new PotentiallyDangerousFlowAlert());
   defineAlert(new BlacklistedCountryAlert());
   defineAlert(new RemoteToRemoteAlert());
   defineAlert(new FlowRiskHTTPNumericIPHostAlert());
   defineAlert(new FlowRiskTLSNotCarryingHTTPSAlert());
   defineAlert(new FlowRiskBinaryApplicationTransferAlert());
   defineAlert(new ExternalAlertCheckAlert());
+
+  /* Pro alerts */
+  defineAlert(new TLSUnsafeCiphersAlert());
+  defineAlert(new TLSCertificateExpiredAlert());
+  defineAlert(new TLSCertificateMismatchAlert());
+  defineAlert(new TLSOldProtocolVersionAlert());
+  defineAlert(new TLSMaliciousSignatureAlert());
+  defineAlert(new TLSCertificateSelfSignedAlert());
+  defineAlert(new SuspiciousTCPSYNProbingAlert());
+  defineAlert(new PotentiallyDangerousAlert());
+  defineAlert(new DataExfiltrationAlert());
+  defineAlert(new ElephantFlowAlert());
+  defineAlert(new LongLivedFlowAlert());
+  defineAlert(new DNSDataExfiltrationAlert());
+  defineAlert(new SuspiciousTCPProbingAlert());
+  defineAlert(new TCPConnectionRefusedAlert());
+  defineAlert(new NedgeBlockedFlowAlert());
+  defineAlert(new InvalidDNSQueryAlert());
 
   for(u_int i=0; i<MAX_DEFINED_FLOW_ALERT_TYPE; i++) {
     if(flow_alerts[i] == NULL)

@@ -27,7 +27,6 @@
 #include "flow_alerts/ExternalAlertCheckAlert.h"
 #include "flow_alerts/LowGoodputFlowAlert.h"
 #include "flow_alerts/NotPurgedAlert.h"
-#include "flow_alerts/PotentiallyDangerousFlowAlert.h"
 #include "flow_alerts/RemoteToLocalInsecureProtoAlert.h"
 #include "flow_alerts/RemoteToRemoteAlert.h"
 #include "flow_alerts/TCPIssuesAlert.h"
