@@ -31,7 +31,7 @@ void BlacklistedFlow::protocolDetected(Flow *f) {
     else
       c_score = 5, s_score = 10;
 
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlert(alert_blacklisted, getSeverity(), f_score, c_score, s_score);
   }
 }
 

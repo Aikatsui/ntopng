@@ -100,6 +100,8 @@ void FlowAlertsLoader::registerFlowAlerts() {
   defineAlert(new FlowRiskTLSNotCarryingHTTPSAlert());
   defineAlert(new FlowRiskBinaryApplicationTransferAlert());
   defineAlert(new ExternalAlertCheckAlert());
+  defineAlert(new IECInvalidTransitionAlert());
+  defineAlert(new IECUnexpectedTypeIdAlert());
 
   /* Pro alerts */
   defineAlert(new TLSUnsafeCiphersAlert());
@@ -228,3 +230,44 @@ void FlowAlertsLoader::loadConfiguration() {
 #endif
 }
 
+/* **************************************************** */
+
+AlertCategory FlowAlertsLoader::getAlertCategory(FlowAlertType fat) const {
+  if(flow_alerts[fat] != NULL)
+    return flow_alerts[fat]->getCategory();
+
+  return(alert_category_other);
+}
+
+/* **************************************************** */
+
+/* NOTE: memory MUST be freed by the caller */
+char* FlowAlertsLoader::getAlertJSON(FlowAlertType fat, Flow *f) const {
+  ndpi_serializer *alert_json_serializer = NULL;
+  char *json_string = NULL;
+  u_int32_t json_string_len;
+  FlowAlert *fc = flow_alerts[fat];
+
+  if(!fc)
+    return NULL; /* Callback not found */
+
+  alert_json_serializer = fc->getSerializedAlert(f);
+
+  if(alert_json_serializer) {
+    json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
+    json_string = json_string ? strdup(json_string) : NULL; /* Allocate memory */
+    ndpi_term_serializer(alert_json_serializer);
+  }
+
+  /* Always allocated in memory (must be freed) */
+  return(json_string);
+}
+
+/* **************************************************** */
+
+ndpi_serializer *FlowAlertsLoader::getAlertSerializer(FlowAlertType fat, Flow *f) const  {
+  if(flow_alerts[fat])
+    return flow_alerts[fat]->getSerializedAlert(f);
+
+  return NULL;
+}

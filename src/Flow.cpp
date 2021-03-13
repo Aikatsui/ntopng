@@ -202,7 +202,7 @@ Flow::Flow(NetworkInterface *_iface,
   case IPPROTO_ICMP:
     ndpiDetectedProtocol.app_protocol = NDPI_PROTOCOL_IP_ICMP,
       ndpiDetectedProtocol.master_protocol = NDPI_PROTOCOL_UNKNOWN;
-
+    
     /* Use nDPI to check potential flow risks */
     if(iface->is_ndpi_enabled()) allocDPIMemory();
     set_hash_entry_state_flow_notyetdetected();
@@ -2158,7 +2158,7 @@ void Flow::lua(lua_State* vm, AddressTree * ptree,
       }
     }
 
-    char *alert_json = getInterface()->getAlertJSON(getPredominantAlert(), this);
+    char *alert_json = ntop->getAlertJSON(getPredominantAlert(), this);
     if(alert_json) {
       lua_push_str_table_entry(vm, "alert_info", alert_json);
       free(alert_json);
@@ -2681,7 +2681,7 @@ void Flow::flow2alertJSON(ndpi_serializer *s, time_t now, FlowAlertType alert_ty
 
   if(!additional_serializer)
     /* No JSON as argument, generate it asynchronously from the alert_type */
-    alert_json = getInterface()->getAlertJSON(alert_type, this);
+    alert_json = ntop->getAlertJSON(alert_type, this);
   else {
     /* JSON submitted as argument, use it as-is. */
     u_int32_t json_string_len;
@@ -3007,7 +3007,7 @@ bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer 
     
   notification.alert = (char*)flow_str;
   notification.alert_severity = severity;
-  notification.script_category = getInterface()->getAlertCategory(fat);
+  notification.alert_category = ntop->getAlertCategory(fat);
 
   rv = ntop->recipients_enqueue(notification.alert_severity >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
 				&notification,
@@ -5261,10 +5261,10 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
 /*
   This method is called by Lua to set score and various other values of the flow
  */
-bool Flow::setAlertsBitmap(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  FlowAlertType alert_type = fcb->getAlertType();
-  ScriptCategory script_category = fcb->getCategory();
-  ScoreCategory score_category = Utils::mapScriptToScoreCategory(script_category);
+bool Flow::setAlertsBitmap(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  AlertCategory alert_category = ntop->getAlertCategory(alert_type);
+
+  ScoreCategory score_category = Utils::mapAlertToScoreCategory(alert_category);
   bool is_predominant = false; /* Check if the alert that is being triggered is becoming the new predominant alert */
 
   if(alert_type == alert_normal)
@@ -5302,20 +5302,30 @@ bool Flow::setAlertsBitmap(FlowCallback *fcb, AlertLevel severity, u_int16_t flo
 /* *************************************** */
 
 bool Flow::triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  FlowAlertType alert_type = fcb->getAlertType();
   bool res;
 
-  res = setAlertsBitmap(fcb, severity, flow_inc, cli_inc, srv_inc);
+  res = setAlertsBitmap(alert_type, severity, flow_inc, cli_inc, srv_inc);
 
   return res;
 }
 
 /* *************************************** */
 
-bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json) {
-  FlowAlertType alert_type = fcb->getAlertType();
+bool Flow::triggerAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   bool res;
 
-  res = setAlertsBitmap(fcb, severity, flow_inc, cli_inc, srv_inc);
+  res = setAlertsBitmap(alert_type, severity, flow_inc, cli_inc, srv_inc);
+
+  return res;
+}
+
+/* *************************************** */
+
+bool Flow::triggerAlertSync(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json) {
+  bool res;
+
+  res = setAlertsBitmap(alert_type, severity, flow_inc, cli_inc, srv_inc);
 
   /* Synchronous, this alert must be sent straight to the recipients now. Let's put it into the recipient queues. */
   if(res) { 
@@ -5335,6 +5345,14 @@ bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t fl
     ndpi_term_serializer(alert_json);
 
   return res;
+}
+
+/* *************************************** */
+
+bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json) {
+  FlowAlertType alert_type = fcb->getAlertType();
+
+  return triggerAlertSync(alert_type, severity, flow_inc, cli_inc, srv_inc, alert_json);
 }
 
 /* *************************************** */

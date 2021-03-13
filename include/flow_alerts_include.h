@@ -58,6 +58,9 @@
 #include "flow_alerts/FlowRiskURLPossibleSQLInjectionAlert.h"
 #include "flow_alerts/FlowRiskURLPossibleXSSAlert.h"
 #include "flow_alerts/FlowRiskUnsafeProtocolAlert.h"
+#include "flow_alerts/IECInvalidTransitionAlert.h"
+#include "flow_alerts/IECUnexpectedTypeIdAlert.h"
+
 
 /* Pro Alerts - do NOT use #ifdef as alerts must always be available */
 #include "flow_alerts/TLSUnsafeCiphersAlert.h"

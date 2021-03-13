@@ -19,30 +19,15 @@
  *
  */
 
-#ifndef _FLOW_ALERTS_LOADER_H_
-#define _FLOW_ALERTS_LOADER_H_
+#ifndef _IEC_UNEXPECTED_TYPE_ID_ALERT_H_
+#define _IEC_UNEXPECTED_TYPE_ID_ALERT_H_
 
 #include "ntop_includes.h"
 
-/* Singleton, i.e. a single instance */
-
-class FlowAlertsLoader {
- private:
-  FlowAlert* flow_alerts[MAX_FLOW_ALERT_TYPE];
-  
-  void registerFlowAlerts(); /* Method called at runtime to register all alerts */
-  void loadConfiguration();
-  void defineAlert(FlowAlert *fa);
-  
-public:
-  FlowAlertsLoader();
-  ~FlowAlertsLoader();
-  
-  void reloadFlowAlerts();
-
-  AlertCategory getAlertCategory(FlowAlertType fat) const;
-  char* getAlertJSON(FlowAlertType fat, Flow *f) const;
-  ndpi_serializer *getAlertSerializer(FlowAlertType fat, Flow *f) const; 
+class IECUnexpectedTypeIdAlert : public FlowAlert {
+ public:
+  IECUnexpectedTypeIdAlert() : FlowAlert("alert_iec_unexpected_type_id", alert_iec_unexpected_type_id, alert_category_security) { };
+  ~IECUnexpectedTypeIdAlert() { };
 };
 
-#endif /* _FLOW_ALERTS_LOADER_H_ */
+#endif /* _IEC_UNEXPECTED_TYPE_ID_ALERT_H_ */

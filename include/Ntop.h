@@ -528,6 +528,11 @@ class Ntop {
   void reloadPeriodicScripts();
   inline void reloadFlowCallbacks() { flowCallbacksReloadInProgress = true; };
   inline void reloadFlowAlerts()    { flowAlertsReloadInProgress    = true; };
+
+  AlertCategory getAlertCategory(FlowAlertType fat) const;
+  char *getAlertJSON(FlowAlertType fat, Flow *f) const;
+  ndpi_serializer *getAlertSerializer(FlowAlertType fat, Flow *f) const;
+  
 #ifndef WIN32
   inline ContinuousPing* getContinuousPing() { return(cping); }
   inline Ping*           getPing()           { return(ping);  }

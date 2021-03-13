@@ -70,36 +70,3 @@ void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
     loadFlowCallbacksAlerts(flow_end),
     loadFlowCallbacksAlerts(flow_none);
 }
-
-/* **************************************************** */
-
-ScriptCategory FlowCallbacksExecutor::getAlertCategory(FlowAlertType fat) const {
-  if(alert_type_to_callback[fat] != NULL)
-    return alert_type_to_callback[fat]->getCategory();
-
-  return(script_category_other);
-}
-
-/* **************************************************** */
-
-/* NOTE: memory MUST be freed by the caller */
-char* FlowCallbacksExecutor::getAlertJSON(FlowAlertType fat, Flow *f) const {
-  ndpi_serializer *alert_json_serializer = NULL;
-  char *json_string = NULL;
-  u_int32_t json_string_len;
-  FlowCallback *fc = alert_type_to_callback[fat];
-
-  if(!fc)
-    return NULL; /* Callback not found */
-
-  alert_json_serializer = fc->getSerializedAlert(f);
-
-  if(alert_json_serializer) {
-    json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
-    json_string = json_string ? strdup(json_string) : NULL; /* Allocate memory */
-    ndpi_term_serializer(alert_json_serializer);
-  }
-
-  /* Always allocated in memory (must be freed) */
-  return(json_string);
-}

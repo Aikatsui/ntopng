@@ -2575,6 +2575,25 @@ void Ntop::initInterface(NetworkInterface *_if) {
   _if->checkDisaggregationMode();
 }
 
+/* **************************************** */
+
+AlertCategory Ntop::getAlertCategory(FlowAlertType fat) const {
+  return flow_alerts_loader ? flow_alerts_loader->getAlertCategory(fat) : alert_category_other;
+}
+
+/* **************************************** */
+
+char * Ntop::getAlertJSON(FlowAlertType fat, Flow *f) const {
+  return flow_alerts_loader ? flow_alerts_loader->getAlertJSON(fat, f) : NULL;
+}
+
+
+/* **************************************** */
+
+ndpi_serializer *Ntop::getAlertSerializer(FlowAlertType fat, Flow *f) const {
+  return flow_alerts_loader ? flow_alerts_loader->getAlertSerializer(fat, f) : NULL;
+}
+
 /* ******************************************* */
 
 void Ntop::checkReloadFlowCallbacks() {

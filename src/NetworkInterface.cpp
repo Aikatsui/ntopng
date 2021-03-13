@@ -6371,18 +6371,6 @@ AlertsQueue *NetworkInterface::getAlertsQueue() const {
 
 /* **************************************** */
 
-ScriptCategory NetworkInterface::getAlertCategory(FlowAlertType fat) const {
-  return flow_callbacks_executor ? flow_callbacks_executor->getAlertCategory(fat) : script_category_other;
-}
-
-/* **************************************** */
-
-char * NetworkInterface::getAlertJSON(FlowAlertType fat, Flow *f) const {
-  return flow_callbacks_executor ? flow_callbacks_executor->getAlertJSON(fat, f) : NULL;
-}
-
-/* **************************************** */
-
 NetworkStats* NetworkInterface::getNetworkStats(u_int8_t networkId) const {
   if((networkStats == NULL) || (networkId >= ntop->getNumLocalNetworks()))
     return(NULL);
