@@ -44,7 +44,7 @@ class Ntop {
   pthread_t purgeLoop;    /* Loop which iterates on active interfaces to delete idle hash table entries */
   bool purgeLoop_started; /* Flag that indicates whether the purgeLoop has been started */
   bool ndpiReloadInProgress;
-  bool flowCallbacksReloadInProgress;
+  bool flowCallbacksReloadInProgress, flowAlertsReloadInProgress;
   Bloom *resolvedHostsBloom; /* Used by all redis class instances */
   AddressTree local_interface_addresses;
   char epoch_buf[11];
@@ -101,7 +101,7 @@ class Ntop {
   FlowCallbacksLoader *flow_callbacks_loader;
 
   /* Flow Alerts Loader */
-  FlowAlertsLoader *flow_alerts_loader;
+  FlowAlertsLoader *flow_alerts_loader, *flow_alerts_loader_shadow;
   
 #ifndef WIN32
   ContinuousPing *cping;
@@ -128,6 +128,7 @@ class Ntop {
   bool startPurgeLoop();
 
   void checkReloadFlowCallbacks();
+  void checkReloadFlowAlerts();
   
  public:
   /**
@@ -526,6 +527,7 @@ class Ntop {
   void setnDPIProtocolCategory(u_int16_t protoId, ndpi_protocol_category_t protoCategory);
   void reloadPeriodicScripts();
   inline void reloadFlowCallbacks() { flowCallbacksReloadInProgress = true; };
+  inline void reloadFlowAlerts()    { flowAlertsReloadInProgress    = true; };
 #ifndef WIN32
   inline ContinuousPing* getContinuousPing() { return(cping); }
   inline Ping*           getPing()           { return(ping);  }

@@ -70,8 +70,13 @@ Ntop::Ntop(char *appName) {
   start_time = last_modified_static_file_epoch = 0, epoch_buf[0] = '\0'; /* It will be initialized by start() */
   last_stats_reset = 0;
   ndpiReloadInProgress = false;
-  flowCallbacksReloadInProgress = true; /* Lazy, will be reloaded the first time this condition is evaluated */
+
+  /* Flow callbacks and flow alerts loaders */
+  flowCallbacksReloadInProgress = true, /* Lazy, will be reloaded the first time this condition is evaluated */
+    flowAlertsReloadInProgress = true;
   flow_callbacks_loader = NULL;
+  flow_alerts_loader = flow_alerts_loader_shadow;
+
   httpd = NULL, geo = NULL, mac_manufacturers = NULL;
   memset(&cpu_stats, 0, sizeof(cpu_stats));
   cpu_load = 0;
@@ -82,8 +87,6 @@ Ntop::Ntop(char *appName) {
 #endif
   privileges_dropped = false;
   can_send_icmp = Utils::isPingSupported();
-
-  flow_alerts_loader = new FlowAlertsLoader();
   
   for (int i = 0; i < CONST_MAX_NUM_NETWORKS; i++)
     local_network_names[i] = local_network_aliases[i] = NULL;
@@ -312,8 +315,9 @@ Ntop::~Ntop() {
   if(prefs)   { delete prefs; prefs = NULL;     }
   if(globals) { delete globals; globals = NULL; }
 
-  if(flow_callbacks_loader)  delete flow_callbacks_loader;
-  if(flow_alerts_loader)     delete flow_alerts_loader;
+  if(flow_callbacks_loader)     delete flow_callbacks_loader;
+  if(flow_alerts_loader)        delete flow_alerts_loader;
+  if(flow_alerts_loader_shadow) delete flow_alerts_loader_shadow;
   
 #ifdef __linux__
   if(inotify_fd > 0)  close(inotify_fd);
@@ -545,6 +549,7 @@ void Ntop::start() {
     get_HTTPserver()->startCaptiveServer();
 #endif
 
+  checkReloadFlowAlerts();
   checkReloadFlowCallbacks();
 
   for(int i=0; i<num_defined_interfaces; i++)
@@ -2583,7 +2588,7 @@ void Ntop::checkReloadFlowCallbacks() {
     FlowCallbacksLoader *old, *tmp_flow_callbacks_loader = new (std::nothrow) FlowCallbacksLoader();
 
     if(!tmp_flow_callbacks_loader) {
-      ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory for for callbacks.");
+      ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory for flow callbacks.");
       return;
     }
 
@@ -2607,8 +2612,30 @@ void Ntop::checkReloadFlowCallbacks() {
 
 /* ******************************************* */
 
+void Ntop::checkReloadFlowAlerts() {
+  if(flow_alerts_loader_shadow) {
+    delete flow_alerts_loader_shadow;
+    flow_alerts_loader_shadow = NULL;
+  }
+
+  if(flowAlertsReloadInProgress) {
+    flow_alerts_loader_shadow = flow_alerts_loader;
+    flow_alerts_loader = new (std::nothrow) FlowAlertsLoader();
+
+    if(!flow_alerts_loader) {
+      ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory for flow alerts.");
+      return;
+    }
+    
+    flowAlertsReloadInProgress = false;
+  }
+}
+
+/* ******************************************* */
+
 /* NOTE: the multiple isShutdown checks below are necessary to reduce the shutdown time */
 void Ntop::runHousekeepingTasks() {
+  checkReloadFlowAlerts();
   checkReloadFlowCallbacks();
 
   for(int i = 0; i < get_num_interfaces(); i++)
