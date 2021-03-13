@@ -25,6 +25,9 @@
 #include "ntop_includes.h"
 
 class TLSOldProtocolVersionAlert : public FlowAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
   TLSOldProtocolVersionAlert() : FlowAlert("alert_tls_old_protocol_version", alert_tls_old_protocol_version, alert_category_security) { };
   ~TLSOldProtocolVersionAlert() { };

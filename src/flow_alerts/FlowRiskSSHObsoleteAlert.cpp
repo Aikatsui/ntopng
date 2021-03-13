@@ -19,18 +19,16 @@
  *
  */
 
-#ifndef _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
-#define _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
+#include "flow_alerts_includes.h"
 
-#include "ntop_includes.h"
+ndpi_serializer* FlowRiskSSHObsoleteAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  ndpi_risk_enum risk_id = NDPI_SSH_OBSOLETE_SERVER_VERSION_OR_CIPHER; /* TODO also handle NDPI_SSH_OBSOLETE_CLIENT_VERSION_OR_CIPHER */
 
-class TLSCertificateSelfSignedAlert : public FlowAlert {
- private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  if(serializer == NULL)
+    return NULL;
 
- public:
-  TLSCertificateSelfSignedAlert() : FlowAlert("alert_tls_certificate_selfsigned", alert_tls_certificate_selfsigned, alert_category_security) { };
-  ~TLSCertificateSelfSignedAlert() { };
-};
+  ndpi_serialize_string_int32(serializer, "risk_id", risk_id);
 
-#endif /* _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_ */
+  return serializer;
+}
+

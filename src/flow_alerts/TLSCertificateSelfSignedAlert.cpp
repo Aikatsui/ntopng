@@ -19,18 +19,19 @@
  *
  */
 
-#ifndef _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
-#define _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
+#include "flow_callbacks_includes.h"
 
-#include "ntop_includes.h"
+ndpi_serializer* TLSCertificateSelfSignedAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  char *s;
+  
+  if(!serializer) return(NULL);
 
-class TLSCertificateSelfSignedAlert : public FlowAlert {
- private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  if((s = f->getTLSCertificateIssuerDN()) != NULL)
+    ndpi_serialize_string_string(serializer, "protos.tls.issuerDN", s);
 
- public:
-  TLSCertificateSelfSignedAlert() : FlowAlert("alert_tls_certificate_selfsigned", alert_tls_certificate_selfsigned, alert_category_security) { };
-  ~TLSCertificateSelfSignedAlert() { };
-};
+  if((s = f->getTLSCertificateSubjectDN()) != NULL)
+    ndpi_serialize_string_string(serializer, "protos.tls.subjectDN", s);
 
-#endif /* _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_ */
+  return(serializer);
+}
+

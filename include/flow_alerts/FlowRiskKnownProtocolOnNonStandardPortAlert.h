@@ -25,6 +25,9 @@
 #include "ntop_includes.h"
 
 class FlowRiskKnownProtocolOnNonStandardPortAlert : public FlowAlert {
+ private:
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
   FlowRiskKnownProtocolOnNonStandardPortAlert() : FlowAlert("alert_known_proto_on_non_std_port", alert_known_proto_on_non_std_port, alert_category_security) { };
   ~FlowRiskKnownProtocolOnNonStandardPortAlert() { };

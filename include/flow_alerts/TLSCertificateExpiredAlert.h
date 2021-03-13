@@ -25,6 +25,9 @@
 #include "ntop_includes.h"
 
 class TLSCertificateExpiredAlert : public FlowAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
   TLSCertificateExpiredAlert() : FlowAlert("alert_tls_certificate_expired", alert_tls_certificate_expired, alert_category_security) { };
   ~TLSCertificateExpiredAlert() { };

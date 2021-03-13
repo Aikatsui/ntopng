@@ -25,6 +25,9 @@
 #include "ntop_includes.h"
 
 class LongLivedFlowAlert : public FlowAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
   LongLivedFlowAlert() : FlowAlert("alert_longlived", alert_longlived, alert_category_security) { };
   ~LongLivedFlowAlert() { };

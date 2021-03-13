@@ -25,6 +25,9 @@
 #include "ntop_includes.h"
 
 class FlowRiskSSHObsoleteAlert : public FlowAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
   FlowRiskSSHObsoleteAlert() : FlowAlert("alert_ndpi_ssh_obsolete", alert_ndpi_ssh_obsolete, alert_category_security) { };
   ~FlowRiskSSHObsoleteAlert() { };

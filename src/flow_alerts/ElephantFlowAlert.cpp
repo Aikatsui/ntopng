@@ -19,18 +19,20 @@
  *
  */
 
-#ifndef _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
-#define _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
+#include "flow_alerts_includes.h"
 
-#include "ntop_includes.h"
+ndpi_serializer* ElephantFlowAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  u_int64_t l2r_th, r2l_th;
+  if(serializer == NULL)
+    return NULL;
 
-class TLSCertificateSelfSignedAlert : public FlowAlert {
- private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  f->fcb_get_elephant_th(&l2r_th, &r2l_th);
 
- public:
-  TLSCertificateSelfSignedAlert() : FlowAlert("alert_tls_certificate_selfsigned", alert_tls_certificate_selfsigned, alert_category_security) { };
-  ~TLSCertificateSelfSignedAlert() { };
-};
+  ndpi_serialize_string_uint64(serializer, "l2r_bytes", f->isLocalToRemote() ? f->get_bytes_cli2srv() : f->get_bytes_srv2cli());
+  ndpi_serialize_string_uint64(serializer, "r2l_bytes", f->isRemoteToLocal() ? f->get_bytes_cli2srv() : f->get_bytes_srv2cli());
+  ndpi_serialize_string_uint64(serializer, "l2r_threshold", l2r_th);
+  ndpi_serialize_string_uint64(serializer, "r2l_threshold", r2l_th);
 
-#endif /* _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_ */
+  return serializer;
+}
+

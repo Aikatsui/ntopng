@@ -19,18 +19,14 @@
  *
  */
 
-#ifndef _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
-#define _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
+#include "flow_alerts_includes.h"
 
-#include "ntop_includes.h"
+ndpi_serializer* FlowRiskBinaryApplicationTransferAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  if(serializer == NULL)
+    return NULL;
 
-class TLSCertificateSelfSignedAlert : public FlowAlert {
- private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  f->getHTTPInfo(serializer);
 
- public:
-  TLSCertificateSelfSignedAlert() : FlowAlert("alert_tls_certificate_selfsigned", alert_tls_certificate_selfsigned, alert_category_security) { };
-  ~TLSCertificateSelfSignedAlert() { };
-};
+  return serializer;
+}
 
-#endif /* _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_ */

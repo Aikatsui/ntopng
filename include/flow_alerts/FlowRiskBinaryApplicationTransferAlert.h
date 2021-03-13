@@ -25,6 +25,9 @@
 #include "ntop_includes.h"
 
 class FlowRiskBinaryApplicationTransferAlert : public FlowAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
   FlowRiskBinaryApplicationTransferAlert() : FlowAlert("alert_suspicious_file_transfer", alert_suspicious_file_transfer, alert_category_security) { };
   ~FlowRiskBinaryApplicationTransferAlert() { };

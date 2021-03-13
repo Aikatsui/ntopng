@@ -19,18 +19,17 @@
  *
  */
 
-#ifndef _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
-#define _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
+#include "flow_callbacks_includes.h"
 
-#include "ntop_includes.h"
+ndpi_serializer* LongLivedFlowAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  u_int64_t longlived_th;
+  if(serializer == NULL)
+    return NULL;
 
-class TLSCertificateSelfSignedAlert : public FlowAlert {
- private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  f->fcb_get_longlived_th(&longlived_th);
 
- public:
-  TLSCertificateSelfSignedAlert() : FlowAlert("alert_tls_certificate_selfsigned", alert_tls_certificate_selfsigned, alert_category_security) { };
-  ~TLSCertificateSelfSignedAlert() { };
-};
+  ndpi_serialize_string_uint64(serializer, "longlived.threshold", longlived_th);
 
-#endif /* _TLS_CERTIFICATE_SELFSIGNED_ALERT_H_ */
+  return serializer;
+}
+

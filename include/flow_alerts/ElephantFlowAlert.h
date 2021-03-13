@@ -25,6 +25,9 @@
 #include "ntop_includes.h"
 
 class ElephantFlowAlert : public FlowAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
   ElephantFlowAlert() : FlowAlert("alert_elephant_flow", alert_elephant_flow, alert_category_security) { };
   ~ElephantFlowAlert() { };
