@@ -391,7 +391,7 @@ typedef enum {
   alert_suspicious_tcp_syn_probing       = 18,
   alert_tcp_connection_issues            = 19,
   alert_tcp_connection_refused           = 20,
-  alert_tcp_severe_connection_issues     = 21,
+  alert_tcp_severe_connection_issues     = 21, /* No longer used, merged with alert_tcp_connection_issues */
   alert_tls_certificate_expired          = 22,
   alert_tls_certificate_mismatch         = 23,
   alert_tls_old_protocol_version         = 24,
@@ -401,13 +401,13 @@ typedef enum {
   alert_tls_certificate_selfsigned       = 28,
   alert_suspicious_file_transfer         = 29, /* TODO rename to alert_ndpi_binary_application_transfer */
   alert_known_proto_on_non_std_port      = 30, /* TODO rename to alert_ndpi_known_protocol_on_non_standard_port */
-  alert_flow_risk                        = 31,
+  alert_flow_risk                        = 31, /* No longer used, each risk is reported individually */
   alert_unexpected_dhcp_server           = 32,
   alert_unexpected_dns_server            = 33,
   alert_unexpected_smtp_server           = 34,
   alert_unexpected_ntp_server            = 35,
   alert_zero_tcp_window                  = 36,
-  alert_iec_invalid_transition           = 37,
+  alert_iec_invalid_transition           = 37, /* To be implemented */
   alert_remote_to_local_insecure_proto   = 38,
   alert_ndpi_url_possible_xss            = 39,
   alert_ndpi_url_possible_sql_injection  = 40,
@@ -425,7 +425,7 @@ typedef enum {
   alert_ndpi_unsafe_protocol             = 52,
   alert_ndpi_dns_suspicious_traffic      = 53,
   alert_ndpi_tls_missing_sni             = 54,
-  alert_iec_unexpected_type_id           = 55,
+  alert_iec_unexpected_type_id           = 55, /* To be implemented */
 
   MAX_DEFINED_FLOW_ALERT_TYPE, /* Leave it as last member */
   
