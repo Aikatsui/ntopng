@@ -22,7 +22,7 @@
 #ifndef _DEVICE_PROTOCOL_NOT_ALLOWED_ALERT_H_
 #define _DEVICE_PROTOCOL_NOT_ALLOWED_ALERT_H_
 
-#include "flow_alerts_includes.h"
+#include "ntop_includes.h"
 
 class DeviceProtocolNotAllowedAlert : public FlowAlert {
  private:
