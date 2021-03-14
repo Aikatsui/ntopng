@@ -19,7 +19,7 @@
  *
  */
 
-#include "flow_alerts_includes.h"
+#include "flow_alerts_include.h"
 
 ndpi_serializer* FlowRiskKnownProtocolOnNonStandardPortAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   if(serializer == NULL)
