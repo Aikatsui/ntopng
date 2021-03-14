@@ -154,7 +154,7 @@ void Host::initialize(Mac *_mac, u_int16_t _vlanId) {
   if((mac = _mac))
     mac->incUses();
 
-  if((vlan = iface->getVlan(_vlanId, true, true /* Inline call */)) != NULL)
+  if((vlan = iface->getVLAN(_vlanId, true, true /* Inline call */)) != NULL)
     vlan->incUses();
 
   num_resolve_attempts = 0, ssdpLocation = NULL;
@@ -1161,7 +1161,7 @@ void Host::luaUsedQuotas(lua_State* vm) {
 /* *************************************** */
 
 /* Splits a string in the format hostip@vlanid: *buf=hostip, *vlan_id=vlanid */
-void Host::splitHostVlan(const char *at_sign_str, char*buf, int bufsize, u_int16_t *vlan_id) {
+void Host::splitHostVLAN(const char *at_sign_str, char*buf, int bufsize, u_int16_t *vlan_id) {
   int size;
   const char *vlan_ptr = strchr(at_sign_str, '@');
 

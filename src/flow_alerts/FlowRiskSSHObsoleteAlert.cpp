@@ -19,7 +19,7 @@
  *
  */
 
-#include "flow_alerts_include.h"
+#include "flow_alerts_includes.h"
 
 ndpi_serializer* FlowRiskSSHObsoleteAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   ndpi_risk_enum risk_id = NDPI_SSH_OBSOLETE_SERVER_VERSION_OR_CIPHER; /* TODO also handle NDPI_SSH_OBSOLETE_CLIENT_VERSION_OR_CIPHER */

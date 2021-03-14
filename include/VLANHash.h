@@ -1,6 +1,6 @@
 /*
  *
- * (C) 2017-21 - ntop.org
+ * (C) 2013-21 - ntop.org
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,26 +19,23 @@
  *
  */
 
-#ifndef _VLAN_ADDRESS_TREE_H_
-#define _VLAN_ADDRESS_TREE_H_
+#ifndef _VLAN_HASH_H_
+#define _VLAN_HASH_H_
 
-class AddressTree;
-
-class VlanAddressTree {
- protected:
-  AddressTree **tree;
+#include "ntop_includes.h"
+ 
+class VLANHash : public GenericHash {
+ private:
+  Mutex m;
 
  public:
-  VlanAddressTree();
-  ~VlanAddressTree();
+  VLANHash(NetworkInterface *iface, u_int _num_hashes, u_int _max_hash_size);
 
-  bool addAddress(u_int16_t vlan_id, char *_net, const int16_t user_data = -1);
-  bool addAddresses(u_int16_t vlan_id, char *net, const int16_t user_data = -1);
+  VLAN* get(u_int16_t vlan_id, bool is_inline_call);
 
-  int16_t findAddress(u_int16_t vlan_id, int family, void *addr, u_int8_t *network_mask_bits = NULL);
-  int16_t findMac(u_int16_t vlan_id, const u_int8_t addr[]);
-
-  inline AddressTree *getAddressTree(u_int16_t vlan_id) { return tree[vlan_id]; };
+#ifdef VLAN_DEBUG
+  void printHash();
+#endif
 };
 
-#endif
+#endif /* _VLAN_HASH_H_ */

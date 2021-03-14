@@ -257,7 +257,7 @@ static int ntop_interface_has_vlans(lua_State* vm) {
   ntop->getTrace()->traceEvent(TRACE_DEBUG, "%s() called", __FUNCTION__);
 
   if(ntop_interface)
-    lua_pushboolean(vm, ntop_interface->hasSeenVlanTaggedPackets());
+    lua_pushboolean(vm, ntop_interface->hasSeenVLANTaggedPackets());
   else
     lua_pushboolean(vm, 0);
 

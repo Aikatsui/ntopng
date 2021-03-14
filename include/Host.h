@@ -64,7 +64,7 @@ class Host : public GenericHashEntry, public AlertableEntity {
   u_int32_t asn;
   AutonomousSystem *as;
   Country *country;
-  Vlan *vlan;
+  VLAN *vlan;
 
   OperatingSystem *os; /* Pointer to an instance of operating system, used internally to handle operating system statistics    */
   OSType os_type;      /* Operating system type, equivalent to os->get_os_type(), used by operating system setters and getters */
@@ -339,7 +339,7 @@ class Host : public GenericHashEntry, public AlertableEntity {
   inline u_int32_t getTotalNumUnreachableIncomingFlows() const { return stats->getTotalUnreachableNumFlowsAsServer(); };
   inline u_int32_t getTotalNumHostUnreachableOutgoingFlows() const { return stats->getTotalHostUnreachableNumFlowsAsClient(); };
   inline u_int32_t getTotalNumHostUnreachableIncomingFlows() const { return stats->getTotalHostUnreachableNumFlowsAsServer(); };
-  void splitHostVlan(const char *at_sign_str, char *buf, int bufsize, u_int16_t *vlan_id);
+  void splitHostVLAN(const char *at_sign_str, char *buf, int bufsize, u_int16_t *vlan_id);
   char* get_country(char *buf, u_int buf_len);
   char* get_city(char *buf, u_int buf_len);
   void get_geocoordinates(float *latitude, float *longitude);

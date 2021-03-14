@@ -23,7 +23,7 @@
 
 /* *************************************** */
 
-Vlan::Vlan(NetworkInterface *_iface, u_int16_t _vlan_id) : GenericHashEntry(_iface), GenericTrafficElement() {
+VLAN::VLAN(NetworkInterface *_iface, u_int16_t _vlan_id) : GenericHashEntry(_iface), GenericTrafficElement() {
   vlan_id = _vlan_id;
 
 #ifdef VLAN_DEBUG
@@ -35,20 +35,20 @@ Vlan::Vlan(NetworkInterface *_iface, u_int16_t _vlan_id) : GenericHashEntry(_ifa
 
 /* *************************************** */
 
-void Vlan::set_hash_entry_state_idle() {
+void VLAN::set_hash_entry_state_idle() {
 if(ntop->getPrefs()->is_idle_local_host_cache_enabled())
   serializeToRedis();
 }
 
 /* *************************************** */
 
-Vlan::~Vlan() {
+VLAN::~VLAN() {
   /* NOTE: ndpiStats is alredy freed by GenericTrafficElement */
 }
 
 /* *************************************** */
 
-void Vlan::lua(lua_State* vm, DetailsLevel details_level, bool asListElement) {
+void VLAN::lua(lua_State* vm, DetailsLevel details_level, bool asListElement) {
   lua_newtable(vm);
 
   lua_push_uint64_table_entry(vm, "vlan", vlan_id);
@@ -77,6 +77,6 @@ void Vlan::lua(lua_State* vm, DetailsLevel details_level, bool asListElement) {
 
 /* *************************************** */
 
-bool Vlan::equal(u_int16_t _vlan_id) {
+bool VLAN::equal(u_int16_t _vlan_id) {
   return(vlan_id == _vlan_id);
 }

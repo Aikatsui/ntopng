@@ -1,6 +1,6 @@
 /*
  *
- * (C) 2013-21 - ntop.org
+ * (C) 2017-21 - ntop.org
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,17 +19,26 @@
  *
  */
 
-#include "flow_alerts_includes.h"
+#ifndef _VLAN_ADDRESS_TREE_H_
+#define _VLAN_ADDRESS_TREE_H_
 
-ndpi_serializer* RemoteToLocalInsecureProtoAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+class AddressTree;
 
-  if (serializer) {
-    ndpi_serialize_string_int32(serializer, "ndpi_breed", f->get_protocol_breed());
-    ndpi_serialize_string_string(serializer, "ndpi_breed_name", f->get_protocol_breed_name());
-    ndpi_serialize_string_int32(serializer, "ndpi_category", f->get_protocol_category());
-    ndpi_serialize_string_string(serializer, "ndpi_category_name", f->get_protocol_category_name());
-  }
+class VLANAddressTree {
+ protected:
+  AddressTree **tree;
 
-  return serializer;
-}
+ public:
+  VLANAddressTree();
+  ~VLANAddressTree();
 
+  bool addAddress(u_int16_t vlan_id, char *_net, const int16_t user_data = -1);
+  bool addAddresses(u_int16_t vlan_id, char *net, const int16_t user_data = -1);
+
+  int16_t findAddress(u_int16_t vlan_id, int family, void *addr, u_int8_t *network_mask_bits = NULL);
+  int16_t findMac(u_int16_t vlan_id, const u_int8_t addr[]);
+
+  inline AddressTree *getAddressTree(u_int16_t vlan_id) { return tree[vlan_id]; };
+};
+
+#endif

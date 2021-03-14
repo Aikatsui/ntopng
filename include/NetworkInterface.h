@@ -34,8 +34,8 @@ class Host;
 class HostHash;
 class Mac;
 class MacHash;
-class Vlan;
-class VlanHash;
+class VLAN;
+class VLANHash;
 class AutonomousSystem;
 class AutonomousSystemHash;
 class OperatingSystem;
@@ -235,8 +235,8 @@ class NetworkInterface : public AlertableEntity {
   /* Countries */
   CountriesHash *countries_hash;
 
-  /* Vlans */
-  VlanHash *vlans_hash; /**< Hash used to store Vlans information. */
+  /* VLANs */
+  VLANHash *vlans_hash; /**< Hash used to store Vlans information. */
 
   /* Hosts */
   HostHash *hosts_hash; /**< Hash used to store hosts information. */
@@ -245,7 +245,7 @@ class NetworkInterface : public AlertableEntity {
   StatsManager  *statsManager;
   AlertsManager *alertsManager;
   HostPools *host_pools;
-  VlanAddressTree *hide_from_top, *hide_from_top_shadow;
+  VLANAddressTree *hide_from_top, *hide_from_top_shadow;
   bool has_vlan_packets, has_ebpf_events, has_mac_addresses, has_seen_dhcp_addresses;
   bool has_seen_pods, has_seen_containers, has_external_alerts;
   time_t last_pkt_rcvd, last_pkt_rcvd_remote, /* Meaningful only for ZMQ interfaces */
@@ -435,8 +435,8 @@ class NetworkInterface : public AlertableEntity {
   inline char* get_description() const         { return(ifDescription);                                };
   inline int  get_id() const                   { return(id);                                           };
   inline bool get_inline_interface()           { return inline_interface;  }
-  virtual bool hasSeenVlanTaggedPackets() const{ return(has_vlan_packets); }
-  inline void setSeenVlanTaggedPackets()       { has_vlan_packets = true;  }
+  virtual bool hasSeenVLANTaggedPackets() const{ return(has_vlan_packets); }
+  inline void setSeenVLANTaggedPackets()       { has_vlan_packets = true;  }
   inline bool hasSeenEBPFEvents() const        { return(has_ebpf_events);  }
   inline void setSeenEBPFEvents()              { has_ebpf_events = true;   }
   inline bool hasSeenMacAddresses() const      { return(has_mac_addresses); }
@@ -675,7 +675,7 @@ class NetworkInterface : public AlertableEntity {
   virtual void purgeIdle(time_t when, bool force_idle = false, bool full_scan = false);
   u_int purgeIdleFlows(bool force_idle, bool full_scan);
   u_int purgeIdleHosts(bool force_idlei, bool full_scan);
-  u_int purgeIdleMacsASesCountriesVlans(bool force_idle, bool full_scan);
+  u_int purgeIdleMacsASesCountriesVLANs(bool force_idle, bool full_scan);
 
   /* Overridden in ViewInterface.cpp */
   virtual u_int64_t getNumPackets();
@@ -706,7 +706,7 @@ class NetworkInterface : public AlertableEntity {
 
   virtual void runHousekeepingTasks();
   void runShutdownTasks();
-  Vlan* getVlan(u_int16_t vlanId, bool create_if_not_present, bool is_inline_call);
+  VLAN* getVLAN(u_int16_t vlanId, bool create_if_not_present, bool is_inline_call);
   AutonomousSystem *getAS(IpAddress *ipa, bool create_if_not_present, bool is_inline_call);
   OperatingSystem *getOS(OSType os, bool create_if_not_present, bool is_inline_call);
   Country* getCountry(const char *country_name, bool create_if_not_present, bool is_inline_call);

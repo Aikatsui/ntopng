@@ -20,7 +20,7 @@
  */
 
 #include "ntop_includes.h"
-#include "flow_alerts_include.h"
+#include "flow_alerts_includes.h"
 
 /* **************************************************** */
 

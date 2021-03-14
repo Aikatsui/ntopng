@@ -358,9 +358,9 @@ void ViewInterface::checkPointCounters(bool drops_only) {
 
 /* **************************************************** */
 
-bool ViewInterface::hasSeenVlanTaggedPackets() const {
+bool ViewInterface::hasSeenVLANTaggedPackets() const {
   for(u_int8_t s = 0; s < num_viewed_interfaces; s++) {
-    if(viewed_interfaces[s]->hasSeenVlanTaggedPackets())
+    if(viewed_interfaces[s]->hasSeenVLANTaggedPackets())
       return true;
   }
 

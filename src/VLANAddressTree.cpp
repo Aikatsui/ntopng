@@ -23,14 +23,14 @@
 
 /* **************************************** */
 
-VlanAddressTree::VlanAddressTree() {
+VLANAddressTree::VLANAddressTree() {
   tree = new (std::nothrow) AddressTree*[MAX_NUM_VLAN];
   memset(tree, 0, sizeof(AddressTree*) * MAX_NUM_VLAN);
 }
 
 /* **************************************** */
 
-VlanAddressTree::~VlanAddressTree() {
+VLANAddressTree::~VLANAddressTree() {
   for(int i = 0; i < MAX_NUM_VLAN; i++)
     if(tree[i])
       delete tree[i];
@@ -40,7 +40,7 @@ VlanAddressTree::~VlanAddressTree() {
 
 /* **************************************** */
 
-bool VlanAddressTree::addAddress(u_int16_t vlan_id, char *_net, const int16_t user_data) {
+bool VLANAddressTree::addAddress(u_int16_t vlan_id, char *_net, const int16_t user_data) {
   if(tree[vlan_id] || (tree[vlan_id] = new (std::nothrow) AddressTree()))
     return tree[vlan_id]->addAddress(_net, user_data);
 
@@ -49,7 +49,7 @@ bool VlanAddressTree::addAddress(u_int16_t vlan_id, char *_net, const int16_t us
 
 /* **************************************** */
 
-bool VlanAddressTree::addAddresses(u_int16_t vlan_id, char *net, const int16_t user_data) {
+bool VLANAddressTree::addAddresses(u_int16_t vlan_id, char *net, const int16_t user_data) {
   if(tree[vlan_id] || (tree[vlan_id] = new (std::nothrow) AddressTree()))
     return tree[vlan_id]->addAddresses(net, user_data);
 
@@ -58,14 +58,14 @@ bool VlanAddressTree::addAddresses(u_int16_t vlan_id, char *net, const int16_t u
 
 /* **************************************** */
 
-int16_t VlanAddressTree::findAddress(u_int16_t vlan_id, int family, void *addr, u_int8_t *network_mask_bits) {
+int16_t VLANAddressTree::findAddress(u_int16_t vlan_id, int family, void *addr, u_int8_t *network_mask_bits) {
   if(! tree[vlan_id]) return -1;
   return tree[vlan_id]->findAddress(family, addr, network_mask_bits);
 }
 
 /* **************************************** */
 
-int16_t VlanAddressTree::findMac(u_int16_t vlan_id, const u_int8_t addr[]) {
+int16_t VLANAddressTree::findMac(u_int16_t vlan_id, const u_int8_t addr[]) {
   if(! tree[vlan_id]) return -1;
   return tree[vlan_id]->findMac(addr);
 }

@@ -1331,7 +1331,7 @@ void Flow::hosts_periodic_stats_update(NetworkInterface *iface, Host *cli_host, 
   if(cli_host && srv_host) {
     bool cli_and_srv_in_same_subnet = false;
     bool cli_and_srv_in_same_country = false;
-    Vlan *vl;
+    VLAN *vl;
     int16_t cli_network_id = cli_host->get_local_network_id();
     int16_t srv_network_id = srv_host->get_local_network_id();
     int16_t stats_protocol = getStatsProtocol(); /* The protocol (among ndpi master_ and app_) that is chosen to increase stats */
@@ -1340,12 +1340,12 @@ void Flow::hosts_periodic_stats_update(NetworkInterface *iface, Host *cli_host, 
     if(cli_network_id >= 0 && (cli_network_id == srv_network_id))
       cli_and_srv_in_same_subnet = true;
 
-    if(iface && (vl = iface->getVlan(vlanId, false, false /* NOT an inline call */))) {
+    if(iface && (vl = iface->getVLAN(vlanId, false, false /* NOT an inline call */))) {
       /* Note: source and destination hosts have, by definition, the same VLAN so the increase is done only one time. */
       /* Note: vl will never be null as we're in a flow with that vlan. Hence, it is guaranteed that at least
 	 two hosts exists for that vlan and that any purge attempt will be prevented. */
 #ifdef VLAN_DEBUG
-      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Increasing Vlan %u stats", vlanId);
+      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Increasing VLAN %u stats", vlanId);
 #endif
       vl->incStats(tv->tv_sec, stats_protocol,
 		   partial->get_cli2srv_packets(), partial->get_cli2srv_bytes(),

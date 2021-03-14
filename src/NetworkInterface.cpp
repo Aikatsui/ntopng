@@ -857,7 +857,7 @@ Flow* NetworkInterface::getFlow(Mac *srcMac, Mac *dstMac,
     return(NULL);
 
   if(vlan_id != 0)
-    setSeenVlanTaggedPackets();
+    setSeenVLANTaggedPackets();
 
   if((srcMac && Utils::macHash(srcMac->get_mac()) != 0)
      || (dstMac && Utils::macHash(dstMac->get_mac()) != 0))
@@ -1705,7 +1705,7 @@ void NetworkInterface::purgeIdle(time_t when, bool force_idle, bool full_scan) {
     ntop->getTrace()->traceEvent(TRACE_DEBUG, "Purged %u/%u idle hosts on %s",
 				 m, getNumHosts(), ifname);
 
-  if((o = purgeIdleMacsASesCountriesVlans(force_idle, full_scan)) > 0)
+  if((o = purgeIdleMacsASesCountriesVLANs(force_idle, full_scan)) > 0)
     ntop->getTrace()->traceEvent(TRACE_DEBUG, "Purged %u idle ASs, MAC, Countries, VLANs... on %s",
 				 o, ifname);
 
@@ -3246,7 +3246,7 @@ struct os_find_info {
 
 struct vlan_find_info {
   u_int16_t vlan_id;
-  Vlan *vl;
+  VLAN *vl;
 };
 
 /* **************************************************** */
@@ -3355,7 +3355,7 @@ static bool find_country(GenericHashEntry *he, void *user_data, bool *matched) {
 
 static bool find_vlan_by_vlan_id(GenericHashEntry *he, void *user_data, bool *matched) {
   struct vlan_find_info *info = (struct vlan_find_info*)user_data;
-  Vlan *vl = (Vlan*)he;
+  VLAN *vl = (VLAN*)he;
 
   if((info->vl == NULL) && info->vlan_id == vl->get_vlan_id()) {
     info->vl = vl;
@@ -3544,7 +3544,7 @@ struct flowHostRetrieveList {
   /* Value */
   Host *hostValue;
   Mac *macValue;
-  Vlan *vlanValue;
+  VLAN *vlanValue;
   AutonomousSystem *asValue;
   OperatingSystem *osValue;
   Country *countryVal;
@@ -4289,7 +4289,7 @@ static bool country_search_walker(GenericHashEntry *he, void *user_data, bool *m
 
 static bool vlan_search_walker(GenericHashEntry *he, void *user_data, bool *matched) {
   struct flowHostRetriever *r = (struct flowHostRetriever*)user_data;
-  Vlan *vl = (Vlan*)he;
+  VLAN *vl = (VLAN*)he;
 
   if(r->actNumEntries >= r->maxNumEntries)
     return(true); /* Limit reached */
@@ -5314,7 +5314,7 @@ u_int NetworkInterface::purgeIdleHosts(bool force_idle, bool full_scan) {
 
 /* **************************************************** */
 
-u_int NetworkInterface::purgeIdleMacsASesCountriesVlans(bool force_idle, bool full_scan) {
+u_int NetworkInterface::purgeIdleMacsASesCountriesVLANs(bool force_idle, bool full_scan) {
   time_t last_packet_time = getTimeLastPktRcvd();
 
   if(!force_idle && last_packet_time < next_idle_other_purge)
@@ -5500,7 +5500,7 @@ void NetworkInterface::lua(lua_State *vm) {
   lua_push_bool_table_entry(vm, "isFlowDumpRunning", db != NULL);
   lua_push_uint64_table_entry(vm, "seen.last", getTimeLastPktRcvd());
   lua_push_bool_table_entry(vm, "inline", get_inline_interface());
-  lua_push_bool_table_entry(vm, "vlan",     hasSeenVlanTaggedPackets());
+  lua_push_bool_table_entry(vm, "vlan",     hasSeenVLANTaggedPackets());
   lua_push_bool_table_entry(vm, "has_macs", hasSeenMacAddresses());
   lua_push_bool_table_entry(vm, "has_seen_dhcp_addresses", hasSeenDHCPAddresses());
   /* Note: source MAC is now used to get traffic direction when not areTrafficDirectionsSupported() */
@@ -5746,8 +5746,8 @@ Mac* NetworkInterface::getMac(u_int8_t _mac[6], bool create_if_not_present, bool
 
 /* **************************************************** */
 
-Vlan* NetworkInterface::getVlan(u_int16_t vlanId, bool create_if_not_present, bool isInlineCall) {
-  Vlan *ret = NULL;
+VLAN* NetworkInterface::getVLAN(u_int16_t vlanId, bool create_if_not_present, bool isInlineCall) {
+  VLAN *ret = NULL;
 
   if(!vlans_hash) return(NULL);
 
@@ -5759,7 +5759,7 @@ Vlan* NetworkInterface::getVlan(u_int16_t vlanId, bool create_if_not_present, bo
       return(NULL);
 
     try {
-      if((ret = new Vlan(this, vlanId)) != NULL) {
+      if((ret = new VLAN(this, vlanId)) != NULL) {
 	if(!vlans_hash->add(ret,
 			    !isInlineCall /* Lock only if not inline, if inline there is no need to lock as we are sequential with the purgeIdle */)) {
           /* Note: this should never happen as we are checking hasEmptyRoom() */
@@ -6299,7 +6299,7 @@ void NetworkInterface::allocateStructures() {
 	  ases_hash      = new AutonomousSystemHash(this, ndpi_min(num_hashes, 4096), 32768);
     oses_hash      = new OperatingSystemHash(this, ndpi_min(num_hashes, 1024), 32768);
 	  countries_hash = new CountriesHash(this, ndpi_min(num_hashes, 1024), 32768);
-	  vlans_hash     = new VlanHash(this, 1024, 2048);
+	  vlans_hash     = new VLANHash(this, 1024, 2048);
 	  macs_hash      = new MacHash(this, ndpi_min(num_hashes, 8192), 32768);
       }
     }
@@ -6492,11 +6492,11 @@ static bool host_reload_hide_from_top(GenericHashEntry *host, void *user_data, b
 void NetworkInterface::reloadHideFromTop(bool refreshHosts) {
   char kname[64];
   char **networks = NULL;
-  VlanAddressTree *new_tree;
+  VLANAddressTree *new_tree;
 
   if(!ntop->getRedis()) return;
 
-  if((new_tree = new (std::nothrow) VlanAddressTree) == NULL) {
+  if((new_tree = new (std::nothrow) VLANAddressTree) == NULL) {
     ntop->getTrace()->traceEvent(TRACE_ERROR, "Not enough memory");
     return;
   }
@@ -6538,7 +6538,7 @@ void NetworkInterface::reloadHideFromTop(bool refreshHosts) {
 /* **************************************** */
 
 bool NetworkInterface::isHiddenFromTop(Host *host) {
-  VlanAddressTree *vlan_addrtree = hide_from_top;
+  VLANAddressTree *vlan_addrtree = hide_from_top;
 
   if(!vlan_addrtree) return false;
 
@@ -6748,7 +6748,7 @@ int NetworkInterface::getActiveVLANList(lua_State* vm,
 					DetailsLevel details_level) {
   struct flowHostRetriever retriever;
 
-  if(! hasSeenVlanTaggedPackets()) {
+  if(! hasSeenVLANTaggedPackets()) {
     /* VLAN statistics are calculated only if VLAN tagged traffic has been seen */
     lua_pushnil(vm);
     return 0;
@@ -6765,14 +6765,14 @@ int NetworkInterface::getActiveVLANList(lua_State* vm,
 
   if(a2zSortOrder) {
     for(int i = toSkip, num = 0; i<(int)retriever.actNumEntries && num < (int)maxHits; i++, num++) {
-      Vlan *vl = retriever.elems[i].vlanValue;
+      VLAN *vl = retriever.elems[i].vlanValue;
 
       vl->lua(vm, details_level, false);
       lua_rawseti(vm, -2, num + 1); /* Must use integer keys to preserve and iterate inorder with ipairs */
     }
   } else {
     for(int i = (retriever.actNumEntries-1-toSkip), num = 0; i >= 0 && num < (int)maxHits; i--, num++) {
-      Vlan *vl = retriever.elems[i].vlanValue;
+      VLAN *vl = retriever.elems[i].vlanValue;
 
       vl->lua(vm, details_level, false);
       lua_rawseti(vm, -2, num + 1);

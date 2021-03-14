@@ -12,30 +12,49 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ *x
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
 
-#ifndef _VLAN_HASH_H_
-#define _VLAN_HASH_H_
-
 #include "ntop_includes.h"
- 
-class VlanHash : public GenericHash {
- private:
-  Mutex m;
 
- public:
-  VlanHash(NetworkInterface *iface, u_int _num_hashes, u_int _max_hash_size);
+/* ************************************ */
 
-  Vlan* get(u_int16_t vlan_id, bool is_inline_call);
+VLANHash::VLANHash(NetworkInterface *_iface, u_int _num_hashes, u_int _max_hash_size) :
+  GenericHash(_iface, _num_hashes, _max_hash_size, "VLANHash") {
+  ;
+}
 
-#ifdef VLAN_DEBUG
-  void printHash();
-#endif
-};
+/* ************************************ */
 
-#endif /* _VLAN_HASH_H_ */
+VLAN* VLANHash::get(u_int16_t _vlan_id, bool is_inline_call) {
+  u_int32_t hash = _vlan_id;
+
+  hash %= num_hashes;
+
+  if(table[hash] == NULL) {
+    return(NULL);
+  } else {
+    VLAN *head;
+
+    if(!is_inline_call)
+      locks[hash]->rdlock(__FILE__, __LINE__);
+
+    head = (VLAN*)table[hash];
+
+    while(head != NULL) {
+      if((!head->idle()) && head->equal(_vlan_id))
+	break;
+      else
+	head = (VLAN*)head->next();
+    }
+
+    if(!is_inline_call)
+      locks[hash]->unlock(__FILE__, __LINE__);
+    
+    return(head);
+  }
+}

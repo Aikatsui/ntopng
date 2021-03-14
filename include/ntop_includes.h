@@ -204,7 +204,7 @@ using namespace std;
 #include "MonitoredGauge.h"
 #include "MDNS.h"
 #include "AddressTree.h"
-#include "VlanAddressTree.h"
+#include "VLANAddressTree.h"
 #include "BroadcastDomains.h"
 #include "Cardinality.h"
 #include "PeerStats.h"
@@ -375,7 +375,7 @@ using namespace std;
 #endif
 
 #include "Geolocation.h"
-#include "Vlan.h"
+#include "VLAN.h"
 #include "AutonomousSystem.h"
 #include "OperatingSystem.h"
 #include "Country.h"
@@ -394,7 +394,7 @@ using namespace std;
 #include "IEC104Stats.h"
 #include "Flow.h"
 #include "FlowHash.h"
-#include "VlanHash.h"
+#include "VLANHash.h"
 #include "AutonomousSystemHash.h"
 #include "OperatingSystemHash.h"
 #include "CountriesHash.h"

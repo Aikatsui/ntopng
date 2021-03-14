@@ -24,7 +24,7 @@
 
 #include "ntop_includes.h"
 
-class Vlan : public GenericHashEntry, public GenericTrafficElement, public SerializableElement {
+class VLAN : public GenericHashEntry, public GenericTrafficElement, public SerializableElement {
  private:
   u_int16_t vlan_id;
   
@@ -39,8 +39,8 @@ class Vlan : public GenericHashEntry, public GenericTrafficElement, public Seria
   }
 
  public:
-  Vlan(NetworkInterface *_iface, u_int16_t _vlan_id);
-  ~Vlan();
+  VLAN(NetworkInterface *_iface, u_int16_t _vlan_id);
+  ~VLAN();
 
   void set_hash_entry_state_idle();
 

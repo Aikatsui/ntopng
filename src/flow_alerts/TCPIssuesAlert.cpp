@@ -19,7 +19,7 @@
  *
  */
 
-#include "flow_alerts_include.h"
+#include "flow_alerts_includes.h"
 
 ndpi_serializer* TCPIssuesAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   
