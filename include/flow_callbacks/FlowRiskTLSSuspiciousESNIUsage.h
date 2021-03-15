@@ -24,7 +24,7 @@
 
 #include "ntop_includes.h"
 
-class FlowRiskTLSSuspiciousESNIUsage : public FlowRisk {
+class FlowRiskTLSSuspiciousESNIUsage : public FlowRiskTLS {
  private:
   ndpi_risk_enum handledRisk()       { return NDPI_TLS_SUSPICIOUS_ESNI_USAGE;       }
   FlowAlertType getAlertType() const { return alert_ndpi_tls_suspicious_esni_usage; }
@@ -36,7 +36,7 @@ class FlowRiskTLSSuspiciousESNIUsage : public FlowRisk {
   */
 
  public:
-  FlowRiskTLSSuspiciousESNIUsage() : FlowRisk() {};
+  FlowRiskTLSSuspiciousESNIUsage() : FlowRiskTLS() {};
   ~FlowRiskTLSSuspiciousESNIUsage() {};
 
   std::string getName()        const { return(std::string("ndpi_tls_suspicious_esni_usage")); }

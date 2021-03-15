@@ -24,7 +24,7 @@
 
 #include "ntop_includes.h"
 
-class FlowRiskTLSMissingSNI : public FlowRisk {
+class FlowRiskTLSMissingSNI : public FlowRiskTLS {
  private:
   ndpi_risk_enum handledRisk()       { return NDPI_TLS_MISSING_SNI;       }
   FlowAlertType getAlertType() const { return alert_ndpi_tls_missing_sni; }
@@ -36,7 +36,7 @@ class FlowRiskTLSMissingSNI : public FlowRisk {
   */
 
  public:
-  FlowRiskTLSMissingSNI() : FlowRisk() {};
+  FlowRiskTLSMissingSNI() : FlowRiskTLS() {};
   ~FlowRiskTLSMissingSNI() {};
 
   std::string getName()        const { return(std::string("ndpi_tls_missing_sni")); }

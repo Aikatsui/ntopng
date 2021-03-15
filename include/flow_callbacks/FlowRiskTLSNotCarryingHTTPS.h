@@ -24,7 +24,7 @@
 
 #include "ntop_includes.h"
 
-class FlowRiskTLSNotCarryingHTTPS : public FlowRisk {
+class FlowRiskTLSNotCarryingHTTPS : public FlowRiskTLS {
  private:
   ndpi_risk_enum handledRisk()       { return NDPI_TLS_NOT_CARRYING_HTTPS;       }
   FlowAlertType getAlertType() const { return alert_ndpi_tls_not_carrying_https; }
@@ -36,7 +36,7 @@ class FlowRiskTLSNotCarryingHTTPS : public FlowRisk {
   */
 
  public:
-  FlowRiskTLSNotCarryingHTTPS() : FlowRisk() {};
+  FlowRiskTLSNotCarryingHTTPS() : FlowRiskTLS() {};
   ~FlowRiskTLSNotCarryingHTTPS() {};
 
   std::string getName()        const { return(std::string("ndpi_tls_not_carrying_https")); }

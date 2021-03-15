@@ -40,6 +40,7 @@
 #include "flow_callbacks/FlowRiskSMBInsecureVersion.h"
 #include "flow_callbacks/FlowRiskSSHObsolete.h"
 #include "flow_callbacks/FlowRiskSuspiciousDGADomain.h"
+#include "flow_callbacks/FlowRiskTLS.h"
 #include "flow_callbacks/FlowRiskTLSMissingSNI.h"
 #include "flow_callbacks/FlowRiskTLSNotCarryingHTTPS.h"
 #include "flow_callbacks/FlowRiskTLSSuspiciousESNIUsage.h"
