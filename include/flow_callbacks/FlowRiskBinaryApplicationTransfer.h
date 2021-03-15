@@ -26,7 +26,8 @@
 
 class FlowRiskBinaryApplicationTransfer : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_BINARY_APPLICATION_TRANSFER; }
+  ndpi_risk_enum handledRisk()       { return NDPI_BINARY_APPLICATION_TRANSFER; };
+  FlowAlertType getAlertType() const { return alert_suspicious_file_transfer;   };
 
   /* Overriding the default scores */
   u_int16_t getClientScore() { return 200; }
@@ -43,7 +44,6 @@ class FlowRiskBinaryApplicationTransfer : public FlowRisk {
 
   std::string getName()        const { return(std::string("suspicious_file_transfer")); }
   ScriptCategory getCategory() const { return script_category_security;                 }
-  FlowAlertType getAlertType() const { return alert_suspicious_file_transfer;           }
 };
 
 #endif

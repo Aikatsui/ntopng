@@ -23,7 +23,6 @@
 #include "flow_callbacks_includes.h"
 
 void DeviceProtocolNotAllowed::protocolDetected(Flow *f) {
-
   if (!f->isDeviceAllowedProtocol()) {
     u_int16_t c_score, s_score, f_score = 80;
     const IpAddress *attacker, *victim;
@@ -48,7 +47,7 @@ void DeviceProtocolNotAllowed::protocolDetected(Flow *f) {
      * set_victim(victim)
      */
 
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlert(alert_device_protocol_not_allowed, getSeverity(), f_score, c_score, s_score);
   }
 }
 

@@ -26,7 +26,8 @@
 
 class FlowRiskUnsafeProtocol : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_UNSAFE_PROTOCOL; }
+  ndpi_risk_enum handledRisk()       { return NDPI_UNSAFE_PROTOCOL;       }
+  FlowAlertType getAlertType() const { return alert_ndpi_unsafe_protocol; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -40,7 +41,6 @@ class FlowRiskUnsafeProtocol : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_unsafe_protocol")); }
   ScriptCategory getCategory() const { return script_category_security;             }
-  FlowAlertType getAlertType() const { return alert_ndpi_unsafe_protocol;           }
 };
 
 #endif

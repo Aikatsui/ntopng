@@ -81,7 +81,6 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new IECInvalidTransition()))                        cb_all[fcb->getName()] = fcb;
   if((fcb = new LowGoodputFlow()))                              cb_all[fcb->getName()] = fcb;
   if((fcb = new NotPurged()))                                   cb_all[fcb->getName()] = fcb;  
-  if((fcb = new PotentiallyDangerousFlow()))                    cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToLocalInsecureProto()))                  cb_all[fcb->getName()] = fcb;
   if((fcb = new RemoteToRemote()))                              cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPZeroWindow()))                               cb_all[fcb->getName()] = fcb;
@@ -98,6 +97,7 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new DataExfiltration()))                            cb_all[fcb->getName()] = fcb;
   if((fcb = new DNSDataExfiltration()))                         cb_all[fcb->getName()] = fcb;
   if((fcb = new ElephantFlow()))                                cb_all[fcb->getName()] = fcb;
+  if((fcb = new PotentiallyDangerous()))                        cb_all[fcb->getName()] = fcb;
   if((fcb = new ExternalAlertCheckPro()))                       cb_all[fcb->getName()] = fcb;
   if((fcb = new InvalidDNSQuery()))                             cb_all[fcb->getName()] = fcb;
   if((fcb = new LongLivedFlow()))                               cb_all[fcb->getName()] = fcb;

@@ -52,7 +52,7 @@ void BlacklistedCountry::protocolDetected(Flow *f) {
     f->fcb_set_blacklisted(false /* is server */), s_score += 60, c_score += 10;
 
   if(c_score || s_score)
-    f->triggerAlert(this, getSeverity(), c_score + s_score, c_score, s_score);
+    f->triggerAlert(alert_blacklisted_country, getSeverity(), c_score + s_score, c_score, s_score);
 }
 
 /* ***************************************************** */

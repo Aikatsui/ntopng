@@ -26,7 +26,8 @@
 
 class FlowRiskURLPossibleRCEInjection : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_URL_POSSIBLE_RCE_INJECTION; }
+  ndpi_risk_enum handledRisk()       { return NDPI_URL_POSSIBLE_RCE_INJECTION;       }
+  FlowAlertType getAlertType() const { return alert_ndpi_url_possible_rce_injection; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -40,7 +41,6 @@ class FlowRiskURLPossibleRCEInjection : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_url_possible_rce_injection")); }
   ScriptCategory getCategory() const { return script_category_security;                        }
-  FlowAlertType getAlertType() const { return alert_ndpi_url_possible_rce_injection;           }
 };
 
 #endif

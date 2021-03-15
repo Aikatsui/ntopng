@@ -28,6 +28,7 @@ class FlowRiskSSHObsolete : public FlowRisk {
  private:
   /* TODO also handle NDPI_SSH_OBSOLETE_CLIENT_VERSION_OR_CIPHER */
   ndpi_risk_enum handledRisk() { return NDPI_SSH_OBSOLETE_SERVER_VERSION_OR_CIPHER; }
+  FlowAlertType getAlertType() const { return alert_ndpi_ssh_obsolete;              }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -42,7 +43,6 @@ class FlowRiskSSHObsolete : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_ssh_obsolete")); }
   ScriptCategory getCategory() const { return script_category_security;          }
-  FlowAlertType getAlertType() const { return alert_ndpi_ssh_obsolete;           }
 };
 
 #endif

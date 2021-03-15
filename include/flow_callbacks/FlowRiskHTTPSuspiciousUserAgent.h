@@ -26,7 +26,8 @@
 
 class FlowRiskHTTPSuspiciousUserAgent : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_HTTP_SUSPICIOUS_USER_AGENT; }
+  ndpi_risk_enum handledRisk() { return NDPI_HTTP_SUSPICIOUS_USER_AGENT;             }
+  FlowAlertType getAlertType() const { return alert_ndpi_http_suspicious_user_agent; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -39,8 +40,6 @@ class FlowRiskHTTPSuspiciousUserAgent : public FlowRisk {
   ~FlowRiskHTTPSuspiciousUserAgent() {};
 
   std::string getName()        const { return(std::string("ndpi_http_suspicious_user_agent")); }
-  ScriptCategory getCategory() const { return script_category_security;              }
-  FlowAlertType getAlertType() const { return alert_ndpi_http_suspicious_user_agent; }
-};
+  ScriptCategory getCategory() const { return script_category_security;              }};
 
 #endif

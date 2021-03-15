@@ -26,7 +26,8 @@
 
 class FlowRiskSuspiciousDGADomain : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_SUSPICIOUS_DGA_DOMAIN; }
+  ndpi_risk_enum handledRisk()       { return NDPI_SUSPICIOUS_DGA_DOMAIN;       }
+  FlowAlertType getAlertType() const { return alert_ndpi_suspicious_dga_domain; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -40,7 +41,6 @@ class FlowRiskSuspiciousDGADomain : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_suspicious_dga_domain")); }
   ScriptCategory getCategory() const { return script_category_security;                   }
-  FlowAlertType getAlertType() const { return alert_ndpi_suspicious_dga_domain;           }
 };
 
 #endif

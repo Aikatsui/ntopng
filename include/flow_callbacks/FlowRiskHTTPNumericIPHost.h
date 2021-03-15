@@ -26,8 +26,8 @@
 
 class FlowRiskHTTPNumericIPHost : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_HTTP_NUMERIC_IP_HOST; }
-
+  ndpi_risk_enum handledRisk()       { return NDPI_HTTP_NUMERIC_IP_HOST;       };
+  FlowAlertType getAlertType() const { return alert_ndpi_http_numeric_ip_host; };
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
   u_int16_t getServerScore() { return 50; }
@@ -39,8 +39,7 @@ class FlowRiskHTTPNumericIPHost : public FlowRisk {
   ~FlowRiskHTTPNumericIPHost() {};
 
   std::string getName()        const { return(std::string("ndpi_http_numeric_ip_host")); }
-  ScriptCategory getCategory() const { return script_category_security;              }
-  FlowAlertType getAlertType() const { return alert_ndpi_http_numeric_ip_host;       }
+  ScriptCategory getCategory() const { return script_category_security;                  }
 };
 
 #endif

@@ -26,7 +26,8 @@
 
 class FlowRiskTLSSuspiciousESNIUsage : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_TLS_SUSPICIOUS_ESNI_USAGE; }
+  ndpi_risk_enum handledRisk()       { return NDPI_TLS_SUSPICIOUS_ESNI_USAGE;       }
+  FlowAlertType getAlertType() const { return alert_ndpi_tls_suspicious_esni_usage; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -40,7 +41,6 @@ class FlowRiskTLSSuspiciousESNIUsage : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_tls_suspicious_esni_usage")); }
   ScriptCategory getCategory() const { return script_category_security;                       }
-  FlowAlertType getAlertType() const { return alert_ndpi_tls_suspicious_esni_usage;           }
 };
 
 #endif

@@ -26,7 +26,8 @@
 
 class FlowRiskTLSNotCarryingHTTPS : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_TLS_NOT_CARRYING_HTTPS; }
+  ndpi_risk_enum handledRisk()       { return NDPI_TLS_NOT_CARRYING_HTTPS;       }
+  FlowAlertType getAlertType() const { return alert_ndpi_tls_not_carrying_https; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -40,7 +41,6 @@ class FlowRiskTLSNotCarryingHTTPS : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_tls_not_carrying_https")); }
   ScriptCategory getCategory() const { return script_category_security;                    }
-  FlowAlertType getAlertType() const { return alert_ndpi_tls_not_carrying_https;           }
 };
 
 #endif

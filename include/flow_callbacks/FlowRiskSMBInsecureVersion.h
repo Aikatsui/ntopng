@@ -26,7 +26,8 @@
 
 class FlowRiskSMBInsecureVersion : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_SMB_INSECURE_VERSION; }
+  ndpi_risk_enum handledRisk() { return NDPI_SMB_INSECURE_VERSION;             }
+  FlowAlertType getAlertType() const { return alert_ndpi_smb_insecure_version; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -40,7 +41,6 @@ class FlowRiskSMBInsecureVersion : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_smb_insecure_version")); }
   ScriptCategory getCategory() const { return script_category_security;                  }
-  FlowAlertType getAlertType() const { return alert_ndpi_smb_insecure_version;           }
 };
 
 #endif

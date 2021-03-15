@@ -26,7 +26,8 @@
 
 class FlowRiskMalformedPacket : public FlowRisk {
  private:
-  ndpi_risk_enum handledRisk() { return NDPI_MALFORMED_PACKET; }
+  ndpi_risk_enum handledRisk() { return NDPI_MALFORMED_PACKET;             }
+  FlowAlertType getAlertType() const { return alert_ndpi_malformed_packet; }
 
   /* Uncomment to override the default scores:
   u_int16_t getClientScore() { return 50; }
@@ -40,7 +41,6 @@ class FlowRiskMalformedPacket : public FlowRisk {
 
   std::string getName()        const { return(std::string("ndpi_malformed_packet")); }
   ScriptCategory getCategory() const { return script_category_security;              }
-  FlowAlertType getAlertType() const { return alert_ndpi_malformed_packet;           }
 };
 
 #endif
