@@ -24,9 +24,9 @@
 
 #include "ntop_includes.h"
 
-class FlowRiskTLSNotCarryingHTTPSAlert : public FlowAlert {
+class FlowRiskTLSNotCarryingHTTPSAlert : public FlowRiskTLSAlert {
  public:
-  FlowRiskTLSNotCarryingHTTPSAlert() : FlowAlert("alert_ndpi_tls_not_carrying_https", alert_ndpi_tls_not_carrying_https, alert_category_security) { };
+  FlowRiskTLSNotCarryingHTTPSAlert() : FlowRiskTLSAlert("alert_ndpi_tls_not_carrying_https", alert_ndpi_tls_not_carrying_https, alert_category_security) { };
   ~FlowRiskTLSNotCarryingHTTPSAlert() { };
 };
 

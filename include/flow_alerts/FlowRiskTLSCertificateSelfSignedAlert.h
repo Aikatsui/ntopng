@@ -19,14 +19,18 @@
  *
  */
 
-#include "flow_callbacks_includes.h"
+#ifndef _FR_TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
+#define _FR_TLS_CERTIFICATE_SELFSIGNED_ALERT_H_
 
-ndpi_serializer* TLSOldProtocolVersionAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
-  if(serializer == NULL)
-    return NULL;
+#include "ntop_includes.h"
 
-  ndpi_serialize_string_int32(serializer, "tls_version", f->getTLSVersion());
-  
-  return serializer;
-}
+class FlowRiskTLSCertificateSelfSignedAlert : public FlowRiskTLSAlert {
+ private:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
+ public:
+  FlowRiskTLSCertificateSelfSignedAlert() : FlowRiskTLSAlert("alert_tls_certificate_selfsigned", alert_tls_certificate_selfsigned, alert_category_security) { };
+  ~FlowRiskTLSCertificateSelfSignedAlert() { };
+};
+
+#endif /* _FR_TLS_CERTIFICATE_SELFSIGNED_ALERT_H_ */

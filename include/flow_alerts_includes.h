@@ -51,6 +51,7 @@
 #include "flow_alerts/FlowRiskSMBInsecureVersionAlert.h"
 #include "flow_alerts/FlowRiskSSHObsoleteAlert.h"
 #include "flow_alerts/FlowRiskSuspiciousDGADomainAlert.h"
+#include "flow_alerts/FlowRiskTLSAlert.h"
 #include "flow_alerts/FlowRiskTLSMissingSNIAlert.h"
 #include "flow_alerts/FlowRiskTLSNotCarryingHTTPSAlert.h"
 #include "flow_alerts/FlowRiskTLSSuspiciousESNIUsageAlert.h"
@@ -63,12 +64,12 @@
 
 
 /* Pro Alerts - do NOT use #ifdef as alerts must always be available */
-#include "flow_alerts/TLSUnsafeCiphersAlert.h"
-#include "flow_alerts/TLSCertificateExpiredAlert.h"
-#include "flow_alerts/TLSCertificateMismatchAlert.h"
-#include "flow_alerts/TLSOldProtocolVersionAlert.h"
+#include "flow_alerts/FlowRiskTLSUnsafeCiphersAlert.h"
+#include "flow_alerts/FlowRiskTLSCertificateExpiredAlert.h"
+#include "flow_alerts/FlowRiskTLSCertificateMismatchAlert.h"
+#include "flow_alerts/FlowRiskTLSOldProtocolVersionAlert.h"
 #include "flow_alerts/TLSMaliciousSignatureAlert.h"
-#include "flow_alerts/TLSCertificateSelfSignedAlert.h"
+#include "flow_alerts/FlowRiskTLSCertificateSelfSignedAlert.h"
 #include "flow_alerts/SuspiciousTCPSYNProbingAlert.h"
 #include "flow_alerts/PotentiallyDangerousAlert.h"
 #include "flow_alerts/DataExfiltrationAlert.h"

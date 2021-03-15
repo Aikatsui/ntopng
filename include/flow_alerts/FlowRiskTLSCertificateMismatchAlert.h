@@ -19,18 +19,15 @@
  *
  */
 
-#ifndef _TLS_OLD_PROTOCOL_VERSION_ALERT_H_
-#define _TLS_OLD_PROTOCOL_VERSION_ALERT_H_
+#ifndef _FR_TLS_CERTIFICATE_MISMATCH_ALERT_H_
+#define _FR_TLS_CERTIFICATE_MISMATCH_ALERT_H_
 
 #include "ntop_includes.h"
 
-class TLSOldProtocolVersionAlert : public FlowAlert {
- private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
-
+class FlowRiskTLSCertificateMismatchAlert : public FlowRiskTLSAlert {
  public:
-  TLSOldProtocolVersionAlert() : FlowAlert("alert_tls_old_protocol_version", alert_tls_old_protocol_version, alert_category_security) { };
-  ~TLSOldProtocolVersionAlert() { };
+  FlowRiskTLSCertificateMismatchAlert() : FlowRiskTLSAlert("alert_tls_certificate_mismatch", alert_tls_certificate_mismatch, alert_category_security) { };
+  ~FlowRiskTLSCertificateMismatchAlert() { };
 };
 
-#endif /* _TLS_OLD_PROTOCOL_VERSION_ALERT_H_ */
+#endif /* _FR_TLS_CERTIFICATE_MISMATCH_ALERT_H_ */

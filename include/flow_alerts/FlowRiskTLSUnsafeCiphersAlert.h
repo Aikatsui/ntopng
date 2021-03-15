@@ -19,19 +19,15 @@
  *
  */
 
-#include "flow_callbacks_includes.h"
+#ifndef _FR_TLS_UNSAFE_CHIPERS_ALERT_H_
+#define _FR_TLS_UNSAFE_CHIPERS_ALERT_H_
 
-ndpi_serializer* TLSCertificateSelfSignedAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
-  char *s;
-  
-  if(!serializer) return(NULL);
+#include "ntop_includes.h"
 
-  if((s = f->getTLSCertificateIssuerDN()) != NULL)
-    ndpi_serialize_string_string(serializer, "protos.tls.issuerDN", s);
+class FlowRiskTLSUnsafeCiphersAlert : public FlowRiskTLSAlert {
+ public:
+  FlowRiskTLSUnsafeCiphersAlert() : FlowRiskTLSAlert("alert_tls_unsafe_ciphers", alert_tls_unsafe_ciphers, alert_category_security) { };
+  ~FlowRiskTLSUnsafeCiphersAlert() { };
+};
 
-  if((s = f->getTLSCertificateSubjectDN()) != NULL)
-    ndpi_serialize_string_string(serializer, "protos.tls.subjectDN", s);
-
-  return(serializer);
-}
-
+#endif /* _FR_TLS_UNSAFE_CHIPERS_ALERT_H_ */

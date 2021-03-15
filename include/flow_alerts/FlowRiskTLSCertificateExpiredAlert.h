@@ -19,15 +19,17 @@
  *
  */
 
-#ifndef _FR_TLS_MISSING_SNI_ALERT_H_
-#define _FR_TLS_MISSING_SNI_ALERT_H_
+#ifndef _FR_TLS_CERTIFICATE_EXPIRED_ALERT_H_
+#define _FR_TLS_CERTIFICATE_EXPIRED_ALERT_H_
 
 #include "ntop_includes.h"
 
-class FlowRiskTLSMissingSNIAlert : public FlowRiskTLSAlert {
+class FlowRiskTLSCertificateExpiredAlert : public FlowRiskTLSAlert {
+ private:
+
  public:
-  FlowRiskTLSMissingSNIAlert() : FlowRiskTLSAlert("alert_ndpi_tls_missing_sni", alert_ndpi_tls_missing_sni, alert_category_security) { };
-  ~FlowRiskTLSMissingSNIAlert() { };
+  FlowRiskTLSCertificateExpiredAlert() : FlowRiskTLSAlert("alert_tls_certificate_expired", alert_tls_certificate_expired, alert_category_security) { };
+  ~FlowRiskTLSCertificateExpiredAlert() { };
 };
 
-#endif /* _FR_TLS_MISSING_SNI_ALERT_H_ */
+#endif /* _FR_TLS_CERTIFICATE_EXPIRED_ALERT_H_ */

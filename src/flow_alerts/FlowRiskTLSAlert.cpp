@@ -19,15 +19,14 @@
  *
  */
 
-#ifndef _TLS_UNSAFE_CHIPERS_ALERT_H_
-#define _TLS_UNSAFE_CHIPERS_ALERT_H_
+#include "flow_alerts_includes.h"
 
-#include "ntop_includes.h"
+ndpi_serializer* FlowRiskTLSAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+  if(serializer == NULL)
+    return NULL;
 
-class TLSUnsafeCiphersAlert : public FlowAlert {
- public:
-  TLSUnsafeCiphersAlert() : FlowAlert("alert_tls_unsafe_ciphers", alert_tls_unsafe_ciphers, alert_category_security) { };
-  ~TLSUnsafeCiphersAlert() { };
-};
+  f->getTLSInfo(serializer);
+  
+  return serializer;
+}
 
-#endif /* _TLS_UNSAFE_CHIPERS_ALERT_H_ */

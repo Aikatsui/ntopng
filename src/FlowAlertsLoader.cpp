@@ -104,12 +104,12 @@ void FlowAlertsLoader::registerFlowAlerts() {
   defineAlert(new IECUnexpectedTypeIdAlert());
 
   /* Pro alerts */
-  defineAlert(new TLSUnsafeCiphersAlert());
-  defineAlert(new TLSCertificateExpiredAlert());
-  defineAlert(new TLSCertificateMismatchAlert());
-  defineAlert(new TLSOldProtocolVersionAlert());
+  defineAlert(new FlowRiskTLSUnsafeCiphersAlert());
+  defineAlert(new FlowRiskTLSCertificateExpiredAlert());
+  defineAlert(new FlowRiskTLSCertificateMismatchAlert());
+  defineAlert(new FlowRiskTLSOldProtocolVersionAlert());
   defineAlert(new TLSMaliciousSignatureAlert());
-  defineAlert(new TLSCertificateSelfSignedAlert());
+  defineAlert(new FlowRiskTLSCertificateSelfSignedAlert());
   defineAlert(new SuspiciousTCPSYNProbingAlert());
   defineAlert(new PotentiallyDangerousAlert());
   defineAlert(new DataExfiltrationAlert());

@@ -19,15 +19,20 @@
  *
  */
 
-#ifndef _TLS_CERTIFICATE_MISMATCH_ALERT_H_
-#define _TLS_CERTIFICATE_MISMATCH_ALERT_H_
+#ifndef _FR_TLS_ALERT_H_
+#define _FR_TLS_ALERT_H_
 
 #include "ntop_includes.h"
 
-class TLSCertificateMismatchAlert : public FlowAlert {
+class FlowRiskTLSAlert : public FlowAlert {
+ private:
+
+ protected:
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);  
+
  public:
-  TLSCertificateMismatchAlert() : FlowAlert("alert_tls_certificate_mismatch", alert_tls_certificate_mismatch, alert_category_security) { };
-  ~TLSCertificateMismatchAlert() { };
+ FlowRiskTLSAlert(const char* _name, FlowAlertType _alert_type, AlertCategory _category) : FlowAlert(_name, _alert_type, _category) { };
+  ~FlowRiskTLSAlert() { };
 };
 
-#endif /* _TLS_CERTIFICATE_MISMATCH_ALERT_H_ */
+#endif /* _FR_TLS_ALERT_H_ */

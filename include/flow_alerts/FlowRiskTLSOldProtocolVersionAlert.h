@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef _TLS_CERTIFICATE_EXPIRED_ALERT_H_
-#define _TLS_CERTIFICATE_EXPIRED_ALERT_H_
+#ifndef _FR_TLS_OLD_PROTOCOL_VERSION_ALERT_H_
+#define _FR_TLS_OLD_PROTOCOL_VERSION_ALERT_H_
 
 #include "ntop_includes.h"
 
-class TLSCertificateExpiredAlert : public FlowAlert {
+class FlowRiskTLSOldProtocolVersionAlert : public FlowRiskTLSAlert {
  private:
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  TLSCertificateExpiredAlert() : FlowAlert("alert_tls_certificate_expired", alert_tls_certificate_expired, alert_category_security) { };
-  ~TLSCertificateExpiredAlert() { };
+  FlowRiskTLSOldProtocolVersionAlert() : FlowRiskTLSAlert("alert_tls_old_protocol_version", alert_tls_old_protocol_version, alert_category_security) { };
+  ~FlowRiskTLSOldProtocolVersionAlert() { };
 };
 
-#endif /* _TLS_CERTIFICATE_EXPIRED_ALERT_H_ */
+#endif /* _FR_TLS_OLD_PROTOCOL_VERSION_ALERT_H_ */

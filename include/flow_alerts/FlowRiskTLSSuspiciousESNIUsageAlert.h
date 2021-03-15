@@ -24,9 +24,9 @@
 
 #include "ntop_includes.h"
 
-class FlowRiskTLSSuspiciousESNIUsageAlert : public FlowAlert {
+class FlowRiskTLSSuspiciousESNIUsageAlert : public FlowRiskTLSAlert {
  public:
-  FlowRiskTLSSuspiciousESNIUsageAlert() : FlowAlert("alert_ndpi_tls_suspicious_esni_usage", alert_ndpi_tls_suspicious_esni_usage, alert_category_security) { };
+  FlowRiskTLSSuspiciousESNIUsageAlert() : FlowRiskTLSAlert("alert_ndpi_tls_suspicious_esni_usage", alert_ndpi_tls_suspicious_esni_usage, alert_category_security) { };
   ~FlowRiskTLSSuspiciousESNIUsageAlert() { };
 };
 

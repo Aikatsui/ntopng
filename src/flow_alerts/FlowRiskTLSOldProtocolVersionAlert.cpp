@@ -19,13 +19,15 @@
  *
  */
 
-#include "flow_alerts_includes.h"
+#include "flow_callbacks_includes.h"
 
-ndpi_serializer* TLSCertificateExpiredAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* FlowRiskTLSOldProtocolVersionAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   if(serializer == NULL)
     return NULL;
 
-  f->getTLSInfo(serializer);
+  FlowRiskTLSAlert::getAlertJSON(serializer, f);
+
+  ndpi_serialize_string_int32(serializer, "tls_version", f->getTLSVersion());
   
   return serializer;
 }
