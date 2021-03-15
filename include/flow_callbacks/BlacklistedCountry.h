@@ -40,7 +40,6 @@ class BlacklistedCountry : public FlowCallback {
   bool loadConfiguration(json_object *config);
 
   std::string getName()        const { return(std::string("country_check")); }
-  FlowAlertType getAlertType() const { return alert_blacklisted_country;     }
 };
 
 #endif /* _BLACKLISTED_COUNTRY_H_ */

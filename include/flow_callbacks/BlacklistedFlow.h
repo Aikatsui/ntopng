@@ -37,7 +37,6 @@ class BlacklistedFlow : public FlowCallback {
   bool loadConfiguration(json_object *config);
   
   std::string getName()          const { return(std::string("blacklisted")); }
-  FlowAlertType getAlertType() const { return alert_blacklisted;        }
 };
 
 #endif /* _BLACKLISTED_FLOW_H_ */

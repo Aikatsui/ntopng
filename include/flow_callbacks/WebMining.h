@@ -36,7 +36,6 @@ class WebMining : public FlowCallback {
   void protocolDetected(Flow *f);
   
   std::string getName()        const { return(std::string("web_mining")); }
-  FlowAlertType getAlertType() const { return alert_web_mining_detected;  }
 };
 
 #endif /* _WEBMINING_H_ */

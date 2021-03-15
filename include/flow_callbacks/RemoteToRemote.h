@@ -36,7 +36,6 @@ class RemoteToRemote : public FlowCallback {
   void protocolDetected(Flow *f);
   
   std::string getName()        const { return(std::string("remote_to_remote")); }
-  FlowAlertType getAlertType() const { return alert_remote_to_remote;           }
 };
 
 #endif /* _REMOTE_TO_REMOTE_H_ */

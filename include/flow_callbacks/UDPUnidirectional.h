@@ -38,7 +38,6 @@ class UDPUnidirectional : public FlowCallback {
   void flowEnd(Flow *f);
   
   std::string getName()        const { return(std::string("udp_unidirectional")); }
-  FlowAlertType getAlertType() const { return alert_udp_unidirectional;           }
 };
 
 #endif /* _UDP_UNIDIRECTIONAL_H_ */

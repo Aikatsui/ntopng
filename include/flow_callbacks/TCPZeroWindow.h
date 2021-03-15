@@ -40,7 +40,6 @@ class TCPZeroWindow : public FlowCallback {
   void flowEnd(Flow *f);
   
   std::string getName()        const { return(std::string("zero_tcp_window")); }
-  FlowAlertType getAlertType() const { return alert_zero_tcp_window;           }
 };
 
 #endif /* _TCP_ZERO_WINDOW_FLOW_CALLBACK_H_ */

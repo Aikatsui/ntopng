@@ -38,7 +38,6 @@ class ExternalAlertCheck : public FlowCallback {
   void flowEnd(Flow *f);
   
   std::string getName()        const { return(std::string("external_alert_check")); }
-  FlowAlertType getAlertType() const { return alert_external;                       }
 };
 
 #endif /* _EXTERNAL_ALERT_CHECK_H_ */

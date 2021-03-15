@@ -38,7 +38,6 @@ class NotPurged : public FlowCallback {
   void flowEnd(Flow *f);
   
   std::string getName()        const { return(std::string("not_purged")); }
-  FlowAlertType getAlertType() const { return alert_internals;            }
 };
 
 #endif /* _NOT_PURGED_FLOW_CALLBACK_H_ */

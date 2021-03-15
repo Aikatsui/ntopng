@@ -36,7 +36,6 @@ class RemoteToLocalInsecureProto : public FlowCallback {
   void protocolDetected(Flow *f);
   
   std::string getName()        const { return(std::string("remote_to_local_insecure_proto")); }
-  FlowAlertType getAlertType() const { return alert_remote_to_local_insecure_proto;           }
 };
 
 #endif /* _REMOTE_TO_LOCAL_INSECURE_PROTO_H_ */

@@ -33,7 +33,6 @@ class IECInvalidTransition : public FlowCallback {
 
   
   std::string getName()        const { return(std::string("iec_invalid_transition")); }
-  FlowAlertType getAlertType() const { return alert_iec_invalid_transition;   }
 };
 
 #endif /* _IEC_INVALID_TRANSITION_H_ */
