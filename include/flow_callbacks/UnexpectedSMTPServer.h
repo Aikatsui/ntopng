@@ -26,14 +26,14 @@
 
 class UnexpectedSMTPServer : public UnexpectedServer {
 protected:
-  bool isAllowedProto(Flow *f) { return(f->isSMTP()); }
+  bool isAllowedProto(Flow *f)       { return(f->isSMTP());                  }
+  FlowAlertType getAlertType() const { return(alert_unexpected_smtp_server); }
   
  public:
   UnexpectedSMTPServer() : UnexpectedServer() {};
   ~UnexpectedSMTPServer() {};
-  
+
   std::string getName()          const { return(std::string("unexpected_smtp")); }
-  FlowAlertType getAlertType()   const { return(alert_unexpected_smtp_server);   }
 };
 
 #endif /* _UNEXPECTED_SMTP_SERVER_H_ */

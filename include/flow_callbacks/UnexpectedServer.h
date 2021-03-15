@@ -27,6 +27,7 @@
 class UnexpectedServer : public FlowCallback {
  private:
   ndpi_ptree_t *whitelist;
+  virtual FlowAlertType getAlertType() const { return alert_flow_risk; };
 
 protected:
   bool isAllowedHost(const IpAddress *p);

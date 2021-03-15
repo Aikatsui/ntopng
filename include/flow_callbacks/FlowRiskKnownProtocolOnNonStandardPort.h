@@ -36,7 +36,6 @@ class FlowRiskKnownProtocolOnNonStandardPort : public FlowRisk {
 
   /* Overriding the default severity */
   virtual AlertLevel getCustomSeverity() { return alert_level_info; }
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
   FlowRiskKnownProtocolOnNonStandardPort() : FlowRisk() {};

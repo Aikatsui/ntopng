@@ -27,7 +27,6 @@
 
 class DeviceProtocolNotAllowed : public FlowCallback {
  private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);  
 
  public:
   DeviceProtocolNotAllowed() : FlowCallback(ntopng_edition_community,

@@ -29,7 +29,6 @@ class BlacklistedCountry : public FlowCallback {
   std::set<std::string> blacklisted_countries;
 
   bool hasBlacklistedCountry(Host *h) const;
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
  BlacklistedCountry() : FlowCallback(ntopng_edition_community,

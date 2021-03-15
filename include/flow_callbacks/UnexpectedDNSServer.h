@@ -26,15 +26,15 @@
 
 class UnexpectedDNSServer : public UnexpectedServer {
 protected:
-  bool isAllowedProto(Flow *f)          { return(f->isDNS()); }
-  const IpAddress* getServerIP(Flow *f) { return(f->get_dns_srv_ip_addr()); }
+  bool isAllowedProto(Flow *f)          { return(f->isDNS());                  }
+  const IpAddress* getServerIP(Flow *f) { return(f->get_dns_srv_ip_addr());    }
+  FlowAlertType getAlertType() const    { return(alert_unexpected_dns_server); }
   
  public:
   UnexpectedDNSServer() : UnexpectedServer() {};
   ~UnexpectedDNSServer() {};
   
   std::string getName()          const { return(std::string("unexpected_dns")); }
-  FlowAlertType getAlertType()   const { return(alert_unexpected_dns_server);   }
 };
 
 #endif /* _UNEXPECTED_DNS_SERVER_H_ */

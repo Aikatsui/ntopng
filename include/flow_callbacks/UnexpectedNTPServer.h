@@ -26,14 +26,14 @@
 
 class UnexpectedNTPServer : public UnexpectedServer {
 protected:
-  bool isAllowedProto(Flow *f) { return(f->isNTP()); }
+  bool isAllowedProto(Flow *f)       { return(f->isNTP());                    }
+  FlowAlertType getAlertType() const { return(alert_unexpected_ntp_server);   }
   
  public:
   UnexpectedNTPServer() : UnexpectedServer() {};
   ~UnexpectedNTPServer() {};
   
   std::string getName()          const { return(std::string("unexpected_ntp")); }
-  FlowAlertType getAlertType()   const { return(alert_unexpected_ntp_server);   }
 };
 
 #endif /* _UNEXPECTED_NTP_SERVER_H_ */

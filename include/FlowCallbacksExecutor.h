@@ -29,7 +29,6 @@ class Flow;
 class FlowCallbacksExecutor { /* One instance per ntopng Interface */
  private:
   NetworkInterface *iface;
-  FlowCallback* alert_type_to_callback[MAX_FLOW_ALERT_TYPE];
   std::list<FlowCallback*> *protocol_detected, *periodic_update, *flow_end, *flow_none;
 
   void loadFlowCallbacksAlerts(std::list<FlowCallback*> *cb_list);
@@ -53,8 +52,6 @@ class FlowCallbacksExecutor { /* One instance per ntopng Interface */
     for(list<FlowCallback*>::iterator it = flow_end->begin(); it != flow_end->end(); ++it)
       (*it)->flowEnd(f);
   }
-
-  FlowCallback* getFlowCallback(FlowAlertType ft) { return(alert_type_to_callback[ft]); }
 };
 
 #endif /* _FLOW_CALLBACKS_EXECUTOR_H_ */

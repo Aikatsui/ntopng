@@ -36,7 +36,6 @@ class FlowRiskBinaryApplicationTransfer : public FlowRisk {
 
   /* Overriding the default severity */
   virtual AlertLevel getCustomSeverity() { return alert_level_error; }
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
   
  public:
   FlowRiskBinaryApplicationTransfer() : FlowRisk() {};

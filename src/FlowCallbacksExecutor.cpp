@@ -25,7 +25,6 @@
 
 FlowCallbacksExecutor::FlowCallbacksExecutor(FlowCallbacksLoader *fcl, NetworkInterface *_iface) {
   iface = _iface;
-  memset(alert_type_to_callback, 0, sizeof(alert_type_to_callback));
   loadFlowCallbacks(fcl);
 };
 
@@ -39,34 +38,9 @@ FlowCallbacksExecutor::~FlowCallbacksExecutor() {
 
 /* **************************************************** */
 
-void FlowCallbacksExecutor::loadFlowCallbacksAlerts(std::list<FlowCallback*> *cb_list) {
-  for(std::list<FlowCallback*>::const_iterator it = cb_list->begin(); it != cb_list->end(); ++it) {
-    FlowAlertType alert_type = (*it)->getAlertType();
-
-    if(alert_type_to_callback[alert_type] != NULL) {
-      /* Entry already existing, check if this is the same callback */
-      if(alert_type_to_callback[alert_type] != *it) /* Another callback providing the same alert */
-	ntop->getTrace()->traceEvent(TRACE_ERROR, "Duplicate callback for the same status [%s][was: %s]",
-				     (*it)->getName().c_str(), alert_type_to_callback[alert_type]->getName().c_str());
-    } else {
-      /* New entry */
-      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Registering %s [alert_type: %u]",
-				   (*it)->getName().c_str(), (unsigned int)alert_type);
-      alert_type_to_callback[alert_type] = *it;
-    }
-  }
-}
-
-/* **************************************************** */
-
 void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
   protocol_detected = fcl->getProtocolDetectedCallbacks(iface);
   periodic_update   = fcl->getPeriodicUpdateCallbacks(iface);
   flow_end          = fcl->getFlowEndCallbacks(iface);
   flow_none         = fcl->getNoneFlowCallbacks(iface);
-  
-  loadFlowCallbacksAlerts(protocol_detected),
-    loadFlowCallbacksAlerts(periodic_update),
-    loadFlowCallbacksAlerts(flow_end),
-    loadFlowCallbacksAlerts(flow_none);
 }

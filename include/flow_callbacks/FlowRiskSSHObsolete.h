@@ -35,7 +35,6 @@ class FlowRiskSSHObsolete : public FlowRisk {
   u_int16_t getServerScore() { return 50; }
   u_int16_t getFlowScore()   { return 50; }
   */
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
   FlowRiskSSHObsolete() : FlowRisk() {};
