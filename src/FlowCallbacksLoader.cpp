@@ -104,11 +104,11 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new SuspiciousTCPProbing()))                        cb_all[fcb->getName()] = fcb;
   if((fcb = new SuspiciousTCPSYNProbing()))                     cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPConnectionRefused()))                        cb_all[fcb->getName()] = fcb;
-  //  if((fcb = new FlowRiskTLSCertificateExpired()))               cb_all[fcb->getName()] = fcb;
-  //  if((fcb = new FlowRiskTLSCertificateMismatch()))              cb_all[fcb->getName()] = fcb;
-  if((fcb = new TLSOldProtocolVersion()))                       cb_all[fcb->getName()] = fcb;
+  if((fcb = new FlowRiskTLSCertificateExpired()))               cb_all[fcb->getName()] = fcb;
+  if((fcb = new FlowRiskTLSCertificateMismatch()))              cb_all[fcb->getName()] = fcb;
+  if((fcb = new FlowRiskTLSOldProtocolVersion()))               cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSUnsafeCiphers()))                            cb_all[fcb->getName()] = fcb;
-  if((fcb = new TLSCertificateSelfSigned()))                    cb_all[fcb->getName()] = fcb;
+  if((fcb = new FlowRiskTLSCertificateSelfSigned()))            cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSMaliciousSignature()))                       cb_all[fcb->getName()] = fcb;
   if((fcb = new NedgeBlockedFlow()))                            cb_all[fcb->getName()] = fcb;
 #endif

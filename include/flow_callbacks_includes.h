@@ -77,10 +77,10 @@
 #include "flow_callbacks/SuspiciousTCPSYNProbing.h"
 #include "flow_callbacks/TCPConnectionRefused.h"
 #include "flow_callbacks/FlowRiskTLSCertificateExpired.h"
-#include "flow_callbacks/TLSCertificateSelfSigned.h"
+#include "flow_callbacks/FlowRiskTLSCertificateSelfSigned.h"
 #include "flow_callbacks/FlowRiskTLSCertificateMismatch.h"
 #include "flow_callbacks/TLSMaliciousSignature.h"
-#include "flow_callbacks/TLSOldProtocolVersion.h"
+#include "flow_callbacks/FlowRiskTLSOldProtocolVersion.h"
 #include "flow_callbacks/TLSUnsafeCiphers.h"
 #include "flow_callbacks/NedgeBlockedFlow.h"
 #endif
