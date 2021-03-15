@@ -104,8 +104,8 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new SuspiciousTCPProbing()))                        cb_all[fcb->getName()] = fcb;
   if((fcb = new SuspiciousTCPSYNProbing()))                     cb_all[fcb->getName()] = fcb;
   if((fcb = new TCPConnectionRefused()))                        cb_all[fcb->getName()] = fcb;
-  if((fcb = new TLSCertificateExpired()))                       cb_all[fcb->getName()] = fcb;
-  if((fcb = new TLSCertificateMismatch()))                      cb_all[fcb->getName()] = fcb;
+  //  if((fcb = new FlowRiskTLSCertificateExpired()))               cb_all[fcb->getName()] = fcb;
+  //  if((fcb = new FlowRiskTLSCertificateMismatch()))              cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSOldProtocolVersion()))                       cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSUnsafeCiphers()))                            cb_all[fcb->getName()] = fcb;
   if((fcb = new TLSCertificateSelfSigned()))                    cb_all[fcb->getName()] = fcb;
