@@ -35,9 +35,9 @@ class PotentiallyDangerousFlow : public FlowCallback {
 
   void protocolDetected(Flow *f);
   
-  std::string getName()          const { return(std::string("potentially_dangerous")); }
-  ScriptCategory getCategory()   const { return script_category_security;              }
-  FlowAlertType getAlertType() const { return alert_potentially_dangerous;          }
+  std::string getName()        const { return(std::string("potentially_dangerous")); }
+  ScriptCategory getCategory() const { return script_category_security;              }
+  FlowAlertType getAlertType() const { return alert_potentially_dangerous;           }
 };
 
 #endif /* _POTENTIALLY_DANGEROUS_FLOW_H_ */

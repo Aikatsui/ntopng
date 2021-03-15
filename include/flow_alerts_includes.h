@@ -79,6 +79,5 @@
 #include "flow_alerts/TCPConnectionRefusedAlert.h"
 #include "flow_alerts/NedgeBlockedFlowAlert.h"
 #include "flow_alerts/InvalidDNSQueryAlert.h"
-#include "flow_alerts/ExternalAlertCheckProAlert.h"
 
 #endif /* _FLOW_ALERTS_INCLUDES_H_ */

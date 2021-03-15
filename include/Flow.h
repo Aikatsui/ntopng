@@ -323,14 +323,12 @@ class Flow : public GenericHashEntry {
     Called by FlowCallback subclasses to trigger a flow alert. This is an asynchronous call, faster, but can
     cause the alert JSON to be generated after the call.
    */
-  bool triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc); /* TODO: remove when done with triggerAlert taking alert_type as input */
   bool triggerAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
 
   /* 
      Called by FlowCallback subclasses to trigger a flow alert. This is a syncrhonous call, more expensive, but
      causes the alert to be immediately enqueued to all recipients.
    */
-  bool triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json); /* TODO: remove when done with triggerAlertSync taking alert_type as input */
   bool triggerAlertSync(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json);
   /*
     Enqueues the predominant alert of the flow to all available flow recipients.

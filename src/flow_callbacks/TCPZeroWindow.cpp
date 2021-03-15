@@ -26,7 +26,7 @@ void TCPZeroWindow::checkTCPWindow(Flow *f) {
   if(f->isTCPZeroWindow()) {
     u_int16_t c_score = 30, s_score = 30, f_score = 30;
 
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlert(alert_zero_tcp_window, getSeverity(), f_score, c_score, s_score);
   }
 }
 

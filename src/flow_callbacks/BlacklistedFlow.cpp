@@ -37,18 +37,19 @@ void BlacklistedFlow::protocolDetected(Flow *f) {
 
 /* ***************************************************** */
 
-/*
+/* Sample configuration:
   "script_conf": {
-  "severity": {
-  "syslog_severity": 3,
-  "severity_id": 5,
-  "i18n_title": "alerts_dashboard.error",
-  "emoji": "❗",
-  "icon": "fas fa-exclamation-triangle text-danger",
-  "label": "badge-danger"
-  }
+    "severity": {
+      "syslog_severity": 3,
+      "severity_id": 5,
+      "i18n_title": "alerts_dashboard.error",
+      "emoji": "❗",
+      "icon": "fas fa-exclamation-triangle text-danger",
+      "label": "badge-danger"
+    }
   }
 */
+
 bool BlacklistedFlow::loadConfiguration(json_object *config) {
   FlowCallback::loadConfiguration(config); /* Parse parameters in common */
 

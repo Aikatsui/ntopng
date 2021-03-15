@@ -26,7 +26,7 @@ void PotentiallyDangerousFlow::protocolDetected(Flow *f) {
     if(!strcmp(f->get_protocol_breed_name(), "Dangerous")) {
     u_int16_t c_score = 20, s_score = 5, f_score = 20;
     
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlert(alert_potentially_dangerous, getSeverity(), f_score, c_score, s_score);
   }
 }
 

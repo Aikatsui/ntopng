@@ -5301,17 +5301,6 @@ bool Flow::setAlertsBitmap(FlowAlertType alert_type, AlertLevel severity, u_int1
 
 /* *************************************** */
 
-bool Flow::triggerAlert(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  FlowAlertType alert_type = fcb->getAlertType();
-  bool res;
-
-  res = setAlertsBitmap(alert_type, severity, flow_inc, cli_inc, srv_inc);
-
-  return res;
-}
-
-/* *************************************** */
-
 bool Flow::triggerAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   bool res;
 
@@ -5345,14 +5334,6 @@ bool Flow::triggerAlertSync(FlowAlertType alert_type, AlertLevel severity, u_int
     ndpi_term_serializer(alert_json);
 
   return res;
-}
-
-/* *************************************** */
-
-bool Flow::triggerAlertSync(FlowCallback *fcb, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json) {
-  FlowAlertType alert_type = fcb->getAlertType();
-
-  return triggerAlertSync(alert_type, severity, flow_inc, cli_inc, srv_inc, alert_json);
 }
 
 /* *************************************** */

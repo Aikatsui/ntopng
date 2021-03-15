@@ -28,7 +28,7 @@ void RemoteToRemote::protocolDetected(Flow *f) {
     u_int16_t s_score = 10;
     u_int16_t f_score = 10;
     
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlert(alert_remote_to_remote, getSeverity(), f_score, c_score, s_score);
   }
 }
 

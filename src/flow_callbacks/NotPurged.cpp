@@ -28,7 +28,7 @@ void NotPurged::checkNotPurged(Flow *f) {
   if(f->isNotPurged()) {
     u_int16_t c_score = 0, s_score = 0, f_score = 100;
 
-    f->triggerAlert(this, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlert(alert_internals, getSeverity(), f_score, c_score, s_score);
   }
 }
 
