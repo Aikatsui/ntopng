@@ -40,7 +40,6 @@ class FlowRiskSuspiciousDGADomain : public FlowRisk {
   ~FlowRiskSuspiciousDGADomain() {};
 
   std::string getName()        const { return(std::string("ndpi_suspicious_dga_domain")); }
-  ScriptCategory getCategory() const { return script_category_security;                   }
 };
 
 #endif

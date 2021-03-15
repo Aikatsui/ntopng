@@ -40,7 +40,6 @@ class FlowRiskTLSSuspiciousESNIUsage : public FlowRisk {
   ~FlowRiskTLSSuspiciousESNIUsage() {};
 
   std::string getName()        const { return(std::string("ndpi_tls_suspicious_esni_usage")); }
-  ScriptCategory getCategory() const { return script_category_security;                       }
 };
 
 #endif

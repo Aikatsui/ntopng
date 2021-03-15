@@ -40,7 +40,6 @@ class FlowRiskUnsafeProtocol : public FlowRisk {
   ~FlowRiskUnsafeProtocol() {};
 
   std::string getName()        const { return(std::string("ndpi_unsafe_protocol")); }
-  ScriptCategory getCategory() const { return script_category_security;             }
 };
 
 #endif

@@ -38,7 +38,6 @@ class FlowRiskUnhandled : public FlowCallback {
   ~FlowRiskUnhandled() {};
 
   std::string getName()        const { return(std::string("flow_risks")); }
-  ScriptCategory getCategory() const { return script_category_security;   }
   FlowAlertType getAlertType() const { return alert_flow_risk;            }
 
   void protocolDetected(Flow *f) {}

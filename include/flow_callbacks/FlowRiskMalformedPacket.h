@@ -40,7 +40,6 @@ class FlowRiskMalformedPacket : public FlowRisk {
   ~FlowRiskMalformedPacket() {};
 
   std::string getName()        const { return(std::string("ndpi_malformed_packet")); }
-  ScriptCategory getCategory() const { return script_category_security;              }
 };
 
 #endif

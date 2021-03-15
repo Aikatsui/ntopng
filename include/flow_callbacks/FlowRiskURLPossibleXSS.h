@@ -40,7 +40,6 @@ class FlowRiskURLPossibleXSS : public FlowRisk {
   ~FlowRiskURLPossibleXSS() {};
 
   std::string getName()        const { return(std::string("ndpi_url_possible_xss")); }
-  ScriptCategory getCategory() const { return script_category_security;              }
 };
 
 #endif

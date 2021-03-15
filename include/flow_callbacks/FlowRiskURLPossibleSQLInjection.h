@@ -40,7 +40,6 @@ class FlowRiskURLPossibleSQLInjection : public FlowRisk {
   ~FlowRiskURLPossibleSQLInjection() {};
 
   std::string getName()        const { return(std::string("ndpi_url_possible_sql_injection")); }
-  ScriptCategory getCategory() const { return script_category_security;                        }
 };
 
 #endif

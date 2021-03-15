@@ -39,7 +39,6 @@ class FlowRiskDNSSuspiciousTraffic : public FlowRisk {
   ~FlowRiskDNSSuspiciousTraffic() {};
 
   std::string getName()        const { return(std::string("ndpi_dns_suspicious_traffic")); }
-  ScriptCategory getCategory() const { return script_category_security;                    }
 };
 
 #endif

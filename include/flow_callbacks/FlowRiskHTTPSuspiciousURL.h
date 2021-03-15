@@ -40,7 +40,6 @@ class FlowRiskHTTPSuspiciousURL : public FlowRisk {
   ~FlowRiskHTTPSuspiciousURL() {};
 
   std::string getName()        const { return(std::string("ndpi_http_suspicious_url")); }
-  ScriptCategory getCategory() const { return script_category_security;                 }
 };
 
 #endif

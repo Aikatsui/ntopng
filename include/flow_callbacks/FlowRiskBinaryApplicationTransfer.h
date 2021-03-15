@@ -42,7 +42,6 @@ class FlowRiskBinaryApplicationTransfer : public FlowRisk {
   ~FlowRiskBinaryApplicationTransfer() {};
 
   std::string getName()        const { return(std::string("suspicious_file_transfer")); }
-  ScriptCategory getCategory() const { return script_category_security;                 }
 };
 
 #endif

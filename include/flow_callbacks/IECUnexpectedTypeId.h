@@ -35,7 +35,6 @@ class IECUnexpectedTypeId : public FlowCallback {
   bool loadConfiguration(json_object *config);
   
   std::string getName()        const { return(std::string("iec_unexpected_type_id")); }
-  ScriptCategory getCategory() const { return script_category_security;       }
   FlowAlertType getAlertType() const { return alert_iec_unexpected_type_id;   }
 };
 

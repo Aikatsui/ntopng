@@ -51,7 +51,6 @@ public:
   void protocolDetected(Flow *f);
   bool loadConfiguration(json_object *config);
 
-  ScriptCategory getCategory() const { return(script_category_security); }
 };
 
 #endif /* _UNEXPECTED_HOST_H_ */

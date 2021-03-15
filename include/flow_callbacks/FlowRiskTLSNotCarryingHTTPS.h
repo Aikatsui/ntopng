@@ -40,7 +40,6 @@ class FlowRiskTLSNotCarryingHTTPS : public FlowRisk {
   ~FlowRiskTLSNotCarryingHTTPS() {};
 
   std::string getName()        const { return(std::string("ndpi_tls_not_carrying_https")); }
-  ScriptCategory getCategory() const { return script_category_security;                    }
 };
 
 #endif

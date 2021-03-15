@@ -40,7 +40,6 @@ class FlowRiskURLPossibleRCEInjection : public FlowRisk {
   ~FlowRiskURLPossibleRCEInjection() {};
 
   std::string getName()        const { return(std::string("ndpi_url_possible_rce_injection")); }
-  ScriptCategory getCategory() const { return script_category_security;                        }
 };
 
 #endif

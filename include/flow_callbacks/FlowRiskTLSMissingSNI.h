@@ -40,7 +40,6 @@ class FlowRiskTLSMissingSNI : public FlowRisk {
   ~FlowRiskTLSMissingSNI() {};
 
   std::string getName()        const { return(std::string("ndpi_tls_missing_sni")); }
-  ScriptCategory getCategory() const { return script_category_security;             }
 };
 
 #endif

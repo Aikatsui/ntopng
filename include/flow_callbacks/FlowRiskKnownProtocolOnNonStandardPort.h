@@ -42,7 +42,6 @@ class FlowRiskKnownProtocolOnNonStandardPort : public FlowRisk {
   ~FlowRiskKnownProtocolOnNonStandardPort() {};
 
   std::string getName()        const { return(std::string("known_proto_on_non_std_port")); }
-  ScriptCategory getCategory() const { return script_category_security;                    }
 };
 
 #endif

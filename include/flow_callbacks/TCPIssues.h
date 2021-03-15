@@ -38,7 +38,6 @@ class TCPIssues : public FlowCallback {
   void flowEnd(Flow *f);
   
   std::string getName()        const { return(std::string("tcp_issues_generic")); }
-  ScriptCategory getCategory() const { return script_category_network;            }
   FlowAlertType getAlertType() const { return alert_tcp_connection_issues;        }
 };
 

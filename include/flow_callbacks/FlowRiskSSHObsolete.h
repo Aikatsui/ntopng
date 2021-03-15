@@ -41,7 +41,6 @@ class FlowRiskSSHObsolete : public FlowRisk {
   ~FlowRiskSSHObsolete() {};
 
   std::string getName()        const { return(std::string("ndpi_ssh_obsolete")); }
-  ScriptCategory getCategory() const { return script_category_security;          }
 };
 
 #endif

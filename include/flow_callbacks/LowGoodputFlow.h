@@ -39,7 +39,6 @@ class LowGoodputFlow : public FlowCallback {
   void flowEnd(Flow *f);
 
   std::string getName()        const { return(std::string("low_goodput")); }
-  ScriptCategory getCategory() const { return script_category_network;     }
   FlowAlertType getAlertType() const { return alert_low_goodput;           }
 };
 

@@ -40,7 +40,6 @@ class FlowRiskSMBInsecureVersion : public FlowRisk {
   ~FlowRiskSMBInsecureVersion() {};
 
   std::string getName()        const { return(std::string("ndpi_smb_insecure_version")); }
-  ScriptCategory getCategory() const { return script_category_security;                  }
 };
 
 #endif
