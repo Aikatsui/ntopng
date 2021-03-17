@@ -470,9 +470,24 @@ void AddressTree::dump() {
 
 /* **************************************************** */
 
-void AddressTree::cleanup() {
-  if(ptree_v4) ndpi_patricia_destroy(ptree_v4, free_ptree_data);
-  if(ptree_v6) ndpi_patricia_destroy(ptree_v6, free_ptree_data);
+void AddressTree::cleanup(ndpi_void_fn_t free_func) {
+  if(ptree_v4) {
+    ndpi_patricia_destroy(ptree_v4, free_func);
+    ptree_v4 = NULL;
+  }
+
+  if(ptree_v6) {
+    ndpi_patricia_destroy(ptree_v6, free_func);
+    ptree_v6 = NULL;
+  }
 
   macs.clear();
 }
+
+/* **************************************************** */
+
+void AddressTree::cleanup() {
+  cleanup(free_ptree_data);
+}
+
+/* **************************************************** */

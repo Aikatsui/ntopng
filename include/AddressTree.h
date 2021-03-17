@@ -43,6 +43,7 @@ class AddressTree {
 
   void init(bool handleIPv6);
   void cleanup();
+  void cleanup(ndpi_void_fn_t free_func);
 
   inline u_int16_t getNumAddresses()     const { return(numAddresses);     }
   inline u_int16_t getNumAddressesIPv4() const { return(numAddressesIPv4); }
