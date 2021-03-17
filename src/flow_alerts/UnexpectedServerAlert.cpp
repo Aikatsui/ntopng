@@ -22,6 +22,7 @@
 #include "flow_alerts_includes.h"
 
 ndpi_serializer* UnexpectedServerAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
   const IpAddress *server = getServerIP(f);
 
   if (serializer != NULL && server != NULL) {

@@ -30,7 +30,7 @@ void FlowRisk::protocolDetected(Flow *f) {
     u_int16_t s_score = getServerScore();
     u_int16_t f_score = getFlowScore();
 
-    f->triggerAlert(getAlertType(), f_score, c_score, s_score);
+    f->triggerAlertAsync(getAlertType(), f_score, c_score, s_score);
   }
 }
 

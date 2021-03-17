@@ -36,6 +36,7 @@ class TCPIssues : public FlowCallback {
 
   void periodicUpdate(Flow *f);
   void flowEnd(Flow *f);
+  FlowAlert *buildAlert(Flow *f);
   
   std::string getName()        const { return(std::string("tcp_issues_generic")); }
 };
