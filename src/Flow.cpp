@@ -5244,7 +5244,7 @@ void Flow::updateAlertsStats(FlowAlert *alert) {
   This method is called by Lua to set score and various other values of the flow
  */
 bool Flow::setAlertsBitmap(FlowAlertType alert_type, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
-  AlertCategory alert_category = ntop->getAlertCategory(alert_type);
+  AlertCategory alert_category = alert_category_network; //TODO getAlertCategory(alert_type);
   ScoreCategory score_category = Utils::mapAlertToScoreCategory(alert_category);
 
   if(alert_type == alert_normal)

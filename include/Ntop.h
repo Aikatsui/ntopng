@@ -525,7 +525,6 @@ class Ntop {
   inline void reloadFlowCallbacks() { flowCallbacksReloadInProgress = true; };
   inline void reloadFlowAlerts()    { flowAlertsReloadInProgress    = true; };
 
-  AlertCategory getAlertCategory(FlowAlertType fat) const;
   char *getAlertJSON(FlowAlertType fat, Flow *f) const;
   ndpi_serializer *getAlertSerializer(FlowAlertType fat, Flow *f) const;
   
