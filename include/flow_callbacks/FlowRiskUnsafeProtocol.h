@@ -39,7 +39,7 @@ class FlowRiskUnsafeProtocol : public FlowRisk {
   FlowRiskUnsafeProtocol() : FlowRisk() {};
   ~FlowRiskUnsafeProtocol() {};
   
-  FlowAlert *buildAlert(Flow *f) return new FlowRiskUnsafeProtocolAlert(f, getSeverity()); }
+  FlowAlert *buildAlert(Flow *f) { return new FlowRiskUnsafeProtocolAlert(f, getSeverity()); }
 
   std::string getName()        const { return(std::string("ndpi_unsafe_protocol")); }
 };

@@ -47,11 +47,26 @@ void FlowCallbacksExecutor::loadFlowCallbacks(FlowCallbacksLoader *fcl) {
 
 /* **************************************************** */
 
-FlowAlert *execCallbacks(Flow *f, FlowCallbacks c) {
+FlowAlert *FlowCallbacksExecutor::execCallbacks(Flow *f, FlowCallbacks c) {
   FlowAlertType predominant_alert = f->getPredominantAlert();
   FlowCallback *predominant_callback = NULL;
+  std::list<FlowCallback*> *callbacks = NULL;
 
-  for(list<FlowCallback*>::iterator it = protocol_detected->begin(); it != protocol_detected->end(); ++it) {
+  switch (c) {
+    case flow_callback_protocol_detected:
+      callbacks = protocol_detected;
+      break;
+    case flow_callback_periodic_update:
+      callbacks = periodic_update;
+      break;
+    case flow_callback_flow_end:
+      callbacks = flow_end;
+      break;
+    default:
+      return NULL;
+  }
+
+  for(list<FlowCallback*>::iterator it = callbacks->begin(); it != callbacks->end(); ++it) {
 
     switch (c) {
       case flow_callback_protocol_detected:
@@ -63,6 +78,8 @@ FlowAlert *execCallbacks(Flow *f, FlowCallbacks c) {
       case flow_callback_flow_end:
         (*it)->flowEnd(f);
         break;
+      default:
+	break;
     }
 
     /* Check if the callback triggered a predominant alert */

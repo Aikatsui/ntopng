@@ -3010,7 +3010,7 @@ bool Flow::enqueueAlert(FlowAlert *alert) {
   ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
 
   /* Prepare the JSON, including a JSON specific of this FlowAlertType */
-  alert2JSON(alert, &flow_json, time(NULL));
+  alert2JSON(alert, &flow_json);
 
   if(!first_alert)
     ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
