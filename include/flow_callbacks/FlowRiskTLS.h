@@ -31,10 +31,6 @@ class FlowRiskTLS : public FlowRisk {
  FlowRiskTLS() : FlowRisk() {};
  FlowRiskTLS(NtopngEdition _edition) : FlowRisk(_edition) {};
   ~FlowRiskTLS() {};
-
-  FlowAlert *buildAlert(Flow *f) { return new FlowRiskTLSAlert(f, getSeverity()); }
-
-  std::string getName()        const { return(std::string("ndpi_tls_missing_sni")); }
 };
 
 #endif
