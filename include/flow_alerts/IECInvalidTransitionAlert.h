@@ -25,9 +25,26 @@
 #include "ntop_includes.h"
 
 class IECInvalidTransitionAlert : public FlowAlert {
+ private:
+  u_int32_t packet_epoch;
+  u_int16_t type_i;
+  u_int8_t type_id;
+
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
-  IECInvalidTransitionAlert() : FlowAlert("alert_iec_invalid_transition", alert_iec_invalid_transition, alert_category_security) { };
+  static const FlowAlertType type = alert_iec_invalid_transition;
+
+  IECInvalidTransitionAlert(Flow *f, AlertLevel s, struct timeval *_time, u_int16_t _type_i, u_int8_t _type_id) : FlowAlert(f, s) {
+    type_i = _type_i;
+    type_id = _type_id;
+    packet_epoch = _time->tv_sec;
+  };
   ~IECInvalidTransitionAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_iec_invalid_transition"); }
 };
 
 #endif /* _IEC_INVALID_TRANSITION_ALERT_H_ */

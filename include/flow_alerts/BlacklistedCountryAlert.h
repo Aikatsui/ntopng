@@ -26,11 +26,21 @@
 
 class BlacklistedCountryAlert : public FlowAlert {
  private:
+  bool is_server;
+
   ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
- BlacklistedCountryAlert() : FlowAlert("alert_blacklisted_country", alert_blacklisted_country, alert_category_security) { };
+  static const FlowAlertType type = alert_blacklisted_country;
+
+  BlacklistedCountryAlert(Flow *f, AlertLevel s, bool _is_server) : FlowAlert(f, s) { is_server = _is_server; };
   ~BlacklistedCountryAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_blacklisted_country"); }
+
+  bool isServer() { return is_server; }
 };
 
 #endif /* _BLACKLISTED_COUNTRY_ALERT_H_ */

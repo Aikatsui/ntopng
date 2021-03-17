@@ -39,20 +39,33 @@ bool BlacklistedCountry::hasBlacklistedCountry(Host *h) const {
 void BlacklistedCountry::protocolDetected(Flow *f) {
   Host *cli_host, *srv_host;
   u_int16_t c_score = 0, s_score = 0;
+  bool is_server_bl = false, is_client_bl = false;
 
   if(blacklisted_countries.size() == 0)
     return; /* Callback enabled but no blacklisted country is configured */
 
   cli_host = f->get_cli_host(), srv_host = f->get_srv_host();
 
-  if(hasBlacklistedCountry(f->get_cli_host()))
-    f->fcb_set_blacklisted(true /* is client */), c_score += 60, s_score += 10;
+  if(hasBlacklistedCountry(f->get_cli_host())) {
+    is_client_bl = true;
+    c_score += 60, s_score += 10;
+  }
 
-  if(hasBlacklistedCountry(f->get_srv_host()))
-    f->fcb_set_blacklisted(false /* is server */), s_score += 60, c_score += 10;
+  if(hasBlacklistedCountry(f->get_srv_host())) {
+    is_server_bl = true;
+    s_score += 60, c_score += 10;
+  }
 
-  if(c_score || s_score)
-    f->triggerAlert(alert_blacklisted_country, getSeverity(), c_score + s_score, c_score, s_score);
+  if (is_server_bl || is_client_bl) {
+    f->triggerAlertAsync(BlacklistedCountryAlert::type, c_score + s_score, c_score, s_score);
+  }
+}
+
+/* ***************************************************** */
+
+FlowAlert *BlacklistedCountry::buildAlert(Flow *f) {
+  bool is_server = hasBlacklistedCountry(f->get_srv_host());
+  return new BlacklistedCountryAlert(f, getSeverity(), is_server);
 }
 
 /* ***************************************************** */

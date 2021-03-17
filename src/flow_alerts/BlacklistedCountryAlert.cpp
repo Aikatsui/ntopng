@@ -23,7 +23,6 @@
 
 ndpi_serializer* BlacklistedCountryAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
   Host *cli_host, *srv_host;
-  bool cli_blacklisted, srv_blacklisted;
   char cli_buf[3], srv_buf[3];
 
   if(serializer == NULL)
@@ -35,12 +34,10 @@ ndpi_serializer* BlacklistedCountryAlert::getAlertJSON(ndpi_serializer* serializ
   if(cli_host) cli_host->get_country(cli_buf, sizeof(cli_buf));
   if(srv_host) srv_host->get_country(srv_buf, sizeof(srv_buf));
 
-  f->fcb_get_blacklisted(&cli_blacklisted, &srv_blacklisted);
-
   ndpi_serialize_string_string(serializer, "cli_country", cli_buf);
   ndpi_serialize_string_string(serializer, "srv_country", srv_buf);
-  ndpi_serialize_string_boolean(serializer, "cli_blacklisted", cli_blacklisted);
-  ndpi_serialize_string_boolean(serializer, "srv_blacklisted", srv_blacklisted);
+  ndpi_serialize_string_boolean(serializer, "cli_blacklisted", !is_server);
+  ndpi_serialize_string_boolean(serializer, "srv_blacklisted", is_server);
 
   return serializer;
 }

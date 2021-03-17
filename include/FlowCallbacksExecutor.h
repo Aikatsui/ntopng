@@ -33,25 +33,12 @@ class FlowCallbacksExecutor { /* One instance per ntopng Interface */
 
   void loadFlowCallbacksAlerts(std::list<FlowCallback*> *cb_list);
   void loadFlowCallbacks(FlowCallbacksLoader *fcl);
-    
+
  public:
   FlowCallbacksExecutor(FlowCallbacksLoader *fcl, NetworkInterface *_iface);
   virtual ~FlowCallbacksExecutor();
 
-  inline void execProtocolDetectedCallback(Flow *f) {
-    for(list<FlowCallback*>::iterator it = protocol_detected->begin(); it != protocol_detected->end(); ++it)
-      (*it)->protocolDetected(f);
-  }
-
-  inline void execPeriodicUpdateCallback(Flow *f) {
-    for(list<FlowCallback*>::iterator it = periodic_update->begin(); it != periodic_update->end(); ++it)
-      (*it)->periodicUpdate(f);
-  }
-
-  inline void execFlowEndCallback(Flow *f) {
-    for(list<FlowCallback*>::iterator it = flow_end->begin(); it != flow_end->end(); ++it)
-      (*it)->flowEnd(f);
-  }
+  FlowAlert *execCallbacks(Flow *f, FlowCallbacks c);
 };
 
 #endif /* _FLOW_CALLBACKS_EXECUTOR_H_ */

@@ -20,6 +20,7 @@
  */
 
 #include "ntop_includes.h"
+#include "flow_alerts_includes.h"
 
 // #define DEBUG_IEC60870
 // #define IEC60870_TRACE
@@ -245,21 +246,17 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 
 	    if(it == type_i_transitions.end()) {
 	      if(f->get_duration() > ntop->getPrefs()->getIEC60870LearingPeriod()) {
-		ndpi_serializer *serializer = ntop->getAlertSerializer(alert_iec_invalid_transition, f);
-		
+	        FlowAlert *alert;
+		u_int16_t f_score = 50, c_score = 50, s_score = 10;
+
 #ifdef IEC60870_TRACE
-		ntop->getTrace()->traceEvent(TRACE_NORMAL, "Found new transition %u -> %u", last_type_i, type_id);
+                ntop->getTrace()->traceEvent(TRACE_NORMAL, "Found new transition %u -> %u", last_type_i, type_id);
 #endif
-		  
-		if(serializer != NULL) {
-		  ndpi_serialize_string_uint32(serializer, "timestamp", packet_time->tv_sec);
-		  ndpi_serialize_string_uint32(serializer, "flow_key", f->key());
-		  ndpi_serialize_string_uint32(serializer, "flow_hash_entry_id", f->get_hash_entry_id());
-		  ndpi_serialize_string_uint32(serializer, "from", last_type_i);
-		  ndpi_serialize_string_uint32(serializer, "to", type_id);
-		    		    
-		  f->triggerAlertSync(alert_iec_invalid_transition, alert_level_error, 50 /* flow score */, 50 /* cli score */, 10 /* server score */, serializer);
-		}
+
+                alert = new IECInvalidTransitionAlert(f, alert_level_error, packet_time, last_type_i, type_id);
+
+		if (alert)
+		  f->triggerAlertSync(alert, f_score, c_score, s_score);
 		
 		type_i_transitions[transition] = 2; /* Post Learning */
 	      } else
@@ -287,16 +284,14 @@ void IEC104Stats::processPacket(Flow *f, bool tx_direction,
 	  }
 
 	  if(alerted) {
-	    ndpi_serializer *serializer = ntop->getAlertSerializer(alert_iec_unexpected_type_id, f);
-	      	      
-	    if(serializer != NULL) {
-	      ndpi_serialize_string_uint32(serializer, "type_id", type_id);
-	      ndpi_serialize_string_uint32(serializer, "asdu", asdu);
-	      ndpi_serialize_string_uint32(serializer, "cause_tx", cause_tx);
-	      ndpi_serialize_string_boolean(serializer, "negative", negative ? 1 : 0);
+	    FlowAlert *alert;
+            u_int16_t f_score = 50, c_score = 50, s_score = 10;
 
-	      f->triggerAlertSync(alert_iec_unexpected_type_id, alert_level_error, 50 /* flow score */, 50 /* cli score */, 10 /* server score */, serializer);
-	    }
+	    alert = new IECUnexpectedTypeIdAlert(f, alert_level_error, type_id, asdu, cause_tx, negative);
+	
+	    if(alert)
+	      f->triggerAlertSync(alert, f_score, c_score, s_score);
+	    
 	  } /* alerted  */
 
 	  /* Discard typeIds 127..255 */

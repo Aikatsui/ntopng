@@ -75,7 +75,6 @@ Ntop::Ntop(char *appName) {
   flowCallbacksReloadInProgress = true, /* Lazy, will be reloaded the first time this condition is evaluated */
     flowAlertsReloadInProgress = true;
   flow_callbacks_loader = NULL;
-  flow_alerts_loader = flow_alerts_loader_shadow;
 
   httpd = NULL, geo = NULL, mac_manufacturers = NULL;
   memset(&cpu_stats, 0, sizeof(cpu_stats));
@@ -316,8 +315,6 @@ Ntop::~Ntop() {
   if(globals) { delete globals; globals = NULL; }
 
   if(flow_callbacks_loader)     delete flow_callbacks_loader;
-  if(flow_alerts_loader)        delete flow_alerts_loader;
-  if(flow_alerts_loader_shadow) delete flow_alerts_loader_shadow;
   
 #ifdef __linux__
   if(inotify_fd > 0)  close(inotify_fd);
@@ -549,7 +546,6 @@ void Ntop::start() {
     get_HTTPserver()->startCaptiveServer();
 #endif
 
-  checkReloadFlowAlerts();
   checkReloadFlowCallbacks();
 
   for(int i=0; i<num_defined_interfaces; i++)
@@ -2575,25 +2571,6 @@ void Ntop::initInterface(NetworkInterface *_if) {
   _if->checkDisaggregationMode();
 }
 
-/* **************************************** */
-
-AlertCategory Ntop::getAlertCategory(FlowAlertType fat) const {
-  return flow_alerts_loader ? flow_alerts_loader->getAlertCategory(fat) : alert_category_other;
-}
-
-/* **************************************** */
-
-char * Ntop::getAlertJSON(FlowAlertType fat, Flow *f) const {
-  return flow_alerts_loader ? flow_alerts_loader->getAlertJSON(fat, f) : NULL;
-}
-
-
-/* **************************************** */
-
-ndpi_serializer *Ntop::getAlertSerializer(FlowAlertType fat, Flow *f) const {
-  return flow_alerts_loader ? flow_alerts_loader->getAlertSerializer(fat, f) : NULL;
-}
-
 /* ******************************************* */
 
 void Ntop::checkReloadFlowCallbacks() {
@@ -2631,30 +2608,8 @@ void Ntop::checkReloadFlowCallbacks() {
 
 /* ******************************************* */
 
-void Ntop::checkReloadFlowAlerts() {
-  if(flow_alerts_loader_shadow) {
-    delete flow_alerts_loader_shadow;
-    flow_alerts_loader_shadow = NULL;
-  }
-
-  if(flowAlertsReloadInProgress) {
-    flow_alerts_loader_shadow = flow_alerts_loader;
-    flow_alerts_loader = new (std::nothrow) FlowAlertsLoader();
-
-    if(!flow_alerts_loader) {
-      ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory for flow alerts.");
-      return;
-    }
-    
-    flowAlertsReloadInProgress = false;
-  }
-}
-
-/* ******************************************* */
-
 /* NOTE: the multiple isShutdown checks below are necessary to reduce the shutdown time */
 void Ntop::runHousekeepingTasks() {
-  checkReloadFlowAlerts();
   checkReloadFlowCallbacks();
 
   for(int i = 0; i < get_num_interfaces(); i++)

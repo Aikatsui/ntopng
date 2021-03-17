@@ -32,6 +32,7 @@ typedef struct {
   u_int64_t last, next;
 } TCPSeqNum;
 
+class FlowAlert;
 class FlowCallback;
 
 class Flow : public GenericHashEntry {
@@ -57,15 +58,15 @@ class Flow : public GenericHashEntry {
   Bitmap alert_map;
   FlowAlertType predominant_alert;          /* This is the predominant alert */
   u_int16_t  predominant_alert_score;       /* The score associated to the predominant alert */
-  FlowAlertType predominant_alert_enqueued; /* This is the most recent predominant alert enqueued to recipients */
   AlertLevel predominant_alert_level;
+  bool alert_stats_initialized;
 
   /*
     Data set by FlowCallback subclasses to preserve a status on the flow. Status is accessed later by
     FlowAlert subclasses to generate alert JSONs.
    */
   struct {
-    u_int8_t bl_country_cli: 1, bl_country_srv: 1,                /* Blacklisted country */
+    u_int8_t
       tcp_issues_cli: 1, tcp_issues_srv: 1, tcp_issues_severe: 1, /* TCP issues          */
       _pad: 3; /* Padding, can be used in the future */
     u_int64_t longlived_th, elephant_th_l2r, elephant_th_r2l;
@@ -276,7 +277,6 @@ class Flow : public GenericHashEntry {
   void luaScore(lua_State* vm);
   void luaIEC104(lua_State* vm);
   void callFlowUpdate(time_t t);
-  bool setPredominantAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t predominant_alert_score);
   /*
     Enqueues an alert to all available flow recipients. Alert is enqueued as-is, no check on predominant alert is performed.
     `alert_json` allows a JSON to be specified for the alert. When `alert_json` is NULL, the JSON is asynchronously
@@ -291,7 +291,8 @@ class Flow : public GenericHashEntry {
                     Immediate alert JSON generation and enqueue to the recipients are performed as well.
    */
   bool setAlertsBitmap(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
-  
+  void updateAlertsStats(FlowAlert *alert);
+
  public:
   Flow(NetworkInterface *_iface,
        u_int16_t _vlanId, u_int8_t _protocol,
@@ -305,14 +306,13 @@ class Flow : public GenericHashEntry {
 
   /* Flow callbacks have these methods to set/get certain statuses on the flow. */
   /* Setters */
-  inline void fcb_set_blacklisted(bool to_cli) { if(to_cli) fcb_status.bl_country_cli = 1; else fcb_status.bl_country_srv = 1; };
+  //TODO WIP to be removed
   inline void fcb_set_tcp_issues(bool to_cli)  { if(to_cli) fcb_status.tcp_issues_cli = 1; else fcb_status.tcp_issues_srv = 1; };
   inline void fcb_set_tcp_issues_severe()      { fcb_status.tcp_issues_severe = 1; };
   inline void fcb_set_longlived_th(u_int64_t th_secs) { fcb_status.longlived_th = th_secs; };
   inline void fcb_set_elephant_th(u_int64_t th_bytes, bool l2r) { if(l2r) fcb_status.elephant_th_l2r = th_bytes; else fcb_status.elephant_th_r2l = th_bytes; };
 
   /* Getters */
-  inline void fcb_get_blacklisted(bool *cli, bool *srv) { *cli = fcb_status.bl_country_cli, *srv = fcb_status.bl_country_srv; };
   inline void fcb_get_tcp_issues(bool *cli, bool *srv, bool *severe)  {
     *cli = fcb_status.tcp_issues_cli, *srv = fcb_status.tcp_issues_srv, *severe = fcb_status.tcp_issues_severe ;
   };
@@ -322,22 +322,28 @@ class Flow : public GenericHashEntry {
   /*
     Called by FlowCallback subclasses to trigger a flow alert. This is an asynchronous call, faster, but can
     cause the alert JSON to be generated after the call.
+    The FlowCallback should implement the buildAlert() method which is called in the predominant callback to actually build the FlowAlert object.
    */
-  bool triggerAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
+  bool triggerAlertAsync(FlowAlertType alert_type, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
 
   /* 
      Called by FlowCallback subclasses to trigger a flow alert. This is a syncrhonous call, more expensive, but
-     causes the alert to be immediately enqueued to all recipients.
+     causes the alert (FlowAlert) to be immediately enqueued to all recipients.
    */
-  bool triggerAlertSync(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json);
+  bool triggerAlertSync(FlowAlert *alert, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
   /*
     Enqueues the predominant alert of the flow to all available flow recipients.
    */
   void enqueuePredominantAlert();
 
-  inline FlowAlertType getPredominantAlert() const { return predominant_alert;       };
+  inline void setPredominantAlert(FlowAlertType a) { predominant_alert = a; }
+  inline FlowAlertType getPredominantAlert() const { return predominant_alert; };
+  inline bool isFlowAlerted()    const { return(predominant_alert != alert_normal); };
+
+  inline void setPredominantAlertScore(u_int16_t s) { predominant_alert_score = s; }
+  inline u_int16_t  getAlertedScore() const { return predominant_alert_score; };
+
   inline AlertLevel getAlertedSeverity()     const { return predominant_alert_level; };
-  inline u_int16_t  getAlertedScore()        const { return predominant_alert_score; };
 
   bool isBlacklistedFlow()   const;
   bool isBlacklistedClient() const;
@@ -387,12 +393,8 @@ class Flow : public GenericHashEntry {
   };
   inline const char* getServerCipherClass()  const { return(isTLS() ? cipher_weakness2str(protos.tls.ja3.server_unsafe_cipher) : NULL); }
   char* serialize(bool use_labels = false);
-  /*
-    Prepares an alert JSON and puts int in the resulting `serializer`. An optional `additional_serializer`
-    can be passed to have it put under key `alert_json` of `serializer`. When no `additional_serializer` is passed, key `alert_json`
-    is populated asynchronously using `alert_type`.
-   */
-  void flow2alertJSON(ndpi_serializer *serializer, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer);
+  /* Prepares an alert JSON and puts int in the resulting `serializer`. */
+  void alert2JSON(FlowAlert *alert, ndpi_serializer *serializer);
   json_object* flow2JSON();
   json_object* flow2es(json_object *flow_object);
   
@@ -728,7 +730,6 @@ class Flow : public GenericHashEntry {
 						 && ((src2dst_tcp_flags & TH_RST) || (dst2src_tcp_flags & TH_RST))); };
   inline bool isTCPRefused()     const { return (!isThreeWayHandshakeOK() && (dst2src_tcp_flags & TH_RST) == TH_RST); };
   inline bool isTCPZeroWindow()  const { return (src2dst_tcp_zero_window || dst2src_tcp_zero_window); };
-  inline bool isFlowAlerted() const      { return(predominant_alert != alert_normal); };
   inline void setVRFid(u_int32_t v) { vrfId = v; }
   inline void setSrcAS(u_int32_t v) { srcAS = v; }
   inline void setDstAS(u_int32_t v) { dstAS = v; }

@@ -334,7 +334,7 @@ void NetworkInterface::init() {
 
   idleFlowsToDump = activeFlowsToDump = NULL;
   
-  callbacksQueue = new (std::nothrow) SPSCQueue<Flow *>(MAX_FLOW_CALLBACKS_QUEUE_LEN, "callbacksQueue");
+  callbacksQueue = new (std::nothrow) SPSCQueue<FlowAlert *>(MAX_FLOW_CALLBACKS_QUEUE_LEN, "callbacksQueue");
 
   PROFILING_INIT();
 }
@@ -628,13 +628,18 @@ NetworkInterface::~NetworkInterface() {
 
 /* **************************************************** */
 
-bool NetworkInterface::callbacksEnqueue(Flow *f) {
+/* Enqueue flow alert to a queue for processing and later delivery to recipients */
+bool NetworkInterface::enqueueFlowAlert(FlowAlert *alert) {
   bool ret = false;
-  SPSCQueue<Flow *> *selected_queue = callbacksQueue;
+  SPSCQueue<FlowAlert *> *selected_queue = callbacksQueue;
+  Flow *f = alert->getFlow();
+
+  
 
   /* Perform the actual enqueue */
   if(selected_queue) {
-    if(selected_queue->enqueue(f, true)) {
+    if(selected_queue->enqueue(alert, true)) {
+
       /*
 	If enqueue was successful, increase the flow reference counter.
 	Reference counter will be deleted when doing the dequeue.
@@ -654,6 +659,9 @@ bool NetworkInterface::callbacksEnqueue(Flow *f) {
       ret = false;
     }
   }
+
+  if (!ret)
+    delete alert;  
 
   return ret;
 }
@@ -2385,27 +2393,37 @@ void NetworkInterface::pollQueuedeCompanionEvents() {
 
 /* **************************************************** */
 
+/* Dequeue alerted flows from callbacks (and enqueue to recipients) */
 u_int64_t NetworkInterface::dequeueAlertedFlows(SPSCQueue<Flow *> *q, u_int budget) {
   u_int64_t num_done = 0;
 
   while(q->isNotEmpty()) {
-    Flow *f = q->dequeue();
+    FlowAlert *alert;
+   
+    alert = q->dequeue();
 
-    f->enqueuePredominantAlert();
+    if (alert) {
+      Flow *f = alert->getFlow();
+
+      /* Enqueue alert to recipients */
+      if (!f->enqueueAlert(alert))
+        delete alert;
 
 #if DEBUG_FLOW_CALLBACKS
-    ntop->getTrace()->traceEvent(TRACE_NORMAL, "Dequeued flow");
+      ntop->getTrace()->traceEvent(TRACE_NORMAL, "Dequeued flow alert");
 #endif
 
-    /*
-      Now that the job is done, the reference counter to the flow can be decreased.
-     */
-    f->decUses();
+      /*
+        Now that the job is done, the reference counter to the flow can be decreased.
+       */
+      f->decUses();
 
-    num_done++;
-    if(budget > 0 /* Budget requested */
-       && num_done >= budget /* Budget exceeded */)
-      break;
+      num_done++;
+
+      if(budget > 0 /* Budget requested */
+         && num_done >= budget /* Budget exceeded */)
+        break;
+    }
   }
 
   return num_done;
@@ -8679,27 +8697,30 @@ void NetworkInterface::incrOS(char *hostname) {
 
 void NetworkInterface::execProtocolDetectedCallbacks(Flow *f) {
   if(flow_callbacks_executor) {
-    flow_callbacks_executor->execProtocolDetectedCallback(f);
-    callbacksEnqueue(f);
+    FlowAlert *alert = flow_callbacks_executor->execCallbacks(f, flow_callback_protocol_detected);
+    if (alert)
+      enqueueFlowAlert(alert);
   }
-};
+}
 
 /* *************************************** */
 
 void NetworkInterface::execPeriodicUpdateCallbacks(Flow *f) {
   if(flow_callbacks_executor) {
-    flow_callbacks_executor->execPeriodicUpdateCallback(f);
-    callbacksEnqueue(f);
+    FlowAlert *alert = flow_callbacks_executor->execCallbacks(f, flow_callback_periodic_update);
+    if (alert)
+      enqueueFlowAlert(alert);
   }
-};
+}
 
 /* *************************************** */
 
 void NetworkInterface::execFlowEndCallbacks(Flow *f) {
   if(flow_callbacks_executor) {
-    flow_callbacks_executor->execFlowEndCallback(f);
-    callbacksEnqueue(f);
+    FlowAlert *alert = flow_callbacks_executor->execCallbacks(f, flow_callback_flow_end);
+    if (alert)
+      enqueueFlowAlert(alert);
   }
-};
+}
 
 /* *************************************** */

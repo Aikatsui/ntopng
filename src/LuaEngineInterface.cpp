@@ -2633,38 +2633,8 @@ static int ntop_get_interface_find_flow_by_key_and_hash_id(lua_State* vm) {
 /* ****************************************** */
 
 static int ntop_get_interface_flow_alert_by_key_and_hash_id(lua_State* vm) {
-  NetworkInterface *ntop_interface = getCurrentInterface(vm);
-  u_int32_t key;
-  u_int hash_id;
-  Flow *f;
-  AddressTree *ptree = get_allowed_nets(vm);
-  
-  if(ntop_lua_check(vm, __FUNCTION__, 1, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
-  if(ntop_lua_check(vm, __FUNCTION__, 2, LUA_TNUMBER) != CONST_LUA_OK) return(CONST_LUA_ERROR);
 
-  key = (u_int32_t)lua_tonumber(vm, 1);
-  hash_id = (u_int)lua_tonumber(vm, 2);
-
-  if(!ntop_interface) return(false);
-
-  f = ntop_interface->findFlowByKeyAndHashId(key, hash_id, ptree);
-
-  if(f) {
-    ndpi_serializer flow_json;
-    u_int32_t buflen;
-    const char *flow_str;
-
-    ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
-
-    f->flow2alertJSON(&flow_json, time(NULL), f->getPredominantAlert(), NULL);
-
-    flow_str = ndpi_serializer_get_buffer(&flow_json, &buflen);
-
-    if(flow_str)
-      lua_pushstring(vm, flow_str);
-
-    ndpi_term_serializer(&flow_json);
-  }
+  //TODO WIP This code has been removed, the call should be removed from Lua
 
   return(CONST_LUA_OK);  
 }

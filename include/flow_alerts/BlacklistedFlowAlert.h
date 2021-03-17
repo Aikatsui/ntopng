@@ -26,8 +26,14 @@
 
 class BlacklistedFlowAlert : public FlowAlert {
  public:
-  BlacklistedFlowAlert() : FlowAlert("alert_blacklisted", alert_blacklisted, alert_category_security) { };
+  static const FlowAlertType type = alert_blacklisted;
+
+  BlacklistedFlowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~BlacklistedFlowAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_blacklisted"); }
 };
 
 #endif /* _BLACKLISTED_FLOW_ALERT_H_ */

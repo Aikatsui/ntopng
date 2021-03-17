@@ -25,9 +25,28 @@
 #include "ntop_includes.h"
 
 class IECUnexpectedTypeIdAlert : public FlowAlert {
+ private:
+  u_int16_t asdu;
+  u_int8_t type_id;
+  u_int8_t cause_tx;
+  u_int8_t negative;
+
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+
  public:
-  IECUnexpectedTypeIdAlert() : FlowAlert("alert_iec_unexpected_type_id", alert_iec_unexpected_type_id, alert_category_security) { };
+  static const FlowAlertType type = alert_iec_unexpected_type_id;
+
+  IECUnexpectedTypeIdAlert(Flow *f, AlertLevel s, u_int8_t _type_id, u_int16_t _asdu, u_int8_t _cause_tx, u_int8_t _negative) : FlowAlert(f, s) { 
+    type_id = _type_id;
+    asdu = _asdu;
+    cause_tx = _cause_tx;
+    negative  = _negative;
+  };
   ~IECUnexpectedTypeIdAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_iec_unexpected_type_id"); }
 };
 
 #endif /* _IEC_UNEXPECTED_TYPE_ID_ALERT_H_ */

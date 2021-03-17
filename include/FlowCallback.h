@@ -48,6 +48,9 @@ class FlowCallback {
   virtual void periodicUpdate(Flow *f)   {};
   virtual void flowEnd(Flow *f)          {};
 
+  /* Used to build an alert when triggerAlertAsync is used */
+  virtual FlowAlert *buildAlert(Flow *f) { return NULL; };
+
   inline void enable()    { enabled = 1; }
   inline bool isEnabled() { return(enabled ? true : false); }
   inline AlertLevel getSeverity() { return severity_id; }

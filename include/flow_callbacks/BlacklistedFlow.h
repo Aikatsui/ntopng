@@ -33,8 +33,9 @@ class BlacklistedFlow : public FlowCallback {
 				   true /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~BlacklistedFlow() {};
 
-  void protocolDetected(Flow *f);
   bool loadConfiguration(json_object *config);
+  void protocolDetected(Flow *f);
+  FlowAlert *buildAlert(Flow *f);
   
   std::string getName()          const { return(std::string("blacklisted")); }
 };

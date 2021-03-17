@@ -100,9 +100,6 @@ class Ntop {
   /* Flow Callbacks Loader */
   FlowCallbacksLoader *flow_callbacks_loader;
 
-  /* Flow Alerts Loader */
-  FlowAlertsLoader *flow_alerts_loader, *flow_alerts_loader_shadow;
-  
 #ifndef WIN32
   ContinuousPing *cping;
   Ping *ping;
@@ -128,7 +125,6 @@ class Ntop {
   bool startPurgeLoop();
 
   void checkReloadFlowCallbacks();
-  void checkReloadFlowAlerts();
   
  public:
   /**

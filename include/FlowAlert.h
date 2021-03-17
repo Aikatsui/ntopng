@@ -26,32 +26,31 @@
 
 class FlowAlert {
  private:
+  Flow *flow;
   AlertLevel severity_id;
-  std::string name;
-  FlowAlertType alert_type;
-  AlertCategory category;
 
   /* 
-     Adds to the passed `serializer` (generated with `getAlertSerializer`) information specific to this callback and this flow
+     Adds to the passed `serializer` (generated with `getAlertSerializer`) information specific to this alert
    */
   virtual ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f)  { return serializer; }  
 
  public:
-  FlowAlert(const char* _name, FlowAlertType _alert_type, AlertCategory _category);
+  FlowAlert(Flow *f, AlertLevel s);
   virtual ~FlowAlert();
 
   bool loadConfiguration(json_object *config);
 
-  inline std::string   getName()      const { return(name);        }
+  virtual FlowAlertType getAlertType() const = 0;
+  virtual AlertCategory getCategory()  const = 0;
+  virtual std::string   getName()      const = 0;
+
   inline AlertLevel    getSeverity()  const { return(severity_id); }  
-  inline AlertCategory getCategory()  const { return(category);    }
-  inline FlowAlertType getAlertType() const { return(alert_type);  }
 
   /* 
      Generates the JSON alert serializer with base information and per-callback information gathered with `getAlertJSON`.
      NOTE: memory must be freed by the caller.
   */
-  ndpi_serializer* getSerializedAlert(Flow *f);
+  ndpi_serializer* getSerializedAlert();
 };
 
 #endif /* _FLOW_ALERT_H_ */

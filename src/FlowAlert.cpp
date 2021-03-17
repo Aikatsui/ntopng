@@ -23,16 +23,15 @@
 
 /* **************************************************** */
 
-FlowAlert::FlowAlert(const char* _name, FlowAlertType _alert_type, AlertCategory _category) {
-  name.assign(_name);
-  alert_type = _alert_type;
-  category = _category;
+FlowAlert::FlowAlert(Flow *f, AlertLevel s) {
+  flow = f;
+  severity_id = s;
 }
 
 /* **************************************************** */
 
 FlowAlert::~FlowAlert() {
-};
+}
 
 /* **************************************************** */
 
@@ -60,7 +59,7 @@ bool FlowAlert::loadConfiguration(json_object *config) {
 
 /* ***************************************************** */
 
-ndpi_serializer* FlowAlert::getSerializedAlert(Flow *f) {
+ndpi_serializer* FlowAlert::getSerializedAlert() {
   ndpi_serializer *serializer;
 
   serializer = (ndpi_serializer *) malloc(sizeof(ndpi_serializer));
@@ -76,19 +75,19 @@ ndpi_serializer* FlowAlert::getSerializedAlert(Flow *f) {
   /* Add here global callback information, common to any alerted flow */
 
   /* Guys used to link the alert back to the active flow */
-  ndpi_serialize_string_uint64(serializer, "ntopng.key", f->key());
-  ndpi_serialize_string_uint64(serializer, "hash_entry_id", f->get_hash_entry_id());
+  ndpi_serialize_string_uint64(serializer, "ntopng.key", flow->key());
+  ndpi_serialize_string_uint64(serializer, "hash_entry_id", flow->get_hash_entry_id());
 
   /* Flow info */
   char buf[64];
-  char *info = f->getFlowInfo(buf, sizeof(buf));
+  char *info = flow->getFlowInfo(buf, sizeof(buf));
   ndpi_serialize_string_string(serializer, "info", info ? info : "");
 
   /* ICMP-related information */
-  if(f->isICMP()) {
+  if(flow->isICMP()) {
     u_int8_t icmp_type, icmp_code;
 
-    f->getICMP(&icmp_type, &icmp_code);
+    flow->getICMP(&icmp_type, &icmp_code);
 
     ndpi_serialize_start_of_block(serializer, "icmp");
     ndpi_serialize_string_int32(serializer, "type", icmp_type);
@@ -103,7 +102,7 @@ ndpi_serializer* FlowAlert::getSerializedAlert(Flow *f) {
   ndpi_serialize_end_of_block(serializer);
 
   /* This call adds callback-specific information to the serializer */
-  getAlertJSON(serializer, f);
+  getAlertJSON(serializer);
 
   return serializer;
 }

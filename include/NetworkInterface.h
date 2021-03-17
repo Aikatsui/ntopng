@@ -46,6 +46,7 @@ class DB;
 class Paginator;
 class NetworkInterfaceTsPoint;
 class ViewInterface;
+class FlowAlert;
 class FlowCallbacksLoader;
 class FlowCallbacksExecutor;
 
@@ -105,7 +106,7 @@ class NetworkInterface : public AlertableEntity {
   /* Queues for the execution of flow user scripts.
      See scripts/plugins/examples/example/user_scripts/flow/example.lua for the callbacks
    */
-  SPSCQueue<Flow *> *callbacksQueue;
+  SPSCQueue<FlowAlert *> *callbacksQueue;
 
   /*
     Flag to indicate whether a flow JSON should be dumped along with the flow. Flow JSON contain
@@ -456,7 +457,7 @@ class NetworkInterface : public AlertableEntity {
   /*
     Enqueue flows for the execution of periodic scripts
    */
-  bool callbacksEnqueue(Flow *f);
+  bool enqueueAlertedFlow(Flow *f);
   /*
     Enqueue flows to be processed by the view interfaces.
     Viewed interface enqueue flows using this method so that the view

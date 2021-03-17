@@ -45,7 +45,8 @@ Flow::Flow(NetworkInterface *_iface,
   good_tls_hs = true, flow_dropped_counts_increased = false, vrfId = 0;
   srcAS = dstAS  = prevAdjacentAS = nextAdjacentAS = 0;
   predominant_alert_level = alert_level_none;
-  predominant_alert = predominant_alert_enqueued = alert_normal, predominant_alert_score = 0;
+  predominant_alert = alert_normal, predominant_alert_score = 0;
+  alert_stats_initialized = false;
   ndpi_flow_risk_bitmap = 0;
   detection_completed = false;
   extra_dissection_completed = false;
@@ -2158,12 +2159,6 @@ void Flow::lua(lua_State* vm, AddressTree * ptree,
       }
     }
 
-    char *alert_json = ntop->getAlertJSON(getPredominantAlert(), this);
-    if(alert_json) {
-      lua_push_str_table_entry(vm, "alert_info", alert_json);
-      free(alert_json);
-    }
-
     lua_get_risk_info(vm, true);
     lua_entropy(vm);
   }
@@ -2672,27 +2667,34 @@ u_char* Flow::getCommunityId(u_char *community_id, u_int community_id_len) {
 
 /* *************************************** */
 
-/* Create a JSON in the alerts format
- * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
-void Flow::flow2alertJSON(ndpi_serializer *s, time_t now, FlowAlertType alert_type, ndpi_serializer *additional_serializer) {
-  char buf[64];
-  u_char community_id[200];
-  char *alert_json = NULL;
+char* Flow::getAlertJSON(FlowAlert *alert) const {
+  ndpi_serializer *alert_json_serializer = NULL;
+  char *json_string = NULL;
+  u_int32_t json_string_len;
 
-  if(!additional_serializer)
-    /* No JSON as argument, generate it asynchronously from the alert_type */
-    alert_json = ntop->getAlertJSON(alert_type, this);
-  else {
-    /* JSON submitted as argument, use it as-is. */
-    u_int32_t json_string_len;
-    
-    alert_json = ndpi_serializer_get_buffer(additional_serializer, &json_string_len);
+  alert_json_serializer = alert->getSerializedAlert();
+
+  if(alert_json_serializer) {
+    json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
+    json_string = json_string ? strdup(json_string) : NULL; /* Allocate memory */
+    ndpi_term_serializer(alert_json_serializer);
   }
 
-  ndpi_serialize_string_string(s, "alert_json", alert_json ? alert_json : "");
+  /* Always allocated in memory (must be freed) */
+  return(json_string);
+}
 
-  if(!additional_serializer && alert_json) /* JSON generated asynchronously, must free it */
-    free(alert_json);
+/* *************************************** */
+
+/* Create a JSON in the alerts format
+ * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
+void Flow::alert2JSON(FlowAlert *alert, ndpi_serializer *s) {
+  ndpi_serializer *alert_json_serializer = NULL;
+  char *alert_json;
+  u_int32_t alert_json_len;
+  char buf[64];
+  u_char community_id[200];
+  time_t now = time(NULL);
 
   ndpi_serialize_string_int32(s, "ifid", iface->get_id());
   ndpi_serialize_string_string(s, "action", "store");
@@ -2756,6 +2758,18 @@ void Flow::flow2alertJSON(ndpi_serializer *s, time_t now, FlowAlertType alert_ty
 
   ndpi_serialize_string_string(s, "community_id",
 			       (char*)getCommunityId(community_id, sizeof(community_id)));
+
+   /* Serialize alert JSON */
+
+  alert_json_serializer = alert->getSerializedAlert();
+
+  if(alert_json_serializer)
+    alert_json = ndpi_serializer_get_buffer(alert_json_serializer, &alert_json_len);
+
+  ndpi_serialize_string_string(s, "alert_json", alert_json ? alert_json : "");
+
+  if (alert_json_serializer)
+    ndpi_term_serializer(alert_json_serializer);
 }
 
 /* *************************************** */
@@ -2984,7 +2998,8 @@ void Flow::callFlowUpdate(time_t t) {
 
 /* *************************************** */
 
-bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer *alert_json) {
+/* Enqueue alert to recipients */
+bool Flow::enqueueAlert(FlowAlert *alert) {
   bool first_alert = isFlowAlerted();
   bool rv = false;
   u_int32_t buflen;
@@ -2995,7 +3010,7 @@ bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer 
   ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
 
   /* Prepare the JSON, including a JSON specific of this FlowAlertType */
-  flow2alertJSON(&flow_json, time(NULL), fat, alert_json);
+  alert2JSON(alert, &flow_json, time(NULL));
 
   if(!first_alert)
     ndpi_serialize_string_boolean(&flow_json, "replace_alert", true);
@@ -3006,8 +3021,8 @@ bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer 
   /* Currenty, we forcefully enqueue only to the builtin sqlite */
     
   notification.alert = (char*)flow_str;
-  notification.alert_severity = severity;
-  notification.alert_category = ntop->getAlertCategory(fat);
+  notification.alert_severity = alert->getSeverity();
+  notification.alert_category = alert->getCategory();
 
   rv = ntop->recipients_enqueue(notification.alert_severity >= alert_level_error ? recipient_notification_priority_high : recipient_notification_priority_low,
 				&notification,
@@ -3018,21 +3033,9 @@ bool Flow::enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer 
 
   ndpi_term_serializer(&flow_json);
 
+  delete alert;
+
   return rv;
-}
-
-/* *************************************** */
-
-void Flow::enqueuePredominantAlert() {
-  /* See if it is time to trigger an alert */
-  FlowAlertType cur_predominant_alert = getPredominantAlert();
-
-  if(cur_predominant_alert == alert_normal                  /* No alert (should not occur) */
-     || predominant_alert_enqueued == cur_predominant_alert /* Predominant alert already enqueued */)
-    return; /* Nothing to do */
-
-  if(enqueueAlert(cur_predominant_alert, getAlertedSeverity(), NULL /* json is asynchronously generated from cur_predominant_alert */))
-    predominant_alert_enqueued = cur_predominant_alert; /* Remember this predominant status that has been successfully enqueued */
 }
 
 /* *************************************** */
@@ -5221,11 +5224,11 @@ bool Flow::hasDissectedTooManyPackets() {
 
 /* ***************************************************** */
 
-bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int16_t alert_score) {
-  bool first_alert = !isFlowAlerted();
+void Flow::updateAlertsStats(FlowAlert *alert) {
+  AlertLevel severity = alert->getSeverity();
   Host *cli_h = get_cli_host(), *srv_h = get_srv_host();
 
-  if(first_alert) {
+  if (!alert_stats_initialized) {
     /* This is the first alert for the flow, increment the counters */
     iface->incNumAlertedFlows(this, severity);
 
@@ -5237,35 +5240,31 @@ bool Flow::setPredominantAlert(FlowAlertType status, AlertLevel severity, u_int1
 #endif
 
     if(cli_h)
-      cli_h->incTotalAlerts(status);
+      cli_h->incTotalAlerts(alert->getAlertType());
 
     if(srv_h)
-      srv_h->incTotalAlerts(status);
-  } else { /* Not the first alert triggered for this flow */
+      srv_h->incTotalAlerts(alert->getAlertType());
+
+  } else {
+    /* Not the first alert triggered for this flow */
+
     if(predominant_alert_level != severity) { /* If the new severity is different from the old severity ...*/
       iface->decNumAlertedFlows(this, predominant_alert_level); /* Decrease the value previously increased for the former level */
       iface->incNumAlertedFlows(this, severity);    /* Increase the value for the newly set level*/
     }
   }
-
-  predominant_alert = status;
+  
   predominant_alert_level = severity;
-  predominant_alert_score = alert_score;
-
-  /* Success - alert is dumped/notified from lua */
-  return true;
 }
 
-/* *************************************** */
+/* ***************************************************** */
 
 /*
   This method is called by Lua to set score and various other values of the flow
  */
-bool Flow::setAlertsBitmap(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+bool Flow::setAlertsBitmap(FlowAlertType alert_type, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   AlertCategory alert_category = ntop->getAlertCategory(alert_type);
-
   ScoreCategory score_category = Utils::mapAlertToScoreCategory(alert_category);
-  bool is_predominant = false; /* Check if the alert that is being triggered is becoming the new predominant alert */
 
   if(alert_type == alert_normal)
     return false;
@@ -5290,10 +5289,9 @@ bool Flow::setAlertsBitmap(FlowAlertType alert_type, AlertLevel severity, u_int1
 
   /* Check if also the predominant alert_type should be updated */
   if(!isFlowAlerted() /* Flow is not yet alerted */
-     || getAlertedScore() < flow_inc /* The score of the current alerted alert_type is less than the score of this alert_type */
-     || getAlertedSeverity() < severity) {
-    setPredominantAlert(alert_type, severity, flow_inc);
-    is_predominant = true;
+     || getAlertedScore() < flow_inc /* The score of the current alerted alert_type is less than the score of this alert_type */) {
+    setPredominantAlert(alert_type);
+    predominant_alert_score = flow_inc;
   }
 
   return true;
@@ -5301,37 +5299,31 @@ bool Flow::setAlertsBitmap(FlowAlertType alert_type, AlertLevel severity, u_int1
 
 /* *************************************** */
 
-bool Flow::triggerAlert(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+bool Flow::triggerAlertAsync(FlowAlertType alert_type, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   bool res;
 
-  res = setAlertsBitmap(alert_type, severity, flow_inc, cli_inc, srv_inc);
+  res = setAlertsBitmap(alert_type, flow_inc, cli_inc, srv_inc);
 
   return res;
 }
 
 /* *************************************** */
 
-bool Flow::triggerAlertSync(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc, ndpi_serializer *alert_json) {
-  bool res;
+bool Flow::triggerAlertSync(FlowAlert *alert, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
+  bool res, alert_enqueued = false;
 
-  res = setAlertsBitmap(alert_type, severity, flow_inc, cli_inc, srv_inc);
+  updateAlertsStats(alert);
+
+  res = setAlertsBitmap(alert->getAlertType(), alert->getSeverity(), flow_inc, cli_inc, srv_inc);
 
   /* Synchronous, this alert must be sent straight to the recipients now. Let's put it into the recipient queues. */
   if(res) { 
-    if(enqueueAlert(alert_type, severity, alert_json) /* Successful enqueue */
-       && alert_type == getPredominantAlert() /* Predominant alert */) {
-      /*
-	If the enqueue has been successful, and this alert is predominant, we
-	update the predominant alert enqueued. This will prevent the asynchronous Flow::enqueuePredominantAlert
-	to re-enqueue this alert.
-       */
-      predominant_alert_enqueued = alert_type;
-    }
+    if(enqueueAlert(alert)
+      alert_enqueued = true; /* Successful enqueue */
   }
 
-  /* Dispose memory */
-  if(alert_json)
-    ndpi_term_serializer(alert_json);
+  if (!alert_enqueued)
+    delete alert;
 
   return res;
 }
