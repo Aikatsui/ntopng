@@ -21,7 +21,8 @@
 
 #include "flow_callbacks_includes.h"
 
-ndpi_serializer* BlacklistedCountryAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* BlacklistedCountryAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
   Host *cli_host, *srv_host;
   char cli_buf[3], srv_buf[3];
 

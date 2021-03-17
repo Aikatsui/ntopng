@@ -21,7 +21,8 @@
 
 #include "flow_alerts_includes.h"
 
-ndpi_serializer* RemoteToLocalInsecureProtoAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* RemoteToLocalInsecureProtoAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
 
   if (serializer) {
     ndpi_serialize_string_int32(serializer, "ndpi_breed", f->get_protocol_breed());

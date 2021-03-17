@@ -2667,25 +2667,6 @@ u_char* Flow::getCommunityId(u_char *community_id, u_int community_id_len) {
 
 /* *************************************** */
 
-char* Flow::getAlertJSON(FlowAlert *alert) const {
-  ndpi_serializer *alert_json_serializer = NULL;
-  char *json_string = NULL;
-  u_int32_t json_string_len;
-
-  alert_json_serializer = alert->getSerializedAlert();
-
-  if(alert_json_serializer) {
-    json_string = ndpi_serializer_get_buffer(alert_json_serializer, &json_string_len);
-    json_string = json_string ? strdup(json_string) : NULL; /* Allocate memory */
-    ndpi_term_serializer(alert_json_serializer);
-  }
-
-  /* Always allocated in memory (must be freed) */
-  return(json_string);
-}
-
-/* *************************************** */
-
 /* Create a JSON in the alerts format
  * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
 void Flow::alert2JSON(FlowAlert *alert, ndpi_serializer *s) {

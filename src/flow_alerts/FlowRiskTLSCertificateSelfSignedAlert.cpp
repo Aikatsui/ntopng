@@ -21,12 +21,13 @@
 
 #include "flow_callbacks_includes.h"
 
-ndpi_serializer* FlowRiskTLSCertificateSelfSignedAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* FlowRiskTLSCertificateSelfSignedAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
   char *s;
   
   if(!serializer) return(NULL);
 
-  FlowRiskTLSAlert::getAlertJSON(serializer, f);
+  FlowRiskTLSAlert::getAlertJSON(serializer);
 
   if((s = f->getTLSCertificateIssuerDN()) != NULL)
     ndpi_serialize_string_string(serializer, "protos.tls.issuerDN", s);

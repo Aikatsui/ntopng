@@ -28,7 +28,7 @@ class BlacklistedCountryAlert : public FlowAlert {
  private:
   bool is_server;
 
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer);
 
  public:
   static const FlowAlertType type = alert_blacklisted_country;

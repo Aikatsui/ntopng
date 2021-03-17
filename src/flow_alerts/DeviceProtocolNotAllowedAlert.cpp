@@ -23,7 +23,8 @@
 
 /* ***************************************************** */
 
-ndpi_serializer *DeviceProtocolNotAllowedAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer *DeviceProtocolNotAllowedAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
   Host *cli = f->get_cli_host(), *srv = f->get_srv_host();
   DeviceType cli_dev_type = device_unknown, srv_dev_type = device_unknown; 
 

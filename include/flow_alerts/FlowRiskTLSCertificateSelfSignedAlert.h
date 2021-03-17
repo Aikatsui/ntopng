@@ -26,7 +26,7 @@
 
 class FlowRiskTLSCertificateSelfSignedAlert : public FlowRiskTLSAlert {
  private:
-  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer *getAlertJSON(ndpi_serializer* serializer);
 
  public:
   static const FlowAlertType type = alert_tls_certificate_selfsigned;

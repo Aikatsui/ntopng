@@ -21,7 +21,9 @@
 
 #include "flow_alerts_includes.h"
 
-ndpi_serializer* FlowRiskBinaryApplicationTransferAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* FlowRiskBinaryApplicationTransferAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
+
   if(serializer == NULL)
     return NULL;
 

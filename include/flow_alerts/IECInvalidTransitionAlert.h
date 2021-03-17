@@ -30,7 +30,7 @@ class IECInvalidTransitionAlert : public FlowAlert {
   u_int16_t type_i;
   u_int8_t type_id;
 
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer);
 
  public:
   static const FlowAlertType type = alert_iec_invalid_transition;

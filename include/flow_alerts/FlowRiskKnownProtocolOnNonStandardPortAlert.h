@@ -26,7 +26,7 @@
 
 class FlowRiskKnownProtocolOnNonStandardPortAlert : public FlowAlert {
  private:
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer);
 
  public:
   static const FlowAlertType type = alert_known_proto_on_non_std_port;

@@ -21,7 +21,8 @@
 
 #include "flow_alerts_includes.h"
 
-ndpi_serializer* LowGoodputFlowAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* LowGoodputFlowAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
 
   if (serializer) {
     ndpi_serialize_string_float(serializer, "goodput_ratio", f->get_goodput_ratio(), "%f");

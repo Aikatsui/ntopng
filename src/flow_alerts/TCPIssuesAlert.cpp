@@ -21,8 +21,9 @@
 
 #include "flow_alerts_includes.h"
 
-ndpi_serializer* TCPIssuesAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
-  
+ndpi_serializer* TCPIssuesAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
+
   if (serializer) {
     bool is_client = false, is_server = false, is_severe = false;
     FlowTrafficStats *stats = f->getTrafficStats();

@@ -32,7 +32,7 @@ class FlowAlert {
   /* 
      Adds to the passed `serializer` (generated with `getAlertSerializer`) information specific to this alert
    */
-  virtual ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f)  { return serializer; }  
+  virtual ndpi_serializer* getAlertJSON(ndpi_serializer* serializer)  { return serializer; }  
 
  public:
   FlowAlert(Flow *f, AlertLevel s);
@@ -45,6 +45,7 @@ class FlowAlert {
   virtual std::string   getName()      const = 0;
 
   inline AlertLevel    getSeverity()  const { return(severity_id); }  
+  inline Flow *getFlow() const { return(flow); }
 
   /* 
      Generates the JSON alert serializer with base information and per-callback information gathered with `getAlertJSON`.

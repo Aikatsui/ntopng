@@ -21,7 +21,8 @@
 
 #include "flow_alerts_includes.h"
 
-ndpi_serializer* ExternalAlertCheckAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* ExternalAlertCheckAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
   json_object *json = f->getExternalAlert();
 
   if (serializer != NULL && json != NULL) {

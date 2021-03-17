@@ -31,7 +31,7 @@ class IECUnexpectedTypeIdAlert : public FlowAlert {
   u_int8_t cause_tx;
   u_int8_t negative;
 
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer);
 
  public:
   static const FlowAlertType type = alert_iec_unexpected_type_id;

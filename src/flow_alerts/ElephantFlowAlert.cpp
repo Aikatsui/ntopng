@@ -21,7 +21,8 @@
 
 #include "flow_alerts_includes.h"
 
-ndpi_serializer* ElephantFlowAlert::getAlertJSON(ndpi_serializer* serializer, Flow *f) {
+ndpi_serializer* ElephantFlowAlert::getAlertJSON(ndpi_serializer* serializer) {
+  Flow *f = getFlow();
   u_int64_t l2r_th, r2l_th;
   if(serializer == NULL)
     return NULL;

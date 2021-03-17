@@ -26,7 +26,7 @@
 
 class UnexpectedServerAlert : public FlowAlert {
  private:
-  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
+  ndpi_serializer* getAlertJSON(ndpi_serializer* serializer);
 
  protected:
   virtual const IpAddress* getServerIP(Flow *f) { return(f->get_srv_ip_addr()); }
