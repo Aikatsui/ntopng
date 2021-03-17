@@ -73,8 +73,9 @@ Ntop::Ntop(char *appName) {
 
   /* Flow callbacks and flow alerts loaders */
   flowCallbacksReloadInProgress = true, /* Lazy, will be reloaded the first time this condition is evaluated */
-    flowAlertsReloadInProgress = true;
+    controlGroupsReloadInProgress = true;
   flow_callbacks_loader = NULL;
+  control_groups = control_groups_shadow = NULL;
 
   httpd = NULL, geo = NULL, mac_manufacturers = NULL;
   memset(&cpu_stats, 0, sizeof(cpu_stats));
@@ -315,6 +316,8 @@ Ntop::~Ntop() {
   if(globals) { delete globals; globals = NULL; }
 
   if(flow_callbacks_loader)     delete flow_callbacks_loader;
+  if(control_groups)            delete control_groups;
+  if(control_groups_shadow)     delete control_groups_shadow;
   
 #ifdef __linux__
   if(inotify_fd > 0)  close(inotify_fd);
@@ -546,6 +549,7 @@ void Ntop::start() {
     get_HTTPserver()->startCaptiveServer();
 #endif
 
+  checkReloadControlGroups();
   checkReloadFlowCallbacks();
 
   for(int i=0; i<num_defined_interfaces; i++)
@@ -2573,6 +2577,26 @@ void Ntop::initInterface(NetworkInterface *_if) {
 
 /* ******************************************* */
 
+void Ntop::checkReloadControlGroups() {
+  if(control_groups_shadow) { /* Dispose old memory if necessary */
+    delete control_groups_shadow;
+    control_groups_shadow = NULL;
+  }
+
+  if(controlGroupsReloadInProgress /* Check if a reload has been requested */
+     || !control_groups /* Control groups are not allocated */) { 
+    controlGroupsReloadInProgress = false; /* Leave this BEFORE the actual swap and new allocation to guarantee changes are always seen */
+
+    control_groups_shadow = control_groups; /* Save the existing instance */
+    control_groups = new (std::nothrow) ControlGroups(); /* Allocate a new instance */
+
+    if(!control_groups)
+      ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory for control groups.");
+  }
+}
+
+/* ******************************************* */
+
 void Ntop::checkReloadFlowCallbacks() {
   if (!ntop->getPrefs()->is_pro_edition() /* Community mode */ && 
       flow_callbacks_loader && flow_callbacks_loader->getCallbacksEdition() != ntopng_edition_community) {
@@ -2610,6 +2634,7 @@ void Ntop::checkReloadFlowCallbacks() {
 
 /* NOTE: the multiple isShutdown checks below are necessary to reduce the shutdown time */
 void Ntop::runHousekeepingTasks() {
+  checkReloadControlGroups();
   checkReloadFlowCallbacks();
 
   for(int i = 0; i < get_num_interfaces(); i++)

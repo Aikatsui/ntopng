@@ -137,8 +137,7 @@ local function _persist(control_group_id, name, members, disabled_alerts)
 
    ntop.setCache(control_group_details_key, json.encode(control_group_details))
 
-   ntop.reloadPeriodicScripts()
-   -- TODO: tell C++ to reload control groups
+   ntop.reloadControlGroups()
 
    -- Return the assigned control_group_id
    return control_group_id
@@ -324,9 +323,9 @@ function control_groups.delete_control_group(control_group_id)
 	 -- Remove the control_group_id from the set of all currently existing control_group ids
 	 ntop.delMembersCache(_get_control_group_ids_key(), string.format("%d", control_group_id))
 
-	 -- Reload periodic scripts to make faster refreshes
-	 ntop.reloadPeriodicScripts()
-	 -- TODO: reload control groups
+	 -- Tell the core to reload control groups
+	 ntop.reloadControlGroups()
+
 	 ret = true
       end
 

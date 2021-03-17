@@ -634,13 +634,23 @@ static int ntop_reload_periodic_scripts(lua_State* vm) {
   return(CONST_LUA_OK);
 }
 
-
 /* ****************************************** */
 
 static int ntop_reload_flow_callbacks(lua_State* vm) {
   ntop->getTrace()->traceEvent(TRACE_DEBUG, "%s() called", __FUNCTION__);
 
   ntop->reloadFlowCallbacks();
+
+  lua_pushnil(vm);
+  return(CONST_LUA_OK);
+}
+
+/* ****************************************** */
+
+static int ntop_reload_control_groups(lua_State* vm) {
+  ntop->getTrace()->traceEvent(TRACE_DEBUG, "%s() called", __FUNCTION__);
+
+  ntop->reloadControlGroups();
 
   lua_pushnil(vm);
   return(CONST_LUA_OK);
@@ -6115,6 +6125,7 @@ static luaL_Reg _ntop_reg[] = {
   { "isIPv6",                ntop_is_ipv6                 },
   { "reloadPeriodicScripts", ntop_reload_periodic_scripts },
   { "reloadFlowCallbacks",   ntop_reload_flow_callbacks   },
+  { "reloadControlGroups",   ntop_reload_control_groups   },
   { "shouldResolveHost",     ntop_should_resolve_host     },
   { "setIEC104AllowedTypeIDs", ntop_set_iec104_allowed_typeids },
   { "getLocalNetworkAlias",  ntop_check_local_network_alias },

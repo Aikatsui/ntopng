@@ -47,6 +47,7 @@ void ControlGroups::loadGroupDisabledFlowAlert(u_int group_id, FlowAlertType dis
 /* *************************************** */
 
 void ControlGroups::loadConfiguration() {
+  ntop->getTrace()->traceEvent(TRACE_NORMAL, "Reloading control groups");
 }
 
 /* *************************************** */
