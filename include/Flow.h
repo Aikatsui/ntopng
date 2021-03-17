@@ -277,8 +277,6 @@ class Flow : public GenericHashEntry {
   void luaScore(lua_State* vm);
   void luaIEC104(lua_State* vm);
   void callFlowUpdate(time_t t);
-  /* Enqueues an alert to all available flow recipients. */
-  bool enqueueAlert(FlowAlert *alert);
   /*
     Method to trigger alerts, synchronous or asynchronous, depending on the last argument.
     - Asynchronous: The alerts bitmap is updated and the predominant alert is possibly updated.
@@ -314,6 +312,9 @@ class Flow : public GenericHashEntry {
   };
   inline void fcb_get_longlived_th(u_int64_t *th_secs) { *th_secs = fcb_status.longlived_th; };
   inline void fcb_get_elephant_th(u_int64_t *l2r, u_int64_t *r2l) { *l2r = fcb_status.elephant_th_l2r, *r2l = fcb_status.elephant_th_r2l; };
+
+  /* Enqueues an alert to all available flow recipients. */
+  bool enqueueAlert(FlowAlert *alert);
 
   /*
     Called by FlowCallback subclasses to trigger a flow alert. This is an asynchronous call, faster, but can
