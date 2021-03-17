@@ -277,12 +277,8 @@ class Flow : public GenericHashEntry {
   void luaScore(lua_State* vm);
   void luaIEC104(lua_State* vm);
   void callFlowUpdate(time_t t);
-  /*
-    Enqueues an alert to all available flow recipients. Alert is enqueued as-is, no check on predominant alert is performed.
-    `alert_json` allows a JSON to be specified for the alert. When `alert_json` is NULL, the JSON is asynchronously
-    generated from `this` flow and the passed `fat`.
-  */
-  bool enqueueAlert(FlowAlertType fat, AlertLevel severity, ndpi_serializer *alert_json);
+  /* Enqueues an alert to all available flow recipients. */
+  bool enqueueAlert(FlowAlert *alert);
   /*
     Method to trigger alerts, synchronous or asynchronous, depending on the last argument.
     - Asynchronous: The alerts bitmap is updated and the predominant alert is possibly updated.
@@ -290,7 +286,7 @@ class Flow : public GenericHashEntry {
     - Synchronous:  The alerts bitmap is updated and the predominant alert is possibly updated.
                     Immediate alert JSON generation and enqueue to the recipients are performed as well.
    */
-  bool setAlertsBitmap(FlowAlertType alert_type, AlertLevel severity, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
+  bool setAlertsBitmap(FlowAlertType alert_type, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc);
   void updateAlertsStats(FlowAlert *alert);
 
  public:

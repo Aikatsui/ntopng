@@ -634,8 +634,6 @@ bool NetworkInterface::enqueueFlowAlert(FlowAlert *alert) {
   SPSCQueue<FlowAlert *> *selected_queue = callbacksQueue;
   Flow *f = alert->getFlow();
 
-  
-
   /* Perform the actual enqueue */
   if(selected_queue) {
     if(selected_queue->enqueue(alert, true)) {
@@ -2394,7 +2392,7 @@ void NetworkInterface::pollQueuedeCompanionEvents() {
 /* **************************************************** */
 
 /* Dequeue alerted flows from callbacks (and enqueue to recipients) */
-u_int64_t NetworkInterface::dequeueAlertedFlows(SPSCQueue<Flow *> *q, u_int budget) {
+u_int64_t NetworkInterface::dequeueAlertedFlows(SPSCQueue<FlowAlert *> *q, u_int budget) {
   u_int64_t num_done = 0;
 
   while(q->isNotEmpty()) {

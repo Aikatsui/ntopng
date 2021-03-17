@@ -2671,7 +2671,7 @@ u_char* Flow::getCommunityId(u_char *community_id, u_int community_id_len) {
  * Using the nDPI json serializer instead of jsonc for faster speed (~2.5x) */
 void Flow::alert2JSON(FlowAlert *alert, ndpi_serializer *s) {
   ndpi_serializer *alert_json_serializer = NULL;
-  char *alert_json;
+  char *alert_json = NULL;
   u_int32_t alert_json_len;
   char buf[64];
   u_char community_id[200];
@@ -5295,11 +5295,11 @@ bool Flow::triggerAlertSync(FlowAlert *alert, u_int16_t flow_inc, u_int16_t cli_
 
   updateAlertsStats(alert);
 
-  res = setAlertsBitmap(alert->getAlertType(), alert->getSeverity(), flow_inc, cli_inc, srv_inc);
+  res = setAlertsBitmap(alert->getAlertType(), flow_inc, cli_inc, srv_inc);
 
   /* Synchronous, this alert must be sent straight to the recipients now. Let's put it into the recipient queues. */
   if(res) { 
-    if(enqueueAlert(alert)
+    if(enqueueAlert(alert))
       alert_enqueued = true; /* Successful enqueue */
   }
 
