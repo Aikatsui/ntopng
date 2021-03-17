@@ -26,8 +26,14 @@
 
 class FlowRiskURLPossibleRCEInjectionAlert : public FlowAlert {
  public:
- FlowRiskURLPossibleRCEInjectionAlert() : FlowAlert("alert_ndpi_url_possible_rce_injection", alert_ndpi_url_possible_rce_injection, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_url_possible_rce_injection;
+
+ FlowRiskURLPossibleRCEInjectionAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~FlowRiskURLPossibleRCEInjectionAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_url_possible_rce_injection"); }
 };
 
 #endif /* _FR_URL_POSSIBLE_RCE_INJ_ALERT_H_ */

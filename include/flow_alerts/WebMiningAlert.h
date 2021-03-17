@@ -28,8 +28,14 @@ class WebMiningAlert : public FlowAlert {
  private:
   
  public:
-  WebMiningAlert() : FlowAlert("web_mining", alert_web_mining_detected, alert_category_security) {};
+  static const FlowAlertType type = alert_web_mining_detected;
+
+ WebMiningAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~WebMiningAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("web_mining"); }
 };
 
 #endif /* _WEBMINING_ALERT_H_ */

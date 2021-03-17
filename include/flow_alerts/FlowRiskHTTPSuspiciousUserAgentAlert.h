@@ -26,8 +26,14 @@
 
 class FlowRiskHTTPSuspiciousUserAgentAlert : public FlowAlert {
  public:
- FlowRiskHTTPSuspiciousUserAgentAlert() : FlowAlert("alert_ndpi_http_suspicious_user_agent", alert_ndpi_http_suspicious_user_agent, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_http_suspicious_user_agent;
+
+ FlowRiskHTTPSuspiciousUserAgentAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskHTTPSuspiciousUserAgentAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_http_suspicious_user_agent"); }
 };
 
 #endif /* _FR_HTTP_SUSPICIOUS_USER_AGENT_ALERT_H_ */

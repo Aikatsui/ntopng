@@ -26,8 +26,14 @@
 
 class FlowRiskSMBInsecureVersionAlert : public FlowAlert {
  public:
-  FlowRiskSMBInsecureVersionAlert() : FlowAlert("alert_ndpi_smb_insecure_version", alert_ndpi_smb_insecure_version, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_smb_insecure_version;
+
+ FlowRiskSMBInsecureVersionAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskSMBInsecureVersionAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_smb_insecure_version"); }
 };
 
 #endif /* _FR_SMB_INSECURE_VERSION_ALERT_H_ */

@@ -29,8 +29,14 @@ class FlowRiskTLSOldProtocolVersionAlert : public FlowRiskTLSAlert {
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  FlowRiskTLSOldProtocolVersionAlert() : FlowRiskTLSAlert("alert_tls_old_protocol_version", alert_tls_old_protocol_version, alert_category_security) { };
+  static const FlowAlertType type = alert_tls_old_protocol_version;
+
+ FlowRiskTLSOldProtocolVersionAlert(Flow *f, AlertLevel s) : FlowRiskTLSAlert(f, s) { };
   ~FlowRiskTLSOldProtocolVersionAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_tls_old_protocol_version"); }
 };
 
 #endif /* _FR_TLS_OLD_PROTOCOL_VERSION_ALERT_H_ */

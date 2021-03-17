@@ -26,8 +26,14 @@
 
 class FlowRiskHTTPSuspiciousURLAlert : public FlowAlert {
  public:
-  FlowRiskHTTPSuspiciousURLAlert() : FlowAlert("alert_ndpi_http_suspicious_url", alert_ndpi_http_suspicious_url, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_http_suspicious_url;
+
+ FlowRiskHTTPSuspiciousURLAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskHTTPSuspiciousURLAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_http_suspicious_url"); }
 };
 
 #endif /* _FR_HTTP_SUSPICIOUS_URL_ALERT_H_ */

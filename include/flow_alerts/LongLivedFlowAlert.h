@@ -29,8 +29,14 @@ class LongLivedFlowAlert : public FlowAlert {
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  LongLivedFlowAlert() : FlowAlert("alert_longlived", alert_longlived, alert_category_security) { };
+  static const FlowAlertType type = alert_longlived;
+
+ LongLivedFlowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~LongLivedFlowAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_longlived"); }
 };
 
 #endif /* _LONGLIVED_FLOW_ALERT_H_ */

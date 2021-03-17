@@ -26,8 +26,14 @@
 
 class NedgeBlockedFlowAlert : public FlowAlert {
  public:
-  NedgeBlockedFlowAlert() : FlowAlert("alert_flow_blocked", alert_flow_blocked, alert_category_security) { };
+  static const FlowAlertType type = alert_flow_blocked;
+
+ NedgeBlockedFlowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~NedgeBlockedFlowAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_flow_blocked"); }
 };
 
 #endif /* _NEDGE_BLOCKED_FLOW_ALERT_H_ */

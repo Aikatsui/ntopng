@@ -26,8 +26,14 @@
 
 class FlowRiskHTTPNumericIPHostAlert : public FlowAlert {
  public:
-  FlowRiskHTTPNumericIPHostAlert() : FlowAlert("alert_ndpi_http_numeric_ip_host", alert_ndpi_http_numeric_ip_host, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_http_numeric_ip_host;
+
+ FlowRiskHTTPNumericIPHostAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskHTTPNumericIPHostAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_http_numeric_ip_host"); }
 };
 
 #endif /* _FR_HTTP_NUMERIC_IP_HOST_ALERT_H_ */

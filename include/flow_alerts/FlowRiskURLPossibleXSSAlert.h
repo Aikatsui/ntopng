@@ -26,8 +26,14 @@
 
 class FlowRiskURLPossibleXSSAlert : public FlowAlert {
  public:
-  FlowRiskURLPossibleXSSAlert() : FlowAlert("alert_ndpi_url_possible_xss", alert_ndpi_url_possible_xss, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_url_possible_xss;
+
+ FlowRiskURLPossibleXSSAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskURLPossibleXSSAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_url_possible_xss"); }
 };
 
 #endif /* _FR_URL_POSSIBLE_XSS_ALERT_H_ */

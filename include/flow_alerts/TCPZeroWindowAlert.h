@@ -28,8 +28,14 @@ class TCPZeroWindowAlert : public FlowAlert {
  private:
 
  public:
- TCPZeroWindowAlert() : FlowAlert("zero_tcp_window", alert_zero_tcp_window, alert_category_network) {};
+  static const FlowAlertType type = alert_zero_tcp_window;
+
+ TCPZeroWindowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~TCPZeroWindowAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_network; }
+  std::string getName() const { return std::string("zero_tcp_window"); }
 };
 
 #endif /* _TCP_ZERO_WINDOW_FLOW_CALLBACK_ALERT_H_ */

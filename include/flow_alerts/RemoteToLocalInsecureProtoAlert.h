@@ -29,8 +29,14 @@ class RemoteToLocalInsecureProtoAlert : public FlowAlert {
   ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);  
 
  public:
-  RemoteToLocalInsecureProtoAlert() : FlowAlert("remote_to_local_insecure_proto", alert_remote_to_local_insecure_proto, alert_category_security) {};
+  static const FlowAlertType type = alert_remote_to_local_insecure_proto;
+
+ RemoteToLocalInsecureProtoAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~RemoteToLocalInsecureProtoAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("remote_to_local_insecure_proto"); }
 };
 
 #endif /* _REMOTE_TO_LOCAL_INSECURE_PROTO_ALERT_H_ */

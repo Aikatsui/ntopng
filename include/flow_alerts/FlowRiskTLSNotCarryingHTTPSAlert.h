@@ -26,8 +26,14 @@
 
 class FlowRiskTLSNotCarryingHTTPSAlert : public FlowRiskTLSAlert {
  public:
-  FlowRiskTLSNotCarryingHTTPSAlert() : FlowRiskTLSAlert("alert_ndpi_tls_not_carrying_https", alert_ndpi_tls_not_carrying_https, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_tls_not_carrying_https;
+
+ FlowRiskTLSNotCarryingHTTPSAlert(Flow *f, AlertLevel s) : FlowRiskTLSAlert(f, s) { };
   ~FlowRiskTLSNotCarryingHTTPSAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_tls_not_carrying_https"); }
 };
 
 #endif /* _FR_TLS_NOT_CARRYING_HTTPS_ALERT_H_ */

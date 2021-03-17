@@ -28,8 +28,14 @@ class NotPurgedAlert : public FlowAlert {
  private:
   
  public:
- NotPurgedAlert() : FlowAlert("not_purged", alert_internals, alert_category_internals) {};
+  static const FlowAlertType type = alert_internals;
+
+ NotPurgedAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~NotPurgedAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_internals; }
+  std::string getName() const { return std::string("not_purged"); }
 };
 
 #endif /* _NOT_PURGED_FLOW_CALLBACK_ALERT_H_ */

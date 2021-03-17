@@ -29,8 +29,14 @@ class ElephantFlowAlert : public FlowAlert {
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  ElephantFlowAlert() : FlowAlert("alert_elephant_flow", alert_elephant_flow, alert_category_security) { };
+  static const FlowAlertType type = alert_elephant_flow;
+
+ ElephantFlowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~ElephantFlowAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_elephant_flow"); }
 };
 
 #endif /* _ELEPHANT_FLOW_ALERT_H_ */

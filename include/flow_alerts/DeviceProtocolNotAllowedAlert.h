@@ -29,8 +29,14 @@ class DeviceProtocolNotAllowedAlert : public FlowAlert {
   ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
- DeviceProtocolNotAllowedAlert() : FlowAlert("alert_device_protocol_not_allowed", alert_device_protocol_not_allowed, alert_category_security) { };
+  static const FlowAlertType type = alert_device_protocol_not_allowed;
+
+ DeviceProtocolNotAllowedAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~DeviceProtocolNotAllowedAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_device_protocol_not_allowed"); }
 };
 
 #endif /* _DEVICE_PROTOCOL_NOT_ALLOWED_ALERT_H_ */

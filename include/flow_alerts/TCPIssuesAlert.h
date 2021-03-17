@@ -29,8 +29,14 @@ class TCPIssuesAlert : public FlowAlert {
   ndpi_serializer* getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  TCPIssuesAlert() : FlowAlert("tcp_issues_generic", alert_tcp_connection_issues, alert_category_network) {};
+  static const FlowAlertType type = alert_tcp_connection_issues;
+
+ TCPIssuesAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~TCPIssuesAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_network; }
+  std::string getName() const { return std::string("tcp_issues_generic"); }
 };
 
 #endif /* _TCP_ISSUES_ALERT_H_ */

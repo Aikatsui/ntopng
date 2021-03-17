@@ -26,8 +26,14 @@
 
 class InvalidDNSQueryAlert : public FlowAlert {
  public:
-  InvalidDNSQueryAlert() : FlowAlert("alert_dns_invalid_query", alert_dns_invalid_query, alert_category_security) { };
+  static const FlowAlertType type = alert_dns_invalid_query;
+
+ InvalidDNSQueryAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~InvalidDNSQueryAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_dns_invalid_query"); }
 };
 
 #endif /* _INVALID_DNS_QUERY_ALERT_H_ */

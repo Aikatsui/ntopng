@@ -28,8 +28,13 @@ class UnexpectedNTPServerAlert : public UnexpectedServerAlert {
  private:
 
  public:
-  UnexpectedNTPServerAlert() : UnexpectedServerAlert("unexpected_ntp", alert_unexpected_ntp_server) {};
+  static const FlowAlertType type = alert_unexpected_ntp_server;
+
+ UnexpectedNTPServerAlert(Flow *f, AlertLevel s) : UnexpectedServerAlert(f, s) {};
   ~UnexpectedNTPServerAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  std::string getName() const { return std::string("unexpected_ntp"); }
 };
 
 #endif /* _UNEXPECTED_NTP_SERVER_ALERT_H_ */

@@ -29,8 +29,14 @@ class FlowRiskSSHObsoleteAlert : public FlowAlert {
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  FlowRiskSSHObsoleteAlert() : FlowAlert("alert_ndpi_ssh_obsolete", alert_ndpi_ssh_obsolete, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_ssh_obsolete;
+
+ FlowRiskSSHObsoleteAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskSSHObsoleteAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_ssh_obsolete"); }
 };
 
 #endif /* _FR_SSH_OBSOLETE_ALERT_H_ */

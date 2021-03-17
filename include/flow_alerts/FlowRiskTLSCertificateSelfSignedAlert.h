@@ -29,8 +29,14 @@ class FlowRiskTLSCertificateSelfSignedAlert : public FlowRiskTLSAlert {
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  FlowRiskTLSCertificateSelfSignedAlert() : FlowRiskTLSAlert("alert_tls_certificate_selfsigned", alert_tls_certificate_selfsigned, alert_category_security) { };
+  static const FlowAlertType type = alert_tls_certificate_selfsigned;
+
+ FlowRiskTLSCertificateSelfSignedAlert(Flow *f, AlertLevel s) : FlowRiskTLSAlert(f, s) {};
   ~FlowRiskTLSCertificateSelfSignedAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_tls_certificate_selfsigned"); }
 };
 
 #endif /* _FR_TLS_CERTIFICATE_SELFSIGNED_ALERT_H_ */

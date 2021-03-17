@@ -31,8 +31,13 @@ class UnexpectedDHCPServerAlert : public UnexpectedServerAlert {
   const IpAddress* getServerIP(Flow *f) { return(f->get_dhcp_srv_ip_addr()); }
 
  public:
-  UnexpectedDHCPServerAlert() : UnexpectedServerAlert("unexpected_dhcp", alert_unexpected_dhcp_server) {};
+  static const FlowAlertType type = alert_unexpected_dhcp_server;
+
+ UnexpectedDHCPServerAlert(Flow *f, AlertLevel s) : UnexpectedServerAlert(f, s) {};
   ~UnexpectedDHCPServerAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  std::string getName() const { return std::string("unexpected_dhcp"); }
 };
 
 #endif /* _UNEXPECTED_DHCP_SERVER_ALERT_H_ */

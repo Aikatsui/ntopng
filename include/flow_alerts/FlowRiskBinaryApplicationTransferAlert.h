@@ -29,8 +29,14 @@ class FlowRiskBinaryApplicationTransferAlert : public FlowAlert {
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
 
  public:
-  FlowRiskBinaryApplicationTransferAlert() : FlowAlert("alert_suspicious_file_transfer", alert_suspicious_file_transfer, alert_category_security) { };
+  static const FlowAlertType type = alert_suspicious_file_transfer;
+
+ FlowRiskBinaryApplicationTransferAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskBinaryApplicationTransferAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_suspicious_file_transfer"); }
 };
 
 #endif /* _FR_BINARY_APPLICATION_TRANSFER_ALERT_H_ */

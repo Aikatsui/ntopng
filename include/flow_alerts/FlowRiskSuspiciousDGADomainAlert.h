@@ -26,8 +26,14 @@
 
 class FlowRiskSuspiciousDGADomainAlert : public FlowAlert {
  public:
-  FlowRiskSuspiciousDGADomainAlert() : FlowAlert("alert_ndpi_suspicious_dga_domain", alert_ndpi_suspicious_dga_domain, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_suspicious_dga_domain;
+
+ FlowRiskSuspiciousDGADomainAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskSuspiciousDGADomainAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_suspicious_dga_domain"); }
 };
 
 #endif /* _FR_SUSPICIOUS_DGA_DOMAIN_ALERT_H_ */

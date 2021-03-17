@@ -26,8 +26,14 @@
 
 class FlowRiskTLSSuspiciousESNIUsageAlert : public FlowRiskTLSAlert {
  public:
-  FlowRiskTLSSuspiciousESNIUsageAlert() : FlowRiskTLSAlert("alert_ndpi_tls_suspicious_esni_usage", alert_ndpi_tls_suspicious_esni_usage, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_tls_suspicious_esni_usage;
+
+ FlowRiskTLSSuspiciousESNIUsageAlert(Flow *f, AlertLevel s) : FlowRiskTLSAlert(f, s) { };
   ~FlowRiskTLSSuspiciousESNIUsageAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_tls_suspicious_esni_usage"); }
 };
 
 #endif /* _FR_TLS_SUSPICIOUS_ESNI_USAGE_ALERT_H_ */

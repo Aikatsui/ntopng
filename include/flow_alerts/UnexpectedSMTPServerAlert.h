@@ -28,8 +28,13 @@ class UnexpectedSMTPServerAlert : public UnexpectedServerAlert {
  private: 
 
  public:
-  UnexpectedSMTPServerAlert() : UnexpectedServerAlert("unexpected_smtp", alert_unexpected_smtp_server) {};
+  static const FlowAlertType type = alert_unexpected_smtp_server;
+
+ UnexpectedSMTPServerAlert(Flow *f, AlertLevel s) : UnexpectedServerAlert(f, s) {};
   ~UnexpectedSMTPServerAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  std::string getName() const { return std::string("unexpected_smtp"); }
 };
 
 #endif /* _UNEXPECTED_SMTP_SERVER_ALERT_H_ */

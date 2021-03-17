@@ -26,8 +26,14 @@
 
 class FlowRiskUnsafeProtocolAlert : public FlowAlert {
  public:
-  FlowRiskUnsafeProtocolAlert() : FlowAlert("alert_ndpi_unsafe_protocol", alert_ndpi_unsafe_protocol, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_unsafe_protocol;
+
+ FlowRiskUnsafeProtocolAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskUnsafeProtocolAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }  
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_unsafe_protocol"); }
 };
 
 #endif /* _FR_UNSAFE_PROTOCOL_ALERT_H_ */

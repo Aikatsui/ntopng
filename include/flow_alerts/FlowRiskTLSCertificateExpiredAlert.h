@@ -28,8 +28,14 @@ class FlowRiskTLSCertificateExpiredAlert : public FlowRiskTLSAlert {
  private:
 
  public:
-  FlowRiskTLSCertificateExpiredAlert() : FlowRiskTLSAlert("alert_tls_certificate_expired", alert_tls_certificate_expired, alert_category_security) { };
+  static const FlowAlertType type = alert_tls_certificate_expired;
+
+ FlowRiskTLSCertificateExpiredAlert(Flow *f, AlertLevel s) : FlowRiskTLSAlert(f, s) { };
   ~FlowRiskTLSCertificateExpiredAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_tls_certificate_expired"); }
 };
 
 #endif /* _FR_TLS_CERTIFICATE_EXPIRED_ALERT_H_ */

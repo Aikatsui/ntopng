@@ -26,8 +26,14 @@
 
 class FlowRiskTLSUnsafeCiphersAlert : public FlowRiskTLSAlert {
  public:
-  FlowRiskTLSUnsafeCiphersAlert() : FlowRiskTLSAlert("alert_tls_unsafe_ciphers", alert_tls_unsafe_ciphers, alert_category_security) { };
+  static const FlowAlertType type = alert_tls_unsafe_ciphers;
+
+ FlowRiskTLSUnsafeCiphersAlert(Flow *f, AlertLevel s) : FlowRiskTLSAlert(f, s) { };
   ~FlowRiskTLSUnsafeCiphersAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_tls_unsafe_ciphers"); }
 };
 
 #endif /* _FR_TLS_UNSAFE_CHIPERS_ALERT_H_ */

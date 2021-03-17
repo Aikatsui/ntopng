@@ -26,8 +26,14 @@
 
 class FlowRiskURLPossibleSQLInjectionAlert : public FlowAlert {
  public:
-  FlowRiskURLPossibleSQLInjectionAlert() : FlowAlert("alert_ndpi_url_possible_sql_injection", alert_ndpi_url_possible_sql_injection, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_url_possible_sql_injection;
+
+ FlowRiskURLPossibleSQLInjectionAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskURLPossibleSQLInjectionAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_url_possible_sql_injection"); }
 };
 
 #endif /* _FR_URL_POSSIBLE_SQL_INJECTION_ALERT_H_ */

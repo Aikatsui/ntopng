@@ -26,8 +26,14 @@
 
 class PotentiallyDangerousAlert : public FlowAlert {
  public:
-  PotentiallyDangerousAlert() : FlowAlert("alert_potentially_dangerous_protocol", alert_potentially_dangerous, alert_category_security) { };
+  static const FlowAlertType type = alert_potentially_dangerous;
+
+ PotentiallyDangerousAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~PotentiallyDangerousAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_potentially_dangerous_protocol"); }
 };
 
 #endif /* _POTENTIALLY_DANGEROUS_ALERT_H_ */

@@ -26,8 +26,14 @@
 
 class FlowRiskMalformedPacketAlert : public FlowAlert {
  public:
-  FlowRiskMalformedPacketAlert() : FlowAlert("alert_ndpi_malformed_packet", alert_ndpi_malformed_packet, alert_category_security) { };
+  static const FlowAlertType type = alert_ndpi_malformed_packet;
+
+ FlowRiskMalformedPacketAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~FlowRiskMalformedPacketAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_ndpi_malformed_packet"); }
 };
 
 #endif /* _FR_MALFORMED_PACKET_ALERT_H_ */

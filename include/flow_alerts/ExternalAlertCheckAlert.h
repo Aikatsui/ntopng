@@ -29,8 +29,15 @@ class ExternalAlertCheckAlert : public FlowAlert {
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer, Flow *f);
   
  public:
-  ExternalAlertCheckAlert() : FlowAlert("external_alert_check", alert_external, alert_category_security) {};
+  static const FlowAlertType type = alert_external;
+
+
+ ExternalAlertCheckAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~ExternalAlertCheckAlert() {};
+  
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("external_alert_check"); }
 };
 
 #endif /* _EXTERNAL_ALERT_CHECK_ALERT_H_ */

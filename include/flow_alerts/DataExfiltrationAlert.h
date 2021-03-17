@@ -26,8 +26,14 @@
 
 class DataExfiltrationAlert : public FlowAlert {
  public:
-  DataExfiltrationAlert() : FlowAlert("alert_data_exfiltration", alert_data_exfiltration, alert_category_security) { };
+  static const FlowAlertType type = alert_data_exfiltration;
+
+ DataExfiltrationAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~DataExfiltrationAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_data_exfiltration"); }
 };
 
 #endif /* _DATA_EXFILTRATION_ALERT_H_ */

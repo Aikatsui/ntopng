@@ -26,8 +26,14 @@
 
 class SuspiciousTCPProbingAlert : public FlowAlert {
  public:
-  SuspiciousTCPProbingAlert() : FlowAlert("alert_suspicious_tcp_probing", alert_suspicious_tcp_probing, alert_category_security) { };
+  static const FlowAlertType type = alert_suspicious_tcp_probing;
+
+ SuspiciousTCPProbingAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
   ~SuspiciousTCPProbingAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_suspicious_tcp_probing"); }
 };
 
 #endif /* _SUSPICIOUS_TCP_PROBING_ALERT_H_ */

@@ -28,8 +28,14 @@ class RemoteToRemoteAlert : public FlowAlert {
  private:
   
  public:
- RemoteToRemoteAlert() : FlowAlert("remote_to_remote", alert_remote_to_remote, alert_category_network) {};
+  static const FlowAlertType type = alert_remote_to_remote;
+
+ RemoteToRemoteAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
   ~RemoteToRemoteAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_network; }
+  std::string getName() const { return std::string("remote_to_remote"); }
 };
 
 #endif /* _REMOTE_TO_REMOTE_ALERT_H_ */

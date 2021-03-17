@@ -26,8 +26,14 @@
 
 class FlowRiskTLSCertificateMismatchAlert : public FlowRiskTLSAlert {
  public:
-  FlowRiskTLSCertificateMismatchAlert() : FlowRiskTLSAlert("alert_tls_certificate_mismatch", alert_tls_certificate_mismatch, alert_category_security) { };
+  static const FlowAlertType type = alert_tls_certificate_mismatch;
+
+ FlowRiskTLSCertificateMismatchAlert(Flow *f, AlertLevel s) : FlowRiskTLSAlert(f, s) { };
   ~FlowRiskTLSCertificateMismatchAlert() { };
+
+  FlowAlertType getAlertType() const { return type; }
+  AlertCategory getCategory() const { return alert_category_security; }
+  std::string getName() const { return std::string("alert_tls_certificate_mismatch"); }
 };
 
 #endif /* _FR_TLS_CERTIFICATE_MISMATCH_ALERT_H_ */

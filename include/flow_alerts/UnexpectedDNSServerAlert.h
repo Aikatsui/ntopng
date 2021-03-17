@@ -31,8 +31,13 @@ class UnexpectedDNSServerAlert : public UnexpectedServerAlert {
   const IpAddress* getServerIP(Flow *f) { return(f->get_dns_srv_ip_addr()); }
 
  public:
-  UnexpectedDNSServerAlert() : UnexpectedServerAlert("unexpected_dns", alert_unexpected_dns_server) {};
+  static const FlowAlertType type = alert_unexpected_dns_server;
+
+ UnexpectedDNSServerAlert(Flow *f, AlertLevel s) : UnexpectedServerAlert(f, s) {};
   ~UnexpectedDNSServerAlert() {};
+
+  FlowAlertType getAlertType() const { return type; }
+  std::string getName() const { return std::string("unexpected_dns"); }
 };
 
 #endif /* _UNEXPECTED_DNS_SERVER_ALERT_H_ */
