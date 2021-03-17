@@ -26,7 +26,7 @@ void TCPZeroWindow::checkTCPWindow(Flow *f) {
   if(f->isTCPZeroWindow()) {
     u_int16_t c_score = 30, s_score = 30, f_score = 30;
 
-    f->triggerAlert(alert_zero_tcp_window, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlertAsync(TCPZeroWindowAlert::type, f_score, c_score, s_score);
   }
 }
 
@@ -40,6 +40,12 @@ void TCPZeroWindow::periodicUpdate(Flow *f) {
 
 void TCPZeroWindow::flowEnd(Flow *f) {
   checkTCPWindow(f);
+}
+
+/* ***************************************************** */
+
+FlowAlert *TCPZeroWindow::buildAlert(Flow *f) {
+  return new TCPZeroWindowAlert(f, getSeverity());
 }
 
 /* ***************************************************** */

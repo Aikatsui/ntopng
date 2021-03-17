@@ -39,6 +39,8 @@ class FlowRiskSuspiciousDGADomain : public FlowRisk {
   FlowRiskSuspiciousDGADomain() : FlowRisk() {};
   ~FlowRiskSuspiciousDGADomain() {};
 
+  FlowAlert *buildAlert(Flow *f)  { return new FlowRiskSuspiciousDGADomainAlert(f, getSeverity()); }
+
   std::string getName()        const { return(std::string("ndpi_suspicious_dga_domain")); }
 };
 

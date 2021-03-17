@@ -39,6 +39,8 @@ class FlowRiskSMBInsecureVersion : public FlowRisk {
   FlowRiskSMBInsecureVersion() : FlowRisk() {};
   ~FlowRiskSMBInsecureVersion() {};
 
+  FlowAlert *buildAlert(Flow *f)  { return new FlowRiskSMBInsecureVersionAlert(f, getSeverity()); }
+
   std::string getName()        const { return(std::string("ndpi_smb_insecure_version")); }
 };
 

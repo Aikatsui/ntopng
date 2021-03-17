@@ -50,7 +50,6 @@ public:
 
   void protocolDetected(Flow *f);
   bool loadConfiguration(json_object *config);
-
 };
 
 #endif /* _UNEXPECTED_HOST_H_ */

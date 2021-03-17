@@ -52,7 +52,7 @@ void TCPIssues::checkFlow(Flow *f) {
   }
 
   if(f_score)
-    f->triggerAlert(alert_tcp_connection_issues, getSeverity(), f_score /* f_score */, c_score, s_score);
+    f->triggerAlertAsync(TCPIssuesAlert::type, f_score /* f_score */, c_score, s_score);
 }
 
 /* ******************************************** */
@@ -68,3 +68,9 @@ void TCPIssues::flowEnd(Flow *f) {
 }
 
 /* ******************************************** */
+
+FlowAlert *TCPIssues::buildAlert(Flow *f) {
+  return new TCPIssuesAlert(f, getSeverity());
+}
+
+/* ***************************************************** */

@@ -39,6 +39,8 @@ class FlowRiskMalformedPacket : public FlowRisk {
   FlowRiskMalformedPacket() : FlowRisk() {};
   ~FlowRiskMalformedPacket() {};
 
+  FlowAlert *buildAlert(Flow *f) { return new FlowRiskMalformedPacketAlert(f, getSeverity()); }
+
   std::string getName()        const { return(std::string("ndpi_malformed_packet")); }
 };
 

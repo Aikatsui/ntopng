@@ -35,11 +35,13 @@ class FlowRiskBinaryApplicationTransfer : public FlowRisk {
   u_int16_t getFlowScore()   { return 200; }
 
   /* Overriding the default severity */
-  virtual AlertLevel getCustomSeverity() { return alert_level_error; }
+  AlertLevel getSeverity() { return alert_level_error; }
   
  public:
   FlowRiskBinaryApplicationTransfer() : FlowRisk() {};
   ~FlowRiskBinaryApplicationTransfer() {};
+
+  FlowAlert *buildAlert(Flow *f) { return new FlowRiskBinaryApplicationTransferAlert(f, getSeverity()); }
 
   std::string getName()        const { return(std::string("suspicious_file_transfer")); }
 };

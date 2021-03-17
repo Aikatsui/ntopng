@@ -63,3 +63,6 @@ bool BlacklistedFlow::loadConfiguration(json_object *config) {
   
   return(true);
 }
+
+/* ***************************************************** */
+

@@ -35,6 +35,7 @@ class DeviceProtocolNotAllowed : public FlowCallback {
   ~DeviceProtocolNotAllowed() {};
 
   void protocolDetected(Flow *f);
+  FlowAlert *buildAlert(Flow *f);
   
   std::string getName()        const { return(std::string("device_protocol_not_allowed")); }
 };

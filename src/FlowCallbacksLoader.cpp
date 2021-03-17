@@ -72,7 +72,6 @@ void FlowCallbacksLoader::registerFlowCallbacks() {
   if((fcb = new FlowRiskTLSMissingSNI()))                       cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskTLSNotCarryingHTTPS()))                 cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskTLSSuspiciousESNIUsage()))              cb_all[fcb->getName()] = fcb;
-  if((fcb = new FlowRiskUnhandled()))                           cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskUnsafeProtocol()))                      cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleXSS()))                      cb_all[fcb->getName()] = fcb;
   if((fcb = new FlowRiskURLPossibleRCEInjection()))             cb_all[fcb->getName()] = fcb;
@@ -208,6 +207,7 @@ void FlowCallbacksLoader::loadConfiguration() {
 	}
       } else {
 	if(strcmp(callback_key, "new_flow_api_demo") == 0
+	   || strcmp(callback_key, "flow_risks") == 0
 	   || strcmp(callback_key, "flow_logger") == 0)
 	  ; /* No noise for demos */
 	else

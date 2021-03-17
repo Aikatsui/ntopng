@@ -34,8 +34,6 @@ class FlowRisk : public FlowCallback {
   virtual u_int16_t getServerScore() { return 50; }
   virtual u_int16_t getFlowScore()   { return 50; }
 
-  virtual AlertLevel getCustomSeverity() { return getSeverity(); }
-
  public:
   FlowRisk() : FlowCallback(ntopng_edition_community,
 			    false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,

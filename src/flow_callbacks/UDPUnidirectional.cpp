@@ -49,7 +49,7 @@ void UDPUnidirectional::checkFlow(Flow *f) {
   if(!f->get_srv_ip_addr()->isLocalHost(&network_id))
     fs_score = 50;
   
-  f->triggerAlert(alert_udp_unidirectional, severity_id, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
+  f->triggerAlertAsync(UDPUnidirectionalAlert::type, fs_score /* f_score */, fs_score /* c_score */, fs_score /* s_score */);
 }
 
 /* ***************************************************** */
@@ -57,3 +57,10 @@ void UDPUnidirectional::checkFlow(Flow *f) {
 void UDPUnidirectional::periodicActivities(Flow *f) { checkFlow(f); }
 void UDPUnidirectional::flowEnd(Flow *f)            { checkFlow(f); }
   
+/* ***************************************************** */
+
+FlowAlert *UDPUnidirectional::buildAlert(Flow *f) {
+  return new UDPUnidirectionalAlert(f, getSeverity());
+}
+
+/* ***************************************************** */

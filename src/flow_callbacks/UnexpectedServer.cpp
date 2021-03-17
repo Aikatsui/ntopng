@@ -99,7 +99,9 @@ void UnexpectedServer::protocolDetected(Flow *f) {
   if(!isAllowedHost(getServerIP(f))) {
     u_int16_t c_score = 100, s_score = 100, f_score = 0;
     
-    f->triggerAlert(getAlertType(), getSeverity(), f_score, c_score, s_score);   
+    f->triggerAlertAsync(getAlertType(), f_score, c_score, s_score);   
   }
 }
+
+/* ***************************************************** */
 

@@ -28,7 +28,7 @@ void ExternalAlertCheck::checkExternalAlert(Flow *f) {
     u_int16_t s_score = 100;
     u_int16_t f_score = 100;
 
-    f->triggerAlert(alert_external, f->getExternalSeverity(), f_score, c_score, s_score);
+    f->triggerAlertAsync(ExternalAlertCheckAlert::type, f_score, c_score, s_score);
   }
 }
 
@@ -46,3 +46,8 @@ void ExternalAlertCheck::flowEnd(Flow *f) {
 
 /* ***************************************************** */
 
+FlowAlert *ExternalAlertCheck::buildAlert(Flow *f) {
+  return new ExternalAlertCheckAlert(f, f->getExternalSeverity());
+}
+
+/* ***************************************************** */

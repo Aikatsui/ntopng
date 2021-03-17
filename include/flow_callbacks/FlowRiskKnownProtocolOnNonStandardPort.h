@@ -35,11 +35,13 @@ class FlowRiskKnownProtocolOnNonStandardPort : public FlowRisk {
   u_int16_t getFlowScore()   { return 100; }
 
   /* Overriding the default severity */
-  virtual AlertLevel getCustomSeverity() { return alert_level_info; }
+  AlertLevel getSeverity() { return alert_level_info; }
 
  public:
   FlowRiskKnownProtocolOnNonStandardPort() : FlowRisk() {};
   ~FlowRiskKnownProtocolOnNonStandardPort() {};
+
+  FlowAlert *buildAlert(Flow *f) { return new FlowRiskKnownProtocolOnNonStandardPortAlert(f, getSeverity()); }
 
   std::string getName()        const { return(std::string("known_proto_on_non_std_port")); }
 };

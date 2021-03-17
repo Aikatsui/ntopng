@@ -52,7 +52,7 @@ void LowGoodputFlow::checkLowGoodput(Flow *f) {
     break; /* Continue with the check */
   };
 
-  f->triggerAlert(alert_low_goodput, getSeverity(), f_score, c_score, s_score);
+  f->triggerAlertAsync(LowGoodputFlowAlert::type, f_score, c_score, s_score);
 }
 
 /* ***************************************************** */
@@ -65,6 +65,12 @@ void LowGoodputFlow::periodicUpdate(Flow *f) {
 
 void LowGoodputFlow::flowEnd(Flow *f) {
   checkLowGoodput(f);
+}
+
+/* ***************************************************** */
+
+FlowAlert *LowGoodputFlow::buildAlert(Flow *f) {
+  return new LowGoodputFlowAlert(f, getSeverity());
 }
 
 /* ***************************************************** */

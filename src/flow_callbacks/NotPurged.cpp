@@ -28,7 +28,7 @@ void NotPurged::checkNotPurged(Flow *f) {
   if(f->isNotPurged()) {
     u_int16_t c_score = 0, s_score = 0, f_score = 100;
 
-    f->triggerAlert(alert_internals, getSeverity(), f_score, c_score, s_score);
+    f->triggerAlertAsync(NotPurgedAlert::type, f_score, c_score, s_score);
   }
 }
 
@@ -42,6 +42,12 @@ void NotPurged::periodicUpdate(Flow *f) {
 
 void NotPurged::flowEnd(Flow *f) {
   checkNotPurged(f);
+}
+
+/* ***************************************************** */
+
+FlowAlert *NotPurged::buildAlert(Flow *f) {
+  return new NotPurgedAlert(f, getSeverity());
 }
 
 /* ***************************************************** */

@@ -36,6 +36,7 @@ class UDPUnidirectional : public FlowCallback {
   
   void periodicActivities(Flow *f);
   void flowEnd(Flow *f);
+  FlowAlert *buildAlert(Flow *f);
   
   std::string getName()        const { return(std::string("udp_unidirectional")); }
 };

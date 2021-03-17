@@ -38,6 +38,8 @@ class FlowRiskDNSSuspiciousTraffic : public FlowRisk {
   FlowRiskDNSSuspiciousTraffic() : FlowRisk() {};
   ~FlowRiskDNSSuspiciousTraffic() {};
 
+  FlowAlert *buildAlert(Flow *f) { return new FlowRiskDNSSuspiciousTrafficAlert(f, getSeverity()); }
+
   std::string getName()        const { return(std::string("ndpi_dns_suspicious_traffic")); }
 };
 

@@ -103,3 +103,6 @@ bool BlacklistedCountry::loadConfiguration(json_object *config) {
 
   return(true);
 }
+
+/* ***************************************************** */
+

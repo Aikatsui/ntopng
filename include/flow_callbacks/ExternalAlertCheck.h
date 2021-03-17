@@ -36,8 +36,9 @@ class ExternalAlertCheck : public FlowCallback {
 
   void protocolDetected(Flow *f);
   void flowEnd(Flow *f);
+  FlowAlert *buildAlert(Flow *f);
   
-  std::string getName()        const { return(std::string("external_alert_check")); }
+  std::string getName() const { return(std::string("external_alert_check")); }
 };
 
 #endif /* _EXTERNAL_ALERT_CHECK_H_ */

@@ -27,12 +27,11 @@
 class IECInvalidTransition : public FlowCallback {
  public:
   IECInvalidTransition() : FlowCallback(ntopng_edition_community,
-				  false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
-				  false /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
+				        false /* All interfaces */, false /* Don't exclude for nEdge */, false /* NOT only for nEdge */,
+				        false /* has_protocol_detected */, false /* has_periodic_update */, false /* has_flow_end */) {};
   ~IECInvalidTransition() {};
-
   
-  std::string getName()        const { return(std::string("iec_invalid_transition")); }
+  std::string getName() const { return(std::string("iec_invalid_transition")); }
 };
 
 #endif /* _IEC_INVALID_TRANSITION_H_ */

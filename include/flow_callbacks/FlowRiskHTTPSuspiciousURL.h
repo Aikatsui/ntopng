@@ -39,6 +39,8 @@ class FlowRiskHTTPSuspiciousURL : public FlowRisk {
   FlowRiskHTTPSuspiciousURL() : FlowRisk() {};
   ~FlowRiskHTTPSuspiciousURL() {};
 
+  FlowAlert *buildAlert(Flow *f) { return new FlowRiskHTTPSuspiciousURLAlert(f, getSeverity()); }
+
   std::string getName()        const { return(std::string("ndpi_http_suspicious_url")); }
 };
 
