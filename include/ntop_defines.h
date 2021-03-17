@@ -984,7 +984,7 @@
 
 #define CACHE_LINE_LEN                  64
 
-#define BITMAP_NUM_BITS                128
+#define BITMAP_NUM_BITS                128 /* This must be a multiple of 64 */
 
 #define TLS_HANDSHAKE_PACKET          0x16
 #define TLS_PAYLOAD_PACKET            0x17

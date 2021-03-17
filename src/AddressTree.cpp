@@ -233,24 +233,44 @@ bool AddressTree::addAddresses(const char *rule, const int16_t user_data) {
 /* ******************************************* */
 
 // TODO match MAC
-bool AddressTree::match(char *addr) {
+ndpi_patricia_node_t *AddressTree::matchAndGetNode(char *addr) {
+  ndpi_patricia_node_t *node = NULL;
   IpAddress address;
-  char *net_prefix = strchr(addr, '/');
-
+  char *net_prefix;
+  int bits;
+ 
+  net_prefix = strchr(addr, '/');
   if(net_prefix) {
-    int bits = atoi(net_prefix + 1);
     char tmp = *net_prefix;
-    
-    *net_prefix = '\0', address.set(addr), *net_prefix = tmp;
-
-    if(address.isIPv4())
-      return(Utils::ptree_match(ptree_v4, AF_INET, &address.getIP()->ipType.ipv4, bits));
-    else
-      return(Utils::ptree_match(ptree_v6, AF_INET6, (void*)&address.getIP()->ipType.ipv6, bits));
+    *net_prefix = '\0';
+    address.set(addr);
+    bits = atoi(net_prefix + 1);
+    *net_prefix = tmp;
   } else {
     address.set(addr);
-    return(address.match(this));
+    bits = address.isIPv4() ? 32 : 128;
   }
+
+  if(address.isIPv4())
+    node = Utils::ptree_match(ptree_v4, AF_INET, &address.getIP()->ipType.ipv4, bits);
+  else
+    node = Utils::ptree_match(ptree_v6, AF_INET6, (void*)&address.getIP()->ipType.ipv6, bits);
+
+  return node;
+}
+
+/* ******************************************* */
+
+void *AddressTree::matchAndGetData(char *addr) {
+  ndpi_patricia_node_t *node = matchAndGetNode(addr);
+  if (node) return ndpi_patricia_get_node_data(node);
+  else return NULL;
+}
+
+/* ******************************************* */
+
+bool AddressTree::match(char *addr) {
+  return !!matchAndGetNode(addr);
 }
 
 /* ******************************************* */

@@ -26,7 +26,7 @@
 
 class Bitmap {
 private:
-  u_int64_t bitmap[2]; /* Sync with BITMAP_NUM_BITS */
+  u_int64_t bitmap[BITMAP_NUM_BITS/64];
 
 public:
   Bitmap() { reset(); }
