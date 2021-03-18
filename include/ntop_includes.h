@@ -260,6 +260,7 @@ using namespace std;
 #include "LdapAuthenticator.h"
 #endif
 #endif
+#include "HostsControl.h"
 #include "ControlGroups.h"
 #include "HostPoolStats.h"
 #include "HostPools.h"

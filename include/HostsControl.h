@@ -1,6 +1,6 @@
 /*
  *
- * (C) 2013-21 - ntop.org
+ * (C) 2015-21 - ntop.org
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,29 +19,27 @@
  *
  */
 
-#ifndef _BITMAP_H_
-#define _BITMAP_H_
+#ifndef _HOSTS_CONTROL_H_
+#define _HOSTS_CONTROL_H_
 
 #include "ntop_includes.h"
 
-class Bitmap {
-private:
-  u_int64_t bitmap[BITMAP_NUM_BITS/64];
+class HostsControl {
+ private:
+  time_t init_tstamp; /* Timestamp, set when the class instance is created */
+  AddressTree *host_filters; /* A ptree holding, for each host, a Bitmap with disabled flow alerts */
 
-public:
-  Bitmap() { reset(); }
+  /* Add a disabled flow alert for a host */
+  bool addHostDisabledFlowAlert(char *host, FlowAlertType disabled_flow_alert_type);
 
-  inline u_int32_t size() { return sizeof(bitmap)*64; }
+  void loadConfiguration(); /* Read the configuration from Redis and initialize internal data structures */
 
-  void reset();
-  void setBit(u_int8_t id);
-  void clearBit(u_int8_t id);
-  bool issetBit(u_int8_t id) const;
-  void bitmapOr(Bitmap b);
-  void set(Bitmap *b);
-  bool equal(Bitmap *b) const;
-  
-  void lua(lua_State* vm, const char *label) const;
+ public:
+  HostsControl();
+  virtual ~HostsControl();
+
+  bool checkChange(time_t *last_change) const;
+  Bitmap *getDisabledFlowAlertsBitmap(Host *host) const;
 };
 
-#endif /* _BITMAP_H_ */
+#endif /* _HOSTS_CONTROL_H_ */

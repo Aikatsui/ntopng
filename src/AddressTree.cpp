@@ -291,6 +291,14 @@ ndpi_patricia_node_t* AddressTree::match(const IpAddress * const ipa, int networ
 
 /* ******************************************* */
 
+void *AddressTree::matchAndGetData(const IpAddress * const ipa) const {
+  ndpi_patricia_node_t *node = match(ipa, ipa->isIPv4() ? 32 : 128);
+  if (node) return ndpi_patricia_get_node_data(node);
+  else return NULL;
+}
+
+/* ******************************************* */
+
 /* NOTE: this does NOT accept a char* address! Use AddressTree::find() instead. */
 int16_t AddressTree::findAddress(int family, void *addr, u_int8_t *network_mask_bits) {
   ndpi_patricia_tree_t *p;

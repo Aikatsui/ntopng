@@ -71,6 +71,7 @@ class AddressTree {
   ndpi_patricia_node_t *matchAndGetNode(char *addr);
 
   ndpi_patricia_node_t* match(const IpAddress * const ipa, int network_bits) const;
+  void *matchAndGetData(const IpAddress * const ipa) const;
 
   void dump();
   void walk(ndpi_void_fn3_t func, void * const user_data) const;
