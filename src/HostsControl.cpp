@@ -94,8 +94,10 @@ Bitmap HostsControl::getDisabledFlowAlertsBitmap(Host *h) const {
 
   host_data = host_filters->matchAndGetData(addr);
 
-  if (host_data)
-    host_filter = static_cast<Bitmap*>(host_data);
+  if (host_data == NULL)
+    return default_host_filter;
+
+  host_filter = static_cast<Bitmap*>(host_data);
 
   return *host_filter;
 }
@@ -131,6 +133,7 @@ void HostsControl::loadConfiguration() {
     alert_id = &alert_id[disabled_alert_field_len];
     flow_alert_type = (FlowAlertType) atoi(alert_id);
 
+    //DEBUG
     ntop->getTrace()->traceEvent(TRACE_NORMAL, "Loading filter for host '%s': discard flow alert %u", host, flow_alert_type);
 
     /* Add disabled alert for the host */
