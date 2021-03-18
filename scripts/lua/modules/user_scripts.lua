@@ -184,51 +184,26 @@ local available_subdirs = {
       -- User script execution filters (field names are those that arrive from the C Flow.cpp)
       filter = {
 	 -- Default fields populated automatically when creating filters
-	 default_fields   = {"srv_addr", "srv_port", "l7_proto", "proto" },
+	 default_fields   = { "srv_addr", },
 	 -- All possible filter fields
 	 available_fields = {
 	    cli_addr = {
 	       lint = http_lint.validateNetwork,
 	       match = function(context, val)
-		  local client_ip = flow.getClientIp()
-		  -- Attempt exact match
-		  if client_ip == val then return true end
-		  -- Attempt IPv4 network match
-		  local network, netmask = ipv4_utils.cidr_2_addr(val)
-		  if network and netmask then return ipv4_utils.includes(network, netmask, client_ip) end
-		  -- No match
-		  return false
+		  -- NO match, match is done in C++
 	       end,
 	       sqlite = function(val)
 		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  return string.format("cli_addr = '%s'", val)
+ 		  return string.format("cli_addr = '%s'", val)
 	       end,
 	       find = function(alert, alert_json, filter, val)
 		  return (alert[filter] and (alert[filter] == val))
 	       end,
 	    },
-	    cli_port = {
-	       lint = http_lint.validatePort,
-	       match = function(context, val) return flow.getClientPort() == tonumber(val) end,
-	       sqlite = function(val)
-		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  return string.format("cli_port = %u", val)
-	       end,
-	       find = function(alert, alert_json, filter, val)
-		  return (alert[filter] and (tonumber(alert[filter]) == tonumber(val)))
-	       end,
-	    },
 	    srv_addr = {
 	       lint = http_lint.validateNetwork,
 	       match = function(context, val)
-		  local server_ip = flow.getServerIp()
-		  -- Attempt exact match
-		  if server_ip == val then return true end
-		  -- Attempt IPv4 network match
-		  local network, netmask = ipv4_utils.cidr_2_addr(val)
-		  if network and netmask then return ipv4_utils.includes(network, netmask, server_ip) end
-		  -- No match
-		  return false
+		  -- NO match, match is done in C++
 	       end,
 	       sqlite = function(val)
 		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
@@ -236,124 +211,6 @@ local available_subdirs = {
 	       end,
 	       find = function(alert, alert_json, filter, val)
 		  return (alert[filter] and (alert[filter] == val))
-	       end,
-	    },
-	    srv_port = {
-	       lint = http_lint.validatePort,
-	       match = function(context, val) return flow.getServerPort() == tonumber(val) end,
-	       sqlite = function(val)
-		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  return string.format("srv_port = %u", val)
-	       end,
-	       find = function(alert, alert_json, filter, val)
-		  return (alert[filter] and (tonumber(alert[filter]) == tonumber(val)))
-	       end,
-	    },
-	    l7_proto = {
-	       lint = http_lint.validateProtocolIdOrName,
-	       match = function(context, val)
-		  -- If val is the application name, then it is converted to application id
-		  if not tonumber(val) then val = interface.getnDPIProtoId(val) end
-		  -- For integers represented as strings
-		  val = tonumber(val)
-		  -- Check for equality on either the master or application ids
-		  return flow.getnDPIMasterProtoId() == val or flow.getnDPIAppProtoId() == val
-	       end,
-	       sqlite = function(val)
-		  -- If val is the application name, then it is converted to application id
-		  if not tonumber(val) then val = interface.getnDPIProtoId(val) end
-		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  -- Match both on the master and app proto
-		  return string.format("(l7_proto = %u OR l7_master_proto = %u)", val, val)
-	       end,
-	       find = function(alert, alert_json, filter, val)
-		  -- Converting value into it's id if value is under string format
-		  local value = tonumber(val)
-		  if not value then value = interface.getnDPIProtoId(val) end
-
-		  return (alert[filter] and (tonumber(alert[filter]) == value))
-	       end,
-	    },
-	    proto = {
-	       lint = http_lint.validateProtocolIdOrName,
-	       match = function(context, val)
-		  -- If val is the protocol name, then it is converted to L4 protocol id
-		  if not tonumber(val) then val = l4_proto_to_id(val) end
-		  -- Check for equality on either the master or application protocol
-		  return flow.getProtocol() == tonumber(val)
-	       end,
-	       sqlite = function(val)
-		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  return string.format("proto = %u", val)
-	       end,
-	       find = function(alert, alert_json, filter, val)
-		  -- Converting value into it's id if value is under string format
-		  local value = tonumber(val)
-		  if not value then value = l4_proto_to_id(val) end
-		  
-		  return (alert[filter] and (tonumber(alert[filter]) == value))
-	       end,
-	    },
-	    flow_risk_bitmap = {
-	       lint = http_lint.validateNumber,
-	       match = function(context, val)
-		  -- Convert the string-bitmap to a number
-		  val = tonumber(val)
-		  -- Check if there's at least one risk in common between val
-		  -- and the actual flow bitmap of risks
-		  return (val & flow.getRiskBitmap()) ~= 0
-	       end,
-	       sqlite = function(val)
-		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  return string.format("flow_risk_bitmap = %u", val)
-	       end,
-	       find = function(alert, alert_json, filter, val)
-		  return (alert[filter] and (tonumber(alert[filter]) == tonumber(val)))
-	       end,
-	    },
-	    info = {
-	       lint = http_lint.validateSingleWord,
-	       match = function(context, val)
-		  -- Search for substring val inside the flow info field
-		  return not not flow.getFlowInfoField():find(val)
-	       end,
-	       sqlite = function(val)
-		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  -- As the info is stored inside the JSON alert, it is necessary to
-		  -- use sqlite json_extract to access it
-		  return string.format("json_extract(alert_json, '$.info') like '%%%s%%'", val)
-	       end,
-	       find = function(alert, alert_json, filter, val)
-		  -- Search for substring val inside the flow info field
-		  if alert_json and val then
-		     return (alert_json[filter] and alert_json[filter]:find(val))
-		  end
-		  return false
-	       end,
-	    },
-	    l7_cat = {
-	       lint = http_lint.validateCategory,
-	       match = function(context, val)
-		  -- If val is the application name, then it is converted to application id
-		  if not tonumber(val) then val = interface.getnDPICategoryId(val) end
-		  -- For integers represented as strings
-		  val = tonumber(val)
-		  -- Check for equality on either the master or application ids
-		  return flow.getnDPICategoryId() == val
-	       end,
-	       sqlite = function(val)
-		  -- If val is the application name, then it is converted to application id
-		  if not tonumber(val) then val = interface.getnDPICategoryId(val) end
-		  -- Keep in sync with SQLite database schema declared in AlertsManager.cpp
-		  -- Match both on the master and app proto
-		  return string.format("l7_cat = %u", val)
-	       end,
-	       find = function(alert, alert_json, filter, val)
-		  -- If val is the application name, then it is converted to application id
-		  local value = tonumber(val)
-		  if not value then value = interface.getnDPICategoryId(val) end
-		  
-		  return (alert[filter] and (tonumber(alert[filter]) == value))
 	       end,
 	    },
 	 },
@@ -1657,17 +1514,8 @@ function user_scripts.getFilterPreset(alert, alert_info)
       return ''
    end
 
-   local script_key       = alert_generation["script_key"]
    local subdir           = alert_generation["subdir"]
-   local filter_string    = ''
-   local script_type      = user_scripts.getScriptType(subdir)
-   local script           = user_scripts.loadModule(interface.getId(), script_type, subdir, script_key)
-   local filter_to_use   = {}
    local subdir_id        = getSubdirId(subdir)
-
-   if not script then
-      return ''
-   end
 
    if subdir_id == -1 then
       return ''
@@ -1677,11 +1525,9 @@ function user_scripts.getFilterPreset(alert, alert_info)
       return ''
    end
 
-   -- Checking if the script has default filter fields or not
-   -- if not, getting the default for the subdir
-   if script["filter"] and script["filter"]["default_fields"] then
-      filter_to_use = script["filter"]["default_fields"]
-   elseif available_subdirs[subdir_id]["filter"]["default_fields"] then
+   local filter_to_use = {}
+
+   if available_subdirs[subdir_id]["filter"]["default_fields"] then
       filter_to_use = available_subdirs[subdir_id]["filter"]["default_fields"]
    end
 

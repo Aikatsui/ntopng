@@ -443,6 +443,25 @@ end
 
 -- #################################
 
+--@brief Deletes all stored alerts matching an host and an IP
+-- @return nil
+function alert_utils.deleteFlowAlertsMatching(host_ip, alert_key)
+   local res = {}
+   local statement = "DELETE "
+
+   -- This is to match elements inside the alert_json
+   local where = {
+      string.format("(cli_addr = '%s' OR srv_addr = '%s')", host_ip, host_ip),
+      string.format("alert_type = %u", alert_key),
+   }
+
+   where = table.concat(where, " AND ")
+
+   res = interface.queryFlowAlertsRaw(statement, where, nil, true)
+end
+
+-- #################################
+
 -- this function returns an object with parameters specific for one tab
 function alert_utils.getTabParameters(_get, what)
    local opts = {}
@@ -944,7 +963,7 @@ function alert_utils.drawAlertTables(has_past_alerts, has_engaged_alerts, has_fl
       template.gen("modal_alert_filter_dialog.html", {
       		      dialog={
 			 id		   = "filter_alert_dialog",
-			 action		   = "filterAlertByFilters(subdir, script_key)",
+			 action		   = "filterAlertByFilters(subdir, script_key, alert_key)",
           		 title		   = i18n("show_alerts.filter_alert"),
           		 message	   = i18n("show_alerts.confirm_filter_alert"),
 			 delete_message    = i18n("show_alerts.confirm_delete_filtered_alerts"),
@@ -1089,7 +1108,7 @@ function deleteAlertById(alert_key) {
   form.appendTo('body').submit();
 }
 
-function filterAlertByFilters(subdir, script_key) {
+function filterAlertByFilters(subdir, script_key, alert_key) {
    $.ajax({
         type: 'POST',
 	contentType: "application/json",
@@ -1099,6 +1118,7 @@ function filterAlertByFilters(subdir, script_key) {
 	    filters: document.getElementById("name_input").value,
             subdir: subdir,
             script_key: script_key,
+            alert_key: alert_key,
             status: getCurrentStatus(),
             delete_alerts: $('#delete_alert_switch').prop('checked'),
             csrf: "]] print(ntop.getRandomCSRFValue()) print[[",
@@ -1387,7 +1407,7 @@ function releaseAlert(idx) {
                var explorer_url = data["column_explorer"];
 
                if(data["column_filter"]) {
-                  datatableAddFilterButtonCallback.bind(this)(10, "subdir = '" + data["column_subdir"] + "'; script_key = '" + data["column_script_key"] + "'; $('#name_input').attr('value', '" + data["column_filter"] + "'); $('#filter_alert_dialog').modal('show');", "<i class='fas fa-bell-slash'></i>", "]] print(i18n("filter")) print[[");
+                  datatableAddFilterButtonCallback.bind(this)(10, "alert_key = '" + data["column_type_id"] + "'; subdir = '" + data["column_subdir"] + "'; script_key = '" + data["column_script_key"] + "'; $('#name_input').attr('value', '" + data["column_filter"] + "'); $('#filter_alert_dialog').modal('show');", "<i class='fas fa-bell-slash'></i>", "]] print(i18n("filter")) print[[");
                } else if(data["column_filter_disabled"]) {
 	       	  datatableAddFilterButtonCallback.bind(this)(10, "subdir = ''; script_key = '';", "<i class='fas fa-bell-slash'></i>", "]] print(i18n("filter")) print[[", false);                             }
 

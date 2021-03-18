@@ -15,6 +15,7 @@ local alerts_api = require "alerts_api"
 local alert_consts = require "alert_consts"
 local recording_utils = require "recording_utils"
 local user_scripts = require "user_scripts"
+local hosts_control = require "hosts_control"
 
 sendHTTPHeader('application/json')
 
@@ -209,10 +210,20 @@ for k,v in ipairs(alerts) do
       record["column_subdir"]     = alert_info.alert_generation.subdir or nil
 
       -- Checking if the filter column needs to be skipped
-      if user_scripts.excludeScriptFilters(alert, alert_info, record["column_script_key"], record["column_subdir"]) == false then
-         record["column_filter"] = user_scripts.getFilterPreset(alert, alert_info)
-      elseif record["column_subdir"] == "flow" then
-         record["column_filter_disabled"] = true
+      if record["column_subdir"] == "flow" then
+	 if hosts_control.has_disabled_alert(v["cli_addr"], tonumber(v["alert_type"])) or hosts_control.has_disabled_alert(v["srv_addr"], tonumber(v["alert_type"])) then
+	    -- Already disabled, don't show the bell
+	    record["column_filter_disabled"] = true
+	 else
+	    -- Enabled, show the bell to disable
+	    record["column_filter"] = user_scripts.getFilterPreset(alert, alert_info)
+	 end
+      else
+	 if user_scripts.excludeScriptFilters(alert, alert_info, record["column_script_key"], record["column_subdir"]) == false then
+	    record["column_filter"] = user_scripts.getFilterPreset(alert, alert_info)
+	 else
+	    record["column_filter_disabled"] = true
+	 end
       end
    end
 
