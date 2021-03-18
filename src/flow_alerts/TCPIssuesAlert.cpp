@@ -25,11 +25,8 @@ ndpi_serializer* TCPIssuesAlert::getAlertJSON(ndpi_serializer* serializer) {
   Flow *f = getFlow();
 
   if (serializer) {
-    bool is_client = false, is_server = false, is_severe = false;
     FlowTrafficStats *stats = f->getTrafficStats();
     const ndpi_analyze_struct *cli2srv_bytes_stats, *srv2cli_bytes_stats;
-
-    f->fcb_get_tcp_issues(&is_client, &is_server, &is_severe);
 
     ndpi_serialize_start_of_block(serializer,   "tcp_stats");
     cli2srv_bytes_stats = stats->get_analize_struct(true), srv2cli_bytes_stats = stats->get_analize_struct(false);

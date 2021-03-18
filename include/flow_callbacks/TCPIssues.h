@@ -26,6 +26,8 @@
 
 class TCPIssues : public FlowCallback {
  private:
+  bool checkClientTCPIssues(Flow *f, bool *is_severe);
+  bool checkServerTCPIssues(Flow *f, bool *is_severe); 
   void checkFlow(Flow *f);
 
  public:

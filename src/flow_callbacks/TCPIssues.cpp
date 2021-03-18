@@ -28,31 +28,61 @@ static const u_int16_t severe_issues_ratio = 3;  // 1/3
 
 /* ******************************************** */
 
+bool TCPIssues::checkClientTCPIssues(Flow *f, bool *is_severe) {
+  u_int64_t pkts = f->get_packets_cli2srv();
+
+  if(f->getCliTcpIssues() < min_pkt_threshold)
+    return false;
+  
+  if((f->getCliTcpIssues() * severe_issues_ratio) > pkts) {
+    *is_severe = true;
+    return true;
+  } else if((f->getCliTcpIssues() * normal_issues_ratio) > pkts)
+    return true;
+  else 
+    return false;
+}
+
+/* ******************************************** */
+
+bool TCPIssues::checkServerTCPIssues(Flow *f, bool *is_severe) {
+  u_int64_t pkts = f->get_packets_srv2cli();
+	
+  if(f->getSrvTcpIssues() < min_pkt_threshold) 
+    return false;  
+  
+  if((f->getSrvTcpIssues() * severe_issues_ratio) > pkts) {
+    *is_severe = true;
+    return true;
+  } else if((f->getSrvTcpIssues() * normal_issues_ratio) > pkts)
+    return true;
+  else
+    return false;
+}
+
+/* ******************************************** */
+
 void TCPIssues::checkFlow(Flow *f) {
   u_int16_t f_score = 0, c_score = 0, s_score = 0;
+  bool is_severe;
 
-  if(f->get_protocol() != IPPROTO_TCP) return; /* Non TCP traffic */
+  if(f->get_protocol() != IPPROTO_TCP)
+    return; /* Non TCP traffic */
 
-  if(f->getCliTcpIssues() > min_pkt_threshold) {
-    u_int64_t pkts = f->get_packets_cli2srv();
-        
-    if((f->getCliTcpIssues() * severe_issues_ratio) > pkts)
-      f->fcb_set_tcp_issues(true /* is client */), f->fcb_set_tcp_issues_severe(), f_score += 20, c_score = 20;
-    else if((f->getCliTcpIssues() * normal_issues_ratio) > pkts)
-      f->fcb_set_tcp_issues(true /* is client */), f_score += 10, c_score = 10;
+  is_severe = false;
+  if (checkClientTCPIssues(f, &is_severe)) {
+    if (is_severe) f_score += 20, c_score = 20;
+    else f_score += 10, c_score = 10;
   }
-  
-  if(f->getSrvTcpIssues() > min_pkt_threshold) {
-    u_int64_t pkts = f->get_packets_srv2cli();
-        
-    if((f->getSrvTcpIssues() * severe_issues_ratio) > pkts)
-      f->fcb_set_tcp_issues(false /* is server */), f->fcb_set_tcp_issues_severe(), f_score += 20, s_score = 20;
-    else if((f->getSrvTcpIssues() * normal_issues_ratio) > pkts)
-      f->fcb_set_tcp_issues(false /* is server */), f_score += 10, s_score = 10;
+
+  is_severe = false;
+  if (checkServerTCPIssues(f, &is_severe)) {
+    if (is_severe) f_score += 20, s_score = 20;
+    else f_score += 10, s_score = 10;
   }
 
   if(f_score)
-    f->triggerAlertAsync(TCPIssuesAlert::type, f_score /* f_score */, c_score, s_score);
+    f->triggerAlertAsync(TCPIssuesAlert::type, f_score, c_score, s_score);
 }
 
 /* ******************************************** */
@@ -70,7 +100,12 @@ void TCPIssues::flowEnd(Flow *f) {
 /* ******************************************** */
 
 FlowAlert *TCPIssues::buildAlert(Flow *f) {
-  return new TCPIssuesAlert(this, f, getSeverity());
+  bool is_client, is_server, is_severe = false;
+
+  is_client = checkClientTCPIssues(f, &is_severe);
+  is_server = checkServerTCPIssues(f, &is_severe);
+
+  return new TCPIssuesAlert(this, f, getSeverity(), is_client, is_server, is_severe);
 }
 
 /* ***************************************************** */
