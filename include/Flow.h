@@ -333,12 +333,10 @@ class Flow : public GenericHashEntry {
    */
   void enqueuePredominantAlert();
 
-  inline void setPredominantAlert(FlowAlertType a) { predominant_alert = a; }
+  inline void setPredominantAlert(FlowAlertType a, u_int16_t s) { predominant_alert = a, predominant_alert_score = s; }
   inline FlowAlertType getPredominantAlert() const { return predominant_alert; };
+  inline u_int16_t getPredominantAlertScore() const { return predominant_alert_score; };
   inline bool isFlowAlerted()    const { return(predominant_alert != alert_normal); };
-
-  inline void setPredominantAlertScore(u_int16_t s) { predominant_alert_score = s; }
-  inline u_int16_t  getAlertedScore() const { return predominant_alert_score; };
 
   inline AlertLevel getAlertedSeverity()     const { return predominant_alert_level; };
 
@@ -734,7 +732,6 @@ class Flow : public GenericHashEntry {
   inline void setNextAdjacentAS(u_int32_t v) { nextAdjacentAS = v; }
 
   inline ViewInterfaceFlowStats* getViewInterfaceFlowStats() { return(viewFlowStats); }
-  u_int16_t getPredominantAlertScore() const;
 
   inline void setFlowNwLatency(const struct timeval * const tv, bool client) {
     if(client) {

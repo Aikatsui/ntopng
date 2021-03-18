@@ -4584,7 +4584,7 @@ void Flow::lua_get_status(lua_State* vm) const {
   if(isFlowAlerted()) {
     lua_push_bool_table_entry(vm, "flow.alerted", true);
     lua_push_uint64_table_entry(vm, "predominant_alert", getPredominantAlert());
-    lua_push_uint64_table_entry(vm, "predominant_alert_score", getAlertedScore());
+    lua_push_uint64_table_entry(vm, "predominant_alert_score", getPredominantAlertScore());
     lua_push_uint64_table_entry(vm, "alerted_severity", getAlertedSeverity());
   }
 }
@@ -5277,10 +5277,8 @@ bool Flow::setAlertsBitmap(FlowAlertType alert_type, u_int16_t flow_inc, u_int16
 
   /* Check if also the predominant alert_type should be updated */
   if(!isFlowAlerted() /* Flow is not yet alerted */
-     || getAlertedScore() < flow_inc /* The score of the current alerted alert_type is less than the score of this alert_type */) {
-    setPredominantAlert(alert_type);
-    predominant_alert_score = flow_inc;
-  }
+     || getPredominantAlertScore() < flow_inc /* The score of the current alerted alert_type is less than the score of this alert_type */)
+    setPredominantAlert(alert_type, flow_inc);
 
   return true;
 }
