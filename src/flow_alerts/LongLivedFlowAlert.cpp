@@ -22,13 +22,9 @@
 #include "flow_callbacks_includes.h"
 
 ndpi_serializer* LongLivedFlowAlert::getAlertJSON(ndpi_serializer* serializer) {
-  Flow *f = getFlow();
-  u_int64_t longlived_th;
 
   if(serializer == NULL)
     return NULL;
-
-  f->fcb_get_longlived_th(&longlived_th);
 
   ndpi_serialize_string_uint64(serializer, "longlived.threshold", longlived_th);
 
