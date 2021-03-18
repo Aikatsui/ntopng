@@ -21,10 +21,9 @@
 
 #include "ntop_includes.h"
 
-/* Keep these constants in sync with control_groups.lua */
-#define CONTROL_GROUP_MAX_CONTROL_GROUP_ID 127 /* Constrained by class Bitmap */
-#define CONTROL_GROUP_IDS_KEY "ntopng.prefs.control_groups.control_group_ids"
-#define CONTROL_GROUP_DETAILS_KEY "ntopng.prefs.control_groups.control_group_id_%d.details"
+/* Keep these constants in sync with hosts_control.lua */
+#define HOSTS_CONTROL_KEY_PREFIX "ntopng.prefs.hosts_control.host_"
+#define HOSTS_CONTROL_DISABLED_ALERT_FIELD ".disabled_alert_"
 
 /* *************************************** */
 
@@ -115,12 +114,41 @@ bool HostsControl::isFlowAlertDisabled(Host *host, FlowAlertType flow_alert_type
 /* *************************************** */
 
 void HostsControl::loadConfiguration() {
-  char kname[CONST_MAX_LEN_REDIS_KEY];
-  Redis *redis = ntop->getRedis();
+  char key[CONST_MAX_LEN_REDIS_KEY];
+  int prefix_len = strlen(HOSTS_CONTROL_KEY_PREFIX);
+  int disabled_alert_field_len = strlen(HOSTS_CONTROL_DISABLED_ALERT_FIELD);
+  FlowAlertType flow_alert_type;
+  char **entries;
+  char *entry, *host, *alert_id;
+  int rc, i;
 
   ntop->getTrace()->traceEvent(TRACE_NORMAL, "Reloading host filters");
 
-  //TODO
+  snprintf(key, sizeof(key), "%s*%s*", HOSTS_CONTROL_KEY_PREFIX, HOSTS_CONTROL_DISABLED_ALERT_FIELD);
+  rc = ntop->getRedis()->keys(key, &entries);
+  if (rc <= 0)
+    return;
+
+  for (i = 0; i < rc; i++) {
+    entry = entries[i];
+    if (entry == NULL) continue; /* safety check */
+
+    /* Read host IP */
+    host = &entry[prefix_len];
+
+    /* Read alert type */
+    alert_id = strstr(host, HOSTS_CONTROL_DISABLED_ALERT_FIELD);
+    alert_id[0] = '\0';
+    alert_id = &alert_id[disabled_alert_field_len];
+    flow_alert_type = (FlowAlertType) atoi(alert_id);
+
+    /* Add disabled alert for the host */
+    addHostDisabledFlowAlert(host, flow_alert_type);
+
+    free(entry);
+  }
+
+  free(entries);
 }
 
 /* *************************************** */
