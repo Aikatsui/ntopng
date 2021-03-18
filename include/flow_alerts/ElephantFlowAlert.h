@@ -26,12 +26,17 @@
 
 class ElephantFlowAlert : public FlowAlert {
  private:
+  u_int64_t l2r_th, r2l_th;
+
   ndpi_serializer *getAlertJSON(ndpi_serializer* serializer);
 
  public:
   static const FlowAlertType type = alert_elephant_flow;
 
- ElephantFlowAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
+ ElephantFlowAlert(FlowCallback *c, Flow *f, AlertLevel s, u_int64_t _l2r_th, u_int64_t _r2l_th) : FlowAlert(c, f, s) { 
+    l2r_th = _l2r_th;
+    r2l_th = _r2l_th;
+  };
   ~ElephantFlowAlert() { };
 
   FlowAlertType getAlertType() const { return type; }
