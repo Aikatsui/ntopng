@@ -968,7 +968,7 @@ function alert_utils.drawAlertTables(has_past_alerts, has_engaged_alerts, has_fl
           		 message	   = i18n("show_alerts.confirm_filter_alert"),
 			 delete_message    = i18n("show_alerts.confirm_delete_filtered_alerts"),
           		 field_input_title = i18n("current_filter"),
-			 delete_alerts     = i18n("delete_alerts"),
+			 delete_alerts     = i18n("delete_disabled_alerts"),
           		 alert_filter      = "default_filter",
 	  		 confirm 	   = i18n("filter"),
 			 confirm_button    = "btn-warning",
@@ -976,6 +976,24 @@ function alert_utils.drawAlertTables(has_past_alerts, has_engaged_alerts, has_fl
       })
    )
 
+
+   -- Filtering for flow alerts
+   print(
+      template.gen("modal_flow_alerts_filter_dialog.html", {
+      		      dialog={
+			 id		   = "flow_alerts_filter_dialog",
+			 action		   = "filterFlowAlerts(alert_key)",
+          		 title		   = i18n("show_alerts.filter_alert"),
+          		 message	   = i18n("show_alerts.confirm_filter_alert"),
+			 delete_message    = i18n("show_alerts.confirm_delete_filtered_alerts"),
+          		 field_input_title = i18n("current_filter"),
+			 delete_alerts     = i18n("delete_disabled_alerts"),
+          		 alert_filter      = "default_filter",
+	  		 confirm 	   = i18n("filter"),
+			 confirm_button    = "btn-warning",
+		      }
+      })
+   )
 
 
    print(
@@ -1121,6 +1139,31 @@ function filterAlertByFilters(subdir, script_key, alert_key) {
             alert_key: alert_key,
             status: getCurrentStatus(),
             delete_alerts: $('#delete_alert_switch').prop('checked'),
+            csrf: "]] print(ntop.getRandomCSRFValue()) print[[",
+	}),
+	success: function(rsp) {
+            let get_params = NtopUtils.paramsExtend(]] print(tableToJsObject(alert_utils.getTabParameters(url_params, nil))) print[[, {status:getCurrentStatus()});
+            get_params.csrf = "]] print(ntop.getRandomCSRFValue()) print[[";
+            let form = NtopUtils.paramsToForm('<form method="post"></form>', get_params);
+            form.appendTo('body').submit();
+	},
+	error: function(rsp) {
+	    $("#filter_alert_dialog_error").text(rsp.responseJSON.rsp).show();
+	},
+    });
+}
+
+function filterFlowAlerts(alert_key) {
+   $.ajax({
+        type: 'POST',
+	contentType: "application/json",
+	dataType: "json",
+	url: `${http_prefix}/lua/rest/v1/edit/user_script/filter.lua`,
+	data: JSON.stringify({
+	    alert_addr:  $("input[name='alert_addr']:checked").val(),
+            subdir: "flow",
+            alert_key: alert_key,
+            delete_alerts: $('#delete_flow_alerts_switch').prop('checked'),
             csrf: "]] print(ntop.getRandomCSRFValue()) print[[",
 	}),
 	success: function(rsp) {
@@ -1406,7 +1449,16 @@ function releaseAlert(idx) {
                var data = table_data[row_id];
                var explorer_url = data["column_explorer"];
 
-               if(data["column_filter"]) {
+               if(data["column_filter"] && data["column_subdir"] == "flow") {
+                  /* Extract client and server address that come into column_filter concatenated with a pipe */
+                  const cli_srv_addr = data["column_filter"].split('|'), cli_addr = cli_srv_addr[0], srv_addr = cli_srv_addr[1];
+
+                  /* Populate client and server radio buttons */
+                  const srv_radio = " $('#srv_radio').attr('value', '" + srv_addr + "'); $('#srv_addr').html('" + srv_addr + "'); ";
+                  const cli_radio = " $('#cli_radio').attr('value', '" + cli_addr + "'); $('#cli_addr').html('" + cli_addr + "'); ";
+
+                  datatableAddFilterButtonCallback.bind(this)(10, "alert_key = '" + data["column_type_id"] + "'; " + srv_radio + cli_radio + " $('#flow_alerts_filter_dialog').modal('show');", "<i class='fas fa-bell-slash'></i>", "]] print(i18n("filter")) print[[");
+               } else if(data["column_filter"]) {
                   datatableAddFilterButtonCallback.bind(this)(10, "alert_key = '" + data["column_type_id"] + "'; subdir = '" + data["column_subdir"] + "'; script_key = '" + data["column_script_key"] + "'; $('#name_input').attr('value', '" + data["column_filter"] + "'); $('#filter_alert_dialog').modal('show');", "<i class='fas fa-bell-slash'></i>", "]] print(i18n("filter")) print[[");
                } else if(data["column_filter_disabled"]) {
 	       	  datatableAddFilterButtonCallback.bind(this)(10, "subdir = ''; script_key = '';", "<i class='fas fa-bell-slash'></i>", "]] print(i18n("filter")) print[[", false);                             }

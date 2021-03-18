@@ -1526,6 +1526,7 @@ local known_parameters = {
    ["script_subdir"]           = validateSingleWord,
    ["script_key"]              = validateSingleWord,
    ["alert_key"]               = validateNumber,
+   ["alert_addr"]              = validateIpAddress,
    ["search_script"]           = validateSingleWord,
    ["field_alias"]             = validateListOfTypeInline(validateFieldAlias),
    ["dscp_class"]              = validateSingleWord,

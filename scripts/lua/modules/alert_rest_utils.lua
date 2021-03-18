@@ -17,24 +17,22 @@ local alert_rest_utils = {}
 
 -- @brief exclude an alert using the parameters that the POST has
 function _exclude_flow_alert(additional_filters, delete_alerts)
-   local alert_key = tonumber(_POST["alert_key"])
+   local success = false
 
-   -- Getting the parameters
-   success, new_filter = user_scripts.parseFilterParams(additional_filters, "flow", false)
+   local alert_key = tonumber(_POST["alert_key"])
+   local alert_addr = _POST["alert_addr"]
+
+   if alert_key and alert_addr then
+      success = true
+   end
 
    if success then
-      for _, filter in pairs(new_filter.new_filters) do
-	 for _, host_ip in pairs(filter) do
-	    -- Disable host for the current filter
-	    hosts_control.disable_alert(host_ip, alert_key)
-	    if delete_alerts == "true" then
-	       alert_utils.deleteFlowAlertsMatching(host_ip, alert_key)
-	    end
+      if alert_addr then
+	 hosts_control.disable_alert(alert_addr, alert_key)
+	 if delete_alerts == "true" then
+	    alert_utils.deleteFlowAlertsMatching(alert_addr, alert_key)
 	 end
       end
-   else
-      -- Error while parsing the params, error is printed
-      update_err = new_filter
    end
 
    if success then
@@ -42,8 +40,7 @@ function _exclude_flow_alert(additional_filters, delete_alerts)
       rest_utils.answer(rc)
    else
       rc = rest_utils.consts.err.invalid_args
-      res = update_err
-      rest_utils.answer(rc, res)
+      rest_utils.answer(rc)
    end
 end
 
@@ -65,15 +62,15 @@ function alert_rest_utils.exclude_alert()
    -- Parameters used for the rest answer
    local rc = ""
    local res = ""
+
+   if subdir == "flow" then
+      return _exclude_flow_alert(additional_filters, delete_alerts)
+   end
    
    -- Checking that all parameters where given to the POST
    if not additional_filters or not subdir or not script_key then
       rest_utils.answer(rest_utils.consts.err.invalid_args)
       return
-   end
-
-   if subdir == "flow" then
-      return _exclude_flow_alert(additional_filters, delete_alerts)
    end
 
    -- Getting the parameters

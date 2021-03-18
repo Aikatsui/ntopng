@@ -216,7 +216,7 @@ for k,v in ipairs(alerts) do
 	    record["column_filter_disabled"] = true
 	 else
 	    -- Enabled, show the bell to disable
-	    record["column_filter"] = user_scripts.getFilterPreset(alert, alert_info)
+	    record["column_filter"] = v["cli_addr"].."|"..v["srv_addr"]
 	 end
       else
 	 if user_scripts.excludeScriptFilters(alert, alert_info, record["column_script_key"], record["column_subdir"]) == false then
