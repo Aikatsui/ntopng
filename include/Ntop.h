@@ -44,7 +44,7 @@ class Ntop {
   pthread_t purgeLoop;    /* Loop which iterates on active interfaces to delete idle hash table entries */
   bool purgeLoop_started; /* Flag that indicates whether the purgeLoop has been started */
   bool ndpiReloadInProgress;
-  bool flowCallbacksReloadInProgress, controlGroupsReloadInProgress;
+  bool flowCallbacksReloadInProgress, hostsControlReloadInProgress;
   Bloom *resolvedHostsBloom; /* Used by all redis class instances */
   AddressTree local_interface_addresses;
   char epoch_buf[11];
@@ -100,8 +100,8 @@ class Ntop {
   /* Flow Callbacks Loader */
   FlowCallbacksLoader *flow_callbacks_loader;
 
-  /* Control Groups */
-  ControlGroups *control_groups, *control_groups_shadow;
+  /* Hosts Control (e.g., disabled alerts) */
+  HostsControl *hosts_control, *hosts_control_shadow;
 
 #ifndef WIN32
   ContinuousPing *cping;
@@ -128,7 +128,7 @@ class Ntop {
   bool startPurgeLoop();
 
   void checkReloadFlowCallbacks();
-  void checkReloadControlGroups();
+  void checkReloadHostsControl();
   
  public:
   /**
@@ -527,7 +527,7 @@ class Ntop {
   void setnDPIProtocolCategory(u_int16_t protoId, ndpi_protocol_category_t protoCategory);
   void reloadPeriodicScripts();
   inline void reloadFlowCallbacks() { flowCallbacksReloadInProgress = true; };
-  inline void reloadControlGroups() { controlGroupsReloadInProgress = true; };
+  inline void reloadHostsControl() { hostsControlReloadInProgress = true; };
 
   char *getAlertJSON(FlowAlertType fat, Flow *f) const;
   ndpi_serializer *getAlertSerializer(FlowAlertType fat, Flow *f) const;

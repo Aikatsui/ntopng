@@ -95,7 +95,7 @@ local function _disable_alert(host_ip, alert_key)
    local control_key = _get_hosts_control_disabled_alert_key(host_ip, alert_key)
 
    ntop.setPref(control_key, "1") -- Add the preference
-   ntop.reloadControlGroups()     -- Tell ntopng to reload
+   ntop.reloadHostsControl()     -- Tell ntopng to reload
 end
 
 -- ##############################################
@@ -104,7 +104,7 @@ local function _enable_alert(host_ip, alert_key)
    local control_key = _get_hosts_control_disabled_alert_key(host_ip, alert_key)
 
    ntop.delCache(control_key) -- Remove the preference
-   ntop.reloadControlGroups() -- Tell ntopng to reload
+   ntop.reloadHostsControl() -- Tell ntopng to reload
 end
 
 -- ##############################################
@@ -176,7 +176,7 @@ function hosts_control.cleanup()
 
       _unlock()
 
-      ntop.reloadControlGroups() -- Tell ntopng to reload
+      ntop.reloadHostsControl() -- Tell ntopng to reload
    end
 end
 

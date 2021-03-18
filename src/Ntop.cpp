@@ -73,9 +73,9 @@ Ntop::Ntop(char *appName) {
 
   /* Flow callbacks and flow alerts loaders */
   flowCallbacksReloadInProgress = true, /* Lazy, will be reloaded the first time this condition is evaluated */
-    controlGroupsReloadInProgress = true;
+    hostsControlReloadInProgress = true;
   flow_callbacks_loader = NULL;
-  control_groups = control_groups_shadow = NULL;
+  hosts_control = hosts_control_shadow = NULL;
 
   httpd = NULL, geo = NULL, mac_manufacturers = NULL;
   memset(&cpu_stats, 0, sizeof(cpu_stats));
@@ -316,8 +316,8 @@ Ntop::~Ntop() {
   if(globals) { delete globals; globals = NULL; }
 
   if(flow_callbacks_loader)     delete flow_callbacks_loader;
-  if(control_groups)            delete control_groups;
-  if(control_groups_shadow)     delete control_groups_shadow;
+  if(hosts_control)            delete hosts_control;
+  if(hosts_control_shadow)     delete hosts_control_shadow;
   
 #ifdef __linux__
   if(inotify_fd > 0)  close(inotify_fd);
@@ -549,7 +549,7 @@ void Ntop::start() {
     get_HTTPserver()->startCaptiveServer();
 #endif
 
-  checkReloadControlGroups();
+  checkReloadHostsControl();
   checkReloadFlowCallbacks();
 
   for(int i=0; i<num_defined_interfaces; i++)
@@ -2577,20 +2577,20 @@ void Ntop::initInterface(NetworkInterface *_if) {
 
 /* ******************************************* */
 
-void Ntop::checkReloadControlGroups() {
-  if(control_groups_shadow) { /* Dispose old memory if necessary */
-    delete control_groups_shadow;
-    control_groups_shadow = NULL;
+void Ntop::checkReloadHostsControl() {
+  if(hosts_control_shadow) { /* Dispose old memory if necessary */
+    delete hosts_control_shadow;
+    hosts_control_shadow = NULL;
   }
 
-  if(controlGroupsReloadInProgress /* Check if a reload has been requested */
-     || !control_groups /* Control groups are not allocated */) { 
-    controlGroupsReloadInProgress = false; /* Leave this BEFORE the actual swap and new allocation to guarantee changes are always seen */
+  if(hostsControlReloadInProgress /* Check if a reload has been requested */
+     || !hosts_control /* Control groups are not allocated */) { 
+    hostsControlReloadInProgress = false; /* Leave this BEFORE the actual swap and new allocation to guarantee changes are always seen */
 
-    control_groups_shadow = control_groups; /* Save the existing instance */
-    control_groups = new (std::nothrow) ControlGroups(); /* Allocate a new instance */
+    hosts_control_shadow = hosts_control; /* Save the existing instance */
+    hosts_control = new (std::nothrow) HostsControl(); /* Allocate a new instance */
 
-    if(!control_groups)
+    if(!hosts_control)
       ntop->getTrace()->traceEvent(TRACE_ERROR, "Unable to allocate memory for control groups.");
   }
 }
@@ -2634,7 +2634,7 @@ void Ntop::checkReloadFlowCallbacks() {
 
 /* NOTE: the multiple isShutdown checks below are necessary to reduce the shutdown time */
 void Ntop::runHousekeepingTasks() {
-  checkReloadControlGroups();
+  checkReloadHostsControl();
   checkReloadFlowCallbacks();
 
   for(int i = 0; i < get_num_interfaces(); i++)
