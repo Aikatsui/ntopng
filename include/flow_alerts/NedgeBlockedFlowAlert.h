@@ -28,7 +28,7 @@ class NedgeBlockedFlowAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_flow_blocked;
 
- NedgeBlockedFlowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
+ NedgeBlockedFlowAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) {};
   ~NedgeBlockedFlowAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

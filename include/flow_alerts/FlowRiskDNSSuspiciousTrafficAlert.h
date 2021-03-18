@@ -28,7 +28,7 @@ class FlowRiskDNSSuspiciousTrafficAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_ndpi_dns_suspicious_traffic;
 
- FlowRiskDNSSuspiciousTrafficAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskDNSSuspiciousTrafficAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskDNSSuspiciousTrafficAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

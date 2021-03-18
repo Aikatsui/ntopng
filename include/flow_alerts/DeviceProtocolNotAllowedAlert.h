@@ -31,7 +31,7 @@ class DeviceProtocolNotAllowedAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_device_protocol_not_allowed;
 
- DeviceProtocolNotAllowedAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ DeviceProtocolNotAllowedAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~DeviceProtocolNotAllowedAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

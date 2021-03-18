@@ -28,7 +28,7 @@ class FlowRiskURLPossibleSQLInjectionAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_ndpi_url_possible_sql_injection;
 
- FlowRiskURLPossibleSQLInjectionAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskURLPossibleSQLInjectionAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskURLPossibleSQLInjectionAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

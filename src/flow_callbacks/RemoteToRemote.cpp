@@ -35,7 +35,7 @@ void RemoteToRemote::protocolDetected(Flow *f) {
 /* ***************************************************** */
 
 FlowAlert *RemoteToRemote::buildAlert(Flow *f) {
-  return new RemoteToRemoteAlert(f, getSeverity());
+  return new RemoteToRemoteAlert(this, f, getSeverity());
 }
 
 /* ***************************************************** */

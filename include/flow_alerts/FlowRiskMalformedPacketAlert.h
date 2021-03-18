@@ -28,7 +28,7 @@ class FlowRiskMalformedPacketAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_ndpi_malformed_packet;
 
- FlowRiskMalformedPacketAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskMalformedPacketAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskMalformedPacketAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

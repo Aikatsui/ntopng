@@ -28,7 +28,7 @@ class BlacklistedFlowAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_blacklisted;
 
-  BlacklistedFlowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+  BlacklistedFlowAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~BlacklistedFlowAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

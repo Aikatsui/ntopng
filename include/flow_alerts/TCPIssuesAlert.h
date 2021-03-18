@@ -31,7 +31,7 @@ class TCPIssuesAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_tcp_connection_issues;
 
- TCPIssuesAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
+ TCPIssuesAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) {};
   ~TCPIssuesAlert() {};
 
   FlowAlertType getAlertType() const { return type; }

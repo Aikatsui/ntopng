@@ -30,7 +30,7 @@ class RemoteToRemoteAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_remote_to_remote;
 
- RemoteToRemoteAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
+ RemoteToRemoteAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) {};
   ~RemoteToRemoteAlert() {};
 
   FlowAlertType getAlertType() const { return type; }

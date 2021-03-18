@@ -23,9 +23,10 @@
 
 /* **************************************************** */
 
-FlowAlert::FlowAlert(Flow *f, AlertLevel s) {
+FlowAlert::FlowAlert(FlowCallback *c, Flow *f, AlertLevel s) {
   flow = f;
   severity_id = s;
+  if (c) callback_name = c->getName();
 }
 
 /* **************************************************** */
@@ -97,7 +98,7 @@ ndpi_serializer* FlowAlert::getSerializedAlert() {
   
   /* Add information relative to this callback */
   ndpi_serialize_start_of_block(serializer, "alert_generation");
-  ndpi_serialize_string_string(serializer, "script_key", getName().c_str());
+  ndpi_serialize_string_string(serializer, "script_key", getCallbackName().c_str());
   ndpi_serialize_string_string(serializer, "subdir", "flow");
   ndpi_serialize_end_of_block(serializer);
 

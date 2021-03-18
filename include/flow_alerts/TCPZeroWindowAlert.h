@@ -30,7 +30,7 @@ class TCPZeroWindowAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_zero_tcp_window;
 
- TCPZeroWindowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
+ TCPZeroWindowAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) {};
   ~TCPZeroWindowAlert() {};
 
   FlowAlertType getAlertType() const { return type; }

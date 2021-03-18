@@ -28,7 +28,7 @@ class FlowRiskSuspiciousDGADomainAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_ndpi_suspicious_dga_domain;
 
- FlowRiskSuspiciousDGADomainAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskSuspiciousDGADomainAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskSuspiciousDGADomainAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

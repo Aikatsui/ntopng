@@ -31,7 +31,7 @@ class FlowRiskBinaryApplicationTransferAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_suspicious_file_transfer;
 
- FlowRiskBinaryApplicationTransferAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskBinaryApplicationTransferAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskBinaryApplicationTransferAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

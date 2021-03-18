@@ -70,7 +70,7 @@ void LowGoodputFlow::flowEnd(Flow *f) {
 /* ***************************************************** */
 
 FlowAlert *LowGoodputFlow::buildAlert(Flow *f) {
-  return new LowGoodputFlowAlert(f, getSeverity());
+  return new LowGoodputFlowAlert(this, f, getSeverity());
 }
 
 /* ***************************************************** */

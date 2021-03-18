@@ -28,7 +28,7 @@ class FlowRiskSMBInsecureVersionAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_ndpi_smb_insecure_version;
 
- FlowRiskSMBInsecureVersionAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskSMBInsecureVersionAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskSMBInsecureVersionAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

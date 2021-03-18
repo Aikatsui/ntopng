@@ -32,7 +32,7 @@ class ExternalAlertCheckAlert : public FlowAlert {
   static const FlowAlertType type = alert_external;
 
 
- ExternalAlertCheckAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
+ ExternalAlertCheckAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) {};
   ~ExternalAlertCheckAlert() {};
   
   FlowAlertType getAlertType() const { return type; }

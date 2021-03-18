@@ -28,7 +28,7 @@ class SuspiciousTCPProbingAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_suspicious_tcp_probing;
 
- SuspiciousTCPProbingAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ SuspiciousTCPProbingAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~SuspiciousTCPProbingAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

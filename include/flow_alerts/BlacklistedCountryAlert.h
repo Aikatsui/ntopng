@@ -33,7 +33,7 @@ class BlacklistedCountryAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_blacklisted_country;
 
-  BlacklistedCountryAlert(Flow *f, AlertLevel s, bool _is_server) : FlowAlert(f, s) { is_server = _is_server; };
+  BlacklistedCountryAlert(FlowCallback *c, Flow *f, AlertLevel s, bool _is_server) : FlowAlert(c, f, s) { is_server = _is_server; };
   ~BlacklistedCountryAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

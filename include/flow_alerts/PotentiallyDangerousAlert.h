@@ -28,7 +28,7 @@ class PotentiallyDangerousAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_potentially_dangerous;
 
- PotentiallyDangerousAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ PotentiallyDangerousAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~PotentiallyDangerousAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

@@ -41,7 +41,7 @@ class FlowRiskBinaryApplicationTransfer : public FlowRisk {
   FlowRiskBinaryApplicationTransfer() : FlowRisk() {};
   ~FlowRiskBinaryApplicationTransfer() {};
 
-  FlowAlert *buildAlert(Flow *f) { return new FlowRiskBinaryApplicationTransferAlert(f, getSeverity()); }
+  FlowAlert *buildAlert(Flow *f) { return new FlowRiskBinaryApplicationTransferAlert(this, f, getSeverity()); }
 
   std::string getName()        const { return(std::string("suspicious_file_transfer")); }
 };

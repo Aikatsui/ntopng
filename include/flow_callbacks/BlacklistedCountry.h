@@ -41,7 +41,7 @@ class BlacklistedCountry : public FlowCallback {
   void protocolDetected(Flow *f);
   FlowAlert *buildAlert(Flow *f);
 
-  std::string getName()        const { return(std::string("country_check")); }
+  std::string getName() const { return(std::string("country_check")); }
 };
 
 #endif /* _BLACKLISTED_COUNTRY_H_ */

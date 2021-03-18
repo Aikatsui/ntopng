@@ -28,7 +28,7 @@ class DataExfiltrationAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_data_exfiltration;
 
- DataExfiltrationAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ DataExfiltrationAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~DataExfiltrationAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

@@ -40,7 +40,7 @@ class FlowRiskSSHObsolete : public FlowRisk {
   FlowRiskSSHObsolete() : FlowRisk() {};
   ~FlowRiskSSHObsolete() {};
 
-  FlowAlert *buildAlert(Flow *f)  { return new FlowRiskSSHObsoleteAlert(f, getSeverity()); }
+  FlowAlert *buildAlert(Flow *f)  { return new FlowRiskSSHObsoleteAlert(this, f, getSeverity()); }
 
   std::string getName()        const { return(std::string("ndpi_ssh_obsolete")); }
 };

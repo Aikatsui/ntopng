@@ -70,7 +70,7 @@ void TCPIssues::flowEnd(Flow *f) {
 /* ******************************************** */
 
 FlowAlert *TCPIssues::buildAlert(Flow *f) {
-  return new TCPIssuesAlert(f, getSeverity());
+  return new TCPIssuesAlert(this, f, getSeverity());
 }
 
 /* ***************************************************** */

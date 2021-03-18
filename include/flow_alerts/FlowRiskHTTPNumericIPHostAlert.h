@@ -28,7 +28,7 @@ class FlowRiskHTTPNumericIPHostAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_ndpi_http_numeric_ip_host;
 
- FlowRiskHTTPNumericIPHostAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskHTTPNumericIPHostAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskHTTPNumericIPHostAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

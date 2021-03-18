@@ -28,7 +28,7 @@ class InvalidDNSQueryAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_dns_invalid_query;
 
- InvalidDNSQueryAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ InvalidDNSQueryAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~InvalidDNSQueryAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

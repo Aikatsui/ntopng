@@ -31,7 +31,7 @@ class ElephantFlowAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_elephant_flow;
 
- ElephantFlowAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ ElephantFlowAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~ElephantFlowAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

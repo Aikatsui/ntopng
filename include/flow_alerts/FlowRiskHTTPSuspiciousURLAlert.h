@@ -28,7 +28,7 @@ class FlowRiskHTTPSuspiciousURLAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_ndpi_http_suspicious_url;
 
- FlowRiskHTTPSuspiciousURLAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ FlowRiskHTTPSuspiciousURLAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~FlowRiskHTTPSuspiciousURLAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

@@ -32,7 +32,7 @@ class UnexpectedServerAlert : public FlowAlert {
   virtual const IpAddress* getServerIP(Flow *f) { return(f->get_srv_ip_addr()); }
 
  public:
- UnexpectedServerAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
+ UnexpectedServerAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) {};
   ~UnexpectedServerAlert() {};
 
   AlertCategory getCategory() const { return alert_category_security; }

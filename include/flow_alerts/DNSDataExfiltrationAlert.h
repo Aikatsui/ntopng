@@ -28,7 +28,7 @@ class DNSDataExfiltrationAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_dns_data_exfiltration;
 
- DNSDataExfiltrationAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) { };
+ DNSDataExfiltrationAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) { };
   ~DNSDataExfiltrationAlert() { };
 
   FlowAlertType getAlertType() const { return type; }

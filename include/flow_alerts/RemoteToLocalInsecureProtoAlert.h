@@ -31,7 +31,7 @@ class RemoteToLocalInsecureProtoAlert : public FlowAlert {
  public:
   static const FlowAlertType type = alert_remote_to_local_insecure_proto;
 
- RemoteToLocalInsecureProtoAlert(Flow *f, AlertLevel s) : FlowAlert(f, s) {};
+ RemoteToLocalInsecureProtoAlert(FlowCallback *c, Flow *f, AlertLevel s) : FlowAlert(c, f, s) {};
   ~RemoteToLocalInsecureProtoAlert() {};
 
   FlowAlertType getAlertType() const { return type; }
