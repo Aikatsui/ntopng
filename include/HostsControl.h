@@ -40,6 +40,7 @@ class HostsControl {
 
   bool checkChange(time_t *last_change) const;
   Bitmap *getDisabledFlowAlertsBitmap(Host *host) const;
+  bool isFlowAlertDisabled(Host *host, FlowAlertType flow_alert_type) const;
 };
 
 #endif /* _HOSTS_CONTROL_H_ */

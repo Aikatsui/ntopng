@@ -39,7 +39,7 @@ void FlowStats::incStats(Bitmap alert_bitmap, u_int8_t l4_protocol, AlertLevel a
   int i;
 
   for(i = 0; i < BITMAP_NUM_BITS; i++) {
-    if(alert_bitmap.issetBit(i))
+    if(alert_bitmap.isSetBit(i))
       counters[i]++;
   }
 

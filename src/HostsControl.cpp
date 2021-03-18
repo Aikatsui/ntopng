@@ -103,6 +103,17 @@ Bitmap *HostsControl::getDisabledFlowAlertsBitmap(Host *h) const {
 
 /* *************************************** */
 
+bool HostsControl::isFlowAlertDisabled(Host *host, FlowAlertType flow_alert_type) const {
+  Bitmap *host_filter = getDisabledFlowAlertsBitmap(host);
+
+  if (host_filter == NULL)
+    return false;  
+
+  return host_filter->isSetBit(flow_alert_type);
+}
+
+/* *************************************** */
+
 void HostsControl::loadConfiguration() {
   char kname[CONST_MAX_LEN_REDIS_KEY];
   Redis *redis = ntop->getRedis();

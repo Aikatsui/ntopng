@@ -48,7 +48,7 @@ void Bitmap::clearBit(u_int8_t id) {
 
 /* ****************************************** */
 
-bool Bitmap::issetBit(u_int8_t id) const {
+bool Bitmap::isSetBit(u_int8_t id) const {
   if(id < 64)
     return(Utils::bitmapIsSet(bitmap[0], id));
   else if(id < BITMAP_NUM_BITS)
@@ -81,7 +81,7 @@ void Bitmap::lua(lua_State* vm, const char *label) const {
   lua_newtable(vm);
 
   for(u_int i=0; i<BITMAP_NUM_BITS; i++) {
-    if(issetBit(i)) {
+    if(isSetBit(i)) {
       lua_pushboolean(vm, true); /* The boolean indicating this risk is set            */
       lua_pushinteger(vm, i);    /* The integer risk id, used as key of this lua table */
       lua_insert(vm, -2);

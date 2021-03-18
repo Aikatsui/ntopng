@@ -795,7 +795,7 @@ int Redis::getAddress(char *numeric_ip, char *rsp,
 
   stats.num_get_address++;
   
-  if(!ntop->getResolutionBloom()->issetBit(numeric_ip)) {
+  if(!ntop->getResolutionBloom()->isSetBit(numeric_ip)) {
     already_in_bloom = false, stats.num_saved_lookups++, rc = -1; /* No way to find it */
 #ifdef CACHE_DEBUG
     ntop->getTrace()->traceEvent(TRACE_NORMAL, "Saved %s lookup", numeric_ip);

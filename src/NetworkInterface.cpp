@@ -3818,7 +3818,7 @@ static bool flow_matches(Flow *f, struct flowHostRetriever *retriever) {
     /* Flow Status filter */
     if(retriever->pag
        && retriever->pag->flowStatusFilter(&alert_type_filter)
-       && !f->getAlertBitmap().issetBit(alert_type_filter))
+       && !f->getAlertBitmap().isSetBit(alert_type_filter))
       return(false);
 
     /* Flow Status severity filter */

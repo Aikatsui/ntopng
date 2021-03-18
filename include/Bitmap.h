@@ -36,7 +36,7 @@ public:
   void reset();
   void setBit(u_int8_t id);
   void clearBit(u_int8_t id);
-  bool issetBit(u_int8_t id) const;
+  bool isSetBit(u_int8_t id) const;
   void bitmapOr(Bitmap b);
   void set(Bitmap *b);
   bool equal(Bitmap *b) const;

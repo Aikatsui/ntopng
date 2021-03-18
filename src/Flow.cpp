@@ -5250,7 +5250,7 @@ bool Flow::setAlertsBitmap(FlowAlertType alert_type, u_int16_t flow_inc, u_int16
   if(alert_type == alert_normal)
     return false;
 
-  if(!alert_map.issetBit(alert_type))
+  if(!alert_map.isSetBit(alert_type))
     alert_map.setBit(alert_type);
 
   flow_score += flow_inc;
