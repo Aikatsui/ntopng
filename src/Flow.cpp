@@ -2988,6 +2988,8 @@ bool Flow::enqueueAlert(FlowAlert *alert) {
   ndpi_serializer flow_json;
   const char *flow_str;
 
+  updateAlertsStats(alert);
+
   ndpi_init_serializer(&flow_json, ndpi_serialization_format_json);
 
   /* Prepare the JSON, including a JSON specific of this FlowAlertType */
@@ -5226,6 +5228,7 @@ void Flow::updateAlertsStats(FlowAlert *alert) {
     if(srv_h)
       srv_h->incTotalAlerts(alert->getAlertType());
 
+    alert_stats_initialized = true;
   } else {
     /* Not the first alert triggered for this flow */
 
@@ -5296,8 +5299,6 @@ bool Flow::triggerAlertAsync(FlowAlertType alert_type, u_int16_t flow_inc, u_int
 
 bool Flow::triggerAlertSync(FlowAlert *alert, u_int16_t flow_inc, u_int16_t cli_inc, u_int16_t srv_inc) {
   bool res, alert_enqueued = false;
-
-  updateAlertsStats(alert);
 
   res = setAlertsBitmap(alert->getAlertType(), flow_inc, cli_inc, srv_inc);
 

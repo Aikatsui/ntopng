@@ -133,8 +133,7 @@ void HostsControl::loadConfiguration() {
     alert_id = &alert_id[disabled_alert_field_len];
     flow_alert_type = (FlowAlertType) atoi(alert_id);
 
-    //DEBUG
-    ntop->getTrace()->traceEvent(TRACE_NORMAL, "Loading filter for host '%s': discard flow alert %u", host, flow_alert_type);
+    //ntop->getTrace()->traceEvent(TRACE_NORMAL, "Loading filter for host '%s': discard flow alert %u", host, flow_alert_type);
 
     /* Add disabled alert for the host */
     addHostDisabledFlowAlert(host, flow_alert_type);
