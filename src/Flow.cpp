@@ -5250,8 +5250,12 @@ bool Flow::setAlertsBitmap(FlowAlertType alert_type, u_int16_t flow_inc, u_int16
   if(alert_type == alert_normal)
     return false;
 
-  if(!alert_map.isSetBit(alert_type))
-    alert_map.setBit(alert_type);
+  /* Check host filter */
+  if((cli_host && cli_host->isFlowAlertDisabled(alert_type)) ||
+     (srv_host && srv_host->isFlowAlertDisabled(alert_type)))
+    return false;  
+
+  alert_map.setBit(alert_type);
 
   flow_score += flow_inc;
 

@@ -27,6 +27,7 @@
 class HostsControl {
  private:
   time_t init_tstamp; /* Timestamp, set when the class instance is created */
+  Bitmap default_host_filter; /* Allow all */
   AddressTree *host_filters; /* A ptree holding, for each host, a Bitmap with disabled flow alerts */
 
   /* Add a disabled flow alert for a host */
@@ -38,9 +39,9 @@ class HostsControl {
   HostsControl();
   virtual ~HostsControl();
 
+  /* Check whether the filters have changed since last_change, setting last_change to the latest change time */
   bool checkChange(time_t *last_change) const;
-  Bitmap *getDisabledFlowAlertsBitmap(Host *host) const;
-  bool isFlowAlertDisabled(Host *host, FlowAlertType flow_alert_type) const;
+  Bitmap getDisabledFlowAlertsBitmap(Host *host) const;
 };
 
 #endif /* _HOSTS_CONTROL_H_ */

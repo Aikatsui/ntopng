@@ -143,6 +143,7 @@ void Host::initialize(Mac *_mac, u_int16_t _vlanId) {
   prefs_loaded = false;
   host_services_bitmap = 0;
   mud_pref = mud_recording_default;
+  disabled_flow_alerts_tstamp = 0;
 
   // readStats(); - Commented as if put here it's too early and the key is not yet set
 
@@ -1535,3 +1536,18 @@ char* Host::get_tskey(char *buf, size_t bufsize) {
   
   return(k);
 }
+
+/* *************************************** */
+
+bool Host::isFlowAlertDisabled(FlowAlertType alert_type) {
+  HostsControl *hosts_control = ntop->getHostsControl();
+  bool disabled = false;
+  if (hosts_control) {
+    if (hosts_control->checkChange(&disabled_flow_alerts_tstamp))
+      disabled_flow_alerts = hosts_control->getDisabledFlowAlertsBitmap(this);
+     disabled = disabled_flow_alerts.isSetBit(alert_type);
+  }
+  return disabled;
+}
+
+/* *************************************** */

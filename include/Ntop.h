@@ -445,8 +445,7 @@ class Ntop {
   void shutdownAll();
   void runHousekeepingTasks();
   void runShutdownTasks();
-  bool isLocalInterfaceAddress(int family, void *addr)       { return(local_interface_addresses.findAddress(family, addr) == -1 ? false : true);    };
-  
+  bool isLocalInterfaceAddress(int family, void *addr)       { return(local_interface_addresses.findAddress(family, addr) == -1 ? false : true);    }; 
   void getLocalNetworkIp(int16_t local_network_id, IpAddress **network_ip, u_int8_t *network_prefix);
   void addLocalNetworkList(const char *network);
   void createExportInterface();
@@ -459,6 +458,7 @@ class Ntop {
   inline void      setLastModifiedStaticFileEpoch(u_int32_t t) { if(t > last_modified_static_file_epoch) last_modified_static_file_epoch = t; }
   inline u_int32_t getUptime()          { return((u_int32_t)((start_time > 0) ? (time(NULL)-start_time) : 0)); }
   inline int getUdpSock()               { return(udp_socket); }
+  inline HostsControl *getHostsControl() { return hosts_control; }
 
   inline u_int getNumCPUs()             { return(num_cpus); }
   inline void setNumCPUs(u_int num)     { num_cpus = num; }

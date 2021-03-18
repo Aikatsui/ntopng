@@ -82,6 +82,9 @@ class Host : public GenericHashEntry, public AlertableEntity {
   bool is_in_broadcast_domain;
   bool is_dhcp_host;
 
+  Bitmap disabled_flow_alerts;
+  time_t disabled_flow_alerts_tstamp;
+
   void initialize(Mac *_mac, u_int16_t _vlan_id);
   void inlineSetOS(OSType _os);
   bool statsResetRequested();
@@ -390,6 +393,7 @@ class Host : public GenericHashEntry, public AlertableEntity {
   inline u_int32_t getScoreAsServer() const { return score.getServer(); };
   u_int16_t incScoreValue(u_int16_t score_incr, ScoreCategory score_category, bool as_client);
   u_int16_t decScoreValue(u_int16_t score_decr, ScoreCategory score_category, bool as_client);
+  bool isFlowAlertDisabled(FlowAlertType alert_type);
 
   void setOS(OSType _os);
   OSType getOS() const;
